@@ -1,6 +1,6 @@
-package protocolsupport.protocol.transformer.v_1_5.reader;
+package protocolsupport.protocol.transformer.v_1_5_v1_6_shared.reader;
 
-import protocolsupport.api.ProtocolVersion;
+import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.protocol.transformer.TransformedPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.ChatPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.EncryptionRequestPacket;
@@ -61,7 +61,7 @@ public class BungeePacketTransformer {
 		}
 		if (packet instanceof StatusResponse) {
 			StatusResponse status = (StatusResponse) packet;
-			return new TransformedPacket[] { new KickPacket(PingSerializer.fromJSON(ProtocolVersion.MINECRAFT_1_5_2.getId(), status.getResponse())) };
+			return new TransformedPacket[] { new KickPacket(PingSerializer.fromJSON(ProtocolSupportAPI.getProtocolVersion(channel.remoteAddress()).getId(), status.getResponse())) };
 		}
 		if (packet instanceof EncryptionRequest) {
 			return new TransformedPacket[] { new EncryptionRequestPacket() };

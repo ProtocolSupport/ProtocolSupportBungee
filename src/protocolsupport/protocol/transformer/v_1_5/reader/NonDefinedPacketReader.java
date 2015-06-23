@@ -2,7 +2,7 @@ package protocolsupport.protocol.transformer.v_1_5.reader;
 
 import java.util.Arrays;
 
-import protocolsupport.protocol.transformer.v_1_5.PacketDataSerializer;
+import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketDataSerializer;
 import protocolsupport.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
