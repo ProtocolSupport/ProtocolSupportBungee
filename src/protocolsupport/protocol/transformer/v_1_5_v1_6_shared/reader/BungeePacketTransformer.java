@@ -64,7 +64,8 @@ public class BungeePacketTransformer {
 			return new TransformedPacket[] { new KickPacket(PingSerializer.fromJSON(ProtocolSupportAPI.getProtocolVersion(channel.remoteAddress()).getId(), status.getResponse())) };
 		}
 		if (packet instanceof EncryptionRequest) {
-			return new TransformedPacket[] { new EncryptionRequestPacket() };
+			EncryptionRequest erequest = (EncryptionRequest) packet;
+			return new TransformedPacket[] { new EncryptionRequestPacket(erequest.getServerId(), erequest.getVerifyToken()) };
 		}
 		if (packet instanceof Login) {
 			Login login = (Login) packet;

@@ -8,9 +8,17 @@ import net.md_5.bungee.protocol.packet.EncryptionRequest;
 
 public class EncryptionRequestPacket extends EncryptionRequest implements TransformedPacket {
 
-	private String serverId = "";
+	private String serverId;
 	private byte[] publicKey = EncryptionUtil.keys.getPublic().getEncoded();
-	private byte[] verifyToken = new byte[] { 1, 2, 3, 4 }; 
+	private byte[] verifyToken;
+
+	public EncryptionRequestPacket() {
+	}
+
+	public EncryptionRequestPacket(String serverId, byte[] verifyToken) {
+		this.serverId = serverId;
+		this.verifyToken = verifyToken.clone();
+	}
 
 	@Override
 	public void read(ByteBuf buf) {
