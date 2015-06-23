@@ -2,6 +2,7 @@ package protocolsupport.utils;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 public class Utils {
 
@@ -11,6 +12,13 @@ public class Utils {
 
 	public static void rewriteBytes(ByteBuf from, ByteBuf to, int length) {
 		to.writeBytes(from.readBytes(length).array());
+	}
+
+	public static String toLegacyText(String json) {
+		if (json == null) {
+			return "";
+		}
+		return Utils.toLegacyText(ComponentSerializer.parse(json));
 	}
 
 	public static String toLegacyText(BaseComponent[] components) {

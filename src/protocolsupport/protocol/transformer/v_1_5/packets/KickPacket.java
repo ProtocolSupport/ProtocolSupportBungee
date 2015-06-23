@@ -36,7 +36,7 @@ public class KickPacket extends Kick implements TransformedPacket {
 
 	@Override
 	public void setMessage(final String message) {
-		this.message = Utils.toLegacyText(ComponentSerializer.parse(message));
+		this.message = Utils.toLegacyText(message);
 	}
 
 	@Override

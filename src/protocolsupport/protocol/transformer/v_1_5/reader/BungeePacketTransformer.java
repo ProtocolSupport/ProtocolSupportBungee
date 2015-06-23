@@ -14,7 +14,6 @@ import protocolsupport.utils.PingSerializer;
 import protocolsupport.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Chat;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
@@ -39,7 +38,7 @@ public class BungeePacketTransformer {
 		}
 		if (packet instanceof Chat) {
 			Chat chat = (Chat) packet;
-			return new TransformedPacket[] { new ChatPacket(Utils.toLegacyText(ComponentSerializer.parse(chat.getMessage()))) };
+			return new TransformedPacket[] { new ChatPacket(Utils.toLegacyText(chat.getMessage())) };
 		}
 		if (packet instanceof Respawn) {
 			Respawn respawn = (Respawn) packet;
@@ -54,7 +53,8 @@ public class BungeePacketTransformer {
 			return packets;
 		}
 		if (packet instanceof Kick) {
-			return new TransformedPacket[] { new KickPacket(((Kick) packet).getMessage()) };
+			Kick kick = (Kick) packet;
+			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
 		}
 		if (packet instanceof LoginSuccess) {
 			return new TransformedPacket[0];
