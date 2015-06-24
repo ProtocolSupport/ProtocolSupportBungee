@@ -12,8 +12,8 @@ public class PipeLineBuilder implements IPipeLineBuilder {
 	@Override
 	public void buildPipeLine(Channel channel, ProtocolVersion version) {
 		ChannelPipeline pipeline = channel.pipeline();
-		pipeline.remove(PipelineUtils.FRAME_DECODER);
-		pipeline.remove(PipelineUtils.FRAME_PREPENDER);
+		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new FakeSplitter());
+		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new FakePrepender());
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new PacketDecoder(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_8.getId(), version));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_8.getId()));
 	}

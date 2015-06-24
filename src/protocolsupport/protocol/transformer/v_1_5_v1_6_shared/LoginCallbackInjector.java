@@ -55,14 +55,23 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 		public void done(LoginEvent result, Throwable arg1) {
 			try {
 				final InitialHandler handler = ReflectionUtils.getFieldValue(original, "this$0");
+
+				final ChannelWrapper ch = ReflectionUtils.getFieldValue(handler, "ch");
+
+				if (handler.isOnlineMode()) {
+					ch.getHandle().pipeline().remove(PipelineUtils.ENCRYPT_HANDLER);
+				}
+
 				if (result.isCancelled()) {
 					handler.disconnect(result.getCancelReason());
 					return;
 				}
-				final ChannelWrapper ch = ReflectionUtils.getFieldValue(handler, "ch");
+
+
 				if (ch.isClosed()) {
 					return;
 				}
+
 				ch.getHandle().eventLoop().execute(new Runnable() {
 					public void run() {
 						if (ch.getHandle().isActive()) {
@@ -85,6 +94,7 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 							if (server == null) {
 								server = bungee.getServerInfo(handler.getListener().getDefaultServer());
 							}
+
 							connect(ch, bungee, userCon, server, true);
 
 							try {
@@ -107,6 +117,7 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 		if (bungee.getPluginManager().callEvent(event).isCancelled()) {
 			return;
 		}
+
 		final BungeeServerInfo target = (BungeeServerInfo) event.getTarget();
 		final ServerConnection serverconn = connection.getServer();
 		if ((serverconn != null) && (Objects.equals(serverconn.getInfo(), target))) {
@@ -148,6 +159,7 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 				}
 			}
 		};
+
 		Bootstrap b = new Bootstrap()
 		.channel(PipelineUtils.getChannel())
 		.group(ch.getHandle().eventLoop())
