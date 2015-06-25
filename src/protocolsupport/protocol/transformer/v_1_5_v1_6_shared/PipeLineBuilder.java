@@ -5,7 +5,7 @@ import net.md_5.bungee.protocol.Protocol;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import protocolsupport.api.ProtocolVersion;
-import protocolsupport.protocol.pipeline.IPipeLineBuilder;
+import protocolsupport.protocol.listeners.IPipeLineBuilder;
 
 public class PipeLineBuilder implements IPipeLineBuilder {
 

@@ -1,4 +1,4 @@
-package protocolsupport.protocol.pipeline.initial;
+package protocolsupport.protocol.listeners.initial;
 
 import io.netty.channel.Channel;
 import protocolsupport.api.ProtocolVersion;

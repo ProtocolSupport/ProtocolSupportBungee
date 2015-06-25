@@ -2,7 +2,7 @@ package protocolsupport.injector;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-import protocolsupport.protocol.pipeline.initial.InitialPacketDecoder;
+import protocolsupport.protocol.listeners.initial.InitialPacketDecoder;
 import protocolsupport.utils.ReflectionUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.InitialHandler;
