@@ -21,10 +21,12 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.Kick;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
+import net.md_5.bungee.protocol.packet.PlayerListHeaderFooter;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.Respawn;
 import net.md_5.bungee.protocol.packet.StatusResponse;
+import net.md_5.bungee.protocol.packet.Title;
 
 public class BungeePacketTransformer {
 
@@ -56,7 +58,7 @@ public class BungeePacketTransformer {
 			Kick kick = (Kick) packet;
 			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
 		}
-		if (packet instanceof LoginSuccess) {
+		if (packet instanceof LoginSuccess || packet instanceof Title || packet instanceof PlayerListHeaderFooter) {
 			return new TransformedPacket[0];
 		}
 		if (packet instanceof StatusResponse) {
