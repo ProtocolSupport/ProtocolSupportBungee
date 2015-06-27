@@ -2,6 +2,7 @@ package protocolsupport.protocol.transformer.v_1_5_v1_6_shared;
 
 import java.io.IOException;
 
+import protocolsupport.LoggerUtil;
 import protocolsupport.protocol.transformer.TransformedPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.reader.BungeePacketTransformer;
 import net.md_5.bungee.protocol.DefinedPacket;
@@ -12,8 +13,10 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class PacketEncoder extends MinecraftEncoder {
 
+	private boolean server;
 	public PacketEncoder(Protocol protocol, boolean server, int protocolVersion) {
 		super(protocol, server, protocolVersion);
+		this.server = server;
 	}
 
 	@Override
@@ -34,6 +37,9 @@ public class PacketEncoder extends MinecraftEncoder {
 	private void encodePackets(TransformedPacket[] packets, ByteBuf buf) {
 		for (TransformedPacket tpacket : packets) {
 			if (tpacket.shouldWrite()) {
+				if (LoggerUtil.isEnabled()) {
+					LoggerUtil.debug((server ? "[To Client] " : "[To Server] ") + "Sent packet(id: "+tpacket.getId() + ", defined data: " + packets.toString());
+				}
 				buf.writeByte(tpacket.getId());
 				tpacket.write(buf);
 			}

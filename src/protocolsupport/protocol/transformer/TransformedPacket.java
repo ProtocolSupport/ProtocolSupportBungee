@@ -10,4 +10,6 @@ public interface TransformedPacket {
 
 	public int getId();
 
+	public String toString();
+
 }
