@@ -38,7 +38,7 @@ public class PacketEncoder extends MinecraftEncoder {
 		for (TransformedPacket tpacket : packets) {
 			if (tpacket.shouldWrite()) {
 				if (LoggerUtil.isEnabled()) {
-					LoggerUtil.debug((server ? "[To Client] " : "[To Server] ") + "Sent packet(id: "+tpacket.getId() + ", defined data: " + packets.toString());
+					LoggerUtil.debug((server ? "[To Client] " : "[To Server] ") + "Sent packet(id: "+tpacket.getId() + ", defined data: " + tpacket.toString());
 				}
 				buf.writeByte(tpacket.getId());
 				tpacket.write(buf);
