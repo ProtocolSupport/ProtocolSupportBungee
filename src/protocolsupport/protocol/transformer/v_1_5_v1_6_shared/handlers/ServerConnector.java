@@ -55,10 +55,10 @@ public class ServerConnector implements IServerConnector {
 		ChannelInitializer<Channel> initializer = new ChannelInitializer<Channel>() {
 			protected void initChannel(Channel ch) throws Exception {
 				PipelineUtils.BASE.initChannel(ch);
-				ch.pipeline().addAfter("frame-decoder", "packet-decoder", new PacketDecoder(Protocol.HANDSHAKE, false, connection.getPendingConnection().getVersion(), ProtocolSupportAPI.getProtocolVersion(connection.getAddress())));
-				ch.pipeline().remove("frame-decoder");
-				ch.pipeline().addAfter("frame-prepender", "packet-encoder", new PacketEncoder(Protocol.HANDSHAKE, false, connection.getPendingConnection().getVersion()));
-				ch.pipeline().remove("frame-prepender");
+				ch.pipeline().addAfter(PipelineUtils.FRAME_DECODER, PipelineUtils.PACKET_DECODER, new PacketDecoder(false, ProtocolSupportAPI.getProtocolVersion(connection.getAddress())));
+				ch.pipeline().addAfter(PipelineUtils.FRAME_PREPENDER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, false, connection.getPendingConnection().getVersion()));
+				ch.pipeline().remove(PipelineUtils.FRAME_DECODER);
+				ch.pipeline().remove(PipelineUtils.FRAME_PREPENDER);
 				ch.pipeline().get(HandlerBoss.class).setHandler(new ServerConnectHandler(bungee, connection, target));
 			}
 		};

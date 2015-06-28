@@ -16,6 +16,7 @@ public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 
 	private ServerboundEntityRewrite rewrite = new ServerboundEntityRewrite();
 
+	@Override
 	public void handle(PacketWrapper packet) throws Exception {
 		rewrite.rewriteServerbound(packet.buf, this.con.getClientEntityId(), this.con.getServerEntityId());
 		if (this.con.getServer() != null) {

@@ -47,6 +47,8 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 				if (handler.isOnlineMode()) {
 					ch.getHandle().pipeline().remove(PipelineUtils.ENCRYPT_HANDLER);
 				}
+				ch.getHandle().pipeline().remove(PipelineUtils.FRAME_DECODER);
+				ch.getHandle().pipeline().remove(PipelineUtils.FRAME_PREPENDER);
 
 				if (result.isCancelled()) {
 					handler.disconnect(result.getCancelReason());

@@ -7,12 +7,14 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 
 import protocolsupport.api.ProtocolSupportAPI;
+import protocolsupport.protocol.CheckedChannelWrapper;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.HandshakePacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.LoginPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.PluginMessagePacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.RespawnPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.ScoreboardObjectivePacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.TeamPacket;
+import protocolsupport.utils.FakeChannelContext;
 import protocolsupport.utils.ReflectionUtils;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.BungeeServerInfo;
@@ -74,6 +76,7 @@ public class ServerConnectHandler extends PacketHandler {
 		}
 	}
 
+	@Override
 	public void exception(Throwable t) throws Exception {
 		String message = "Exception Connecting:" + Util.exception(t);
 		if (this.user.getServer() == null) {
@@ -83,8 +86,9 @@ public class ServerConnectHandler extends PacketHandler {
 		}
 	}
 
+	@Override
 	public void connected(ChannelWrapper channel) throws Exception {
-		this.ch = channel;
+		this.ch = new CheckedChannelWrapper(new FakeChannelContext(channel.getHandle()));
 
 		this.handshakeHandler = new ForgeServerHandler(this.user, this.ch, this.target);
 		Handshake originalHandshake = this.user.getPendingConnection().getHandshake();
@@ -99,24 +103,28 @@ public class ServerConnectHandler extends PacketHandler {
 		} else if (!this.user.getExtraDataInHandshake().isEmpty()) {
 			copiedHandshake.setHost(copiedHandshake.getHost() + this.user.getExtraDataInHandshake());
 		}
-		channel.write(copiedHandshake);
+		ch.write(copiedHandshake);
 
-		channel.setProtocol(Protocol.LOGIN);
+		ch.setProtocol(Protocol.LOGIN);
 	}
 
+	@Override
 	public void disconnected(ChannelWrapper channel) throws Exception {
 		this.user.getPendingConnects().remove(this.target);
 	}
 
+	@Override
 	public void handle(LoginSuccess loginSuccess) throws Exception {
 		throw new RuntimeException("Server sent LoginSucess, that shouldn't have happened");
 	}
 
+	@Override
 	public void handle(SetCompression setCompression) throws Exception {
 		throw new RuntimeException("Server sent SetCompression, that shouldn't have happened");
 	}
 
 	@SuppressWarnings("deprecation")
+	@Override
 	public void handle(Login login) throws Exception {
 		Preconditions.checkState(this.thisState == State.LOGIN, "Not expecting LOGIN");
 
@@ -196,10 +204,12 @@ public class ServerConnectHandler extends PacketHandler {
 		throw CancelSendSignal.INSTANCE;
 	}
 
+	@Override
 	public void handle(EncryptionRequest encryptionRequest) throws Exception {
 		throw new RuntimeException("Server is online mode!");
 	}
 
+	@Override
 	public void handle(Kick kick) throws Exception {
 		ServerInfo def = this.bungee.getServerInfo(this.user.getPendingConnection().getListener().getFallbackServer());
 		if (Objects.equals(this.target, def)) {
@@ -220,6 +230,7 @@ public class ServerConnectHandler extends PacketHandler {
 		throw CancelSendSignal.INSTANCE;
 	}
 
+	@Override
 	public void handle(PluginMessage pluginMessage) throws Exception {
 		if (pluginMessage.getTag().equals("REGISTER")) {
 			Set<String> channels = ForgeUtils.readRegisteredChannels(pluginMessage);
@@ -249,6 +260,7 @@ public class ServerConnectHandler extends PacketHandler {
 		this.user.unsafe().sendPacket(pluginMessage);
 	}
 
+	@Override
 	public String toString() {
 		return "[" + this.user.getName() + "] <-> ServerConnector [" + this.target.getName() + "]";
 	}

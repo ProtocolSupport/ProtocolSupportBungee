@@ -22,7 +22,6 @@ public class PacketEncoder extends MinecraftEncoder {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, DefinedPacket packet, ByteBuf buf) throws Exception {
 		TransformedPacket[] packets = null;
-		//Bungee can send packets too, so we will have to transform them first
 		if (!(packet instanceof TransformedPacket)) {
 			packets = BungeePacketTransformer.transformBungeePacket(ctx.channel(), packet, buf);
 			if (packets == null) {
@@ -38,7 +37,7 @@ public class PacketEncoder extends MinecraftEncoder {
 		for (TransformedPacket tpacket : packets) {
 			if (tpacket.shouldWrite()) {
 				if (LoggerUtil.isEnabled()) {
-					LoggerUtil.debug((server ? "[To Client] " : "[To Server] ") + "Sent packet(id: "+tpacket.getId() + ", defined data: " + tpacket.toString());
+					LoggerUtil.debug((server ? "[To Client] " : "[To Server] ") + "Sent packet(id: "+tpacket.getId() + ", defined data: " + tpacket.toString() + ")");
 				}
 				buf.writeByte(tpacket.getId());
 				tpacket.write(buf);
