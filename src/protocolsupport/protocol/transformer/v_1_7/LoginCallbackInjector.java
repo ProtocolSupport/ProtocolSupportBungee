@@ -1,8 +1,6 @@
-package protocolsupport.protocol.transformer.v_1_5_v1_6_shared;
+package protocolsupport.protocol.transformer.v_1_7;
 
 import protocolsupport.protocol.listeners.LoginFinishInjector.ILoginCallbackInjector;
-import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.EntityRewriteUpstreamBridge;
-import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector;
 import protocolsupport.utils.ReflConstants;
 import protocolsupport.utils.ReflectionUtils;
 import net.md_5.bungee.BungeeCord;
@@ -13,10 +11,11 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
-import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.Protocol;
+import net.md_5.bungee.protocol.packet.LoginSuccess;
 
 public class LoginCallbackInjector implements ILoginCallbackInjector {
 
@@ -45,17 +44,10 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 
 				final ChannelWrapper ch = ReflectionUtils.getFieldValue(handler, "ch");
 
-				if (handler.isOnlineMode()) {
-					ch.getHandle().pipeline().remove(PipelineUtils.ENCRYPT_HANDLER);
-				}
-				ch.getHandle().pipeline().remove(PipelineUtils.FRAME_DECODER);
-				ch.getHandle().pipeline().remove(PipelineUtils.FRAME_PREPENDER);
-
 				if (result.isCancelled()) {
 					handler.disconnect(result.getCancelReason());
 					return;
 				}
-
 
 				if (ch.isClosed()) {
 					return;
@@ -66,6 +58,12 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 						if (ch.getHandle().isActive()) {
 							BungeeCord bungee = BungeeCord.getInstance();
 
+							if (handler.getVersion() >= 5) {
+								handler.unsafe().sendPacket(new LoginSuccess(handler.getUniqueId().toString(), handler.getName()));
+							} else {
+								handler.unsafe().sendPacket(new LoginSuccess(handler.getUUID(), handler.getName()));
+							}
+
 							ch.setProtocol(Protocol.GAME);
 
 							UserConnection userCon = new UserConnection(bungee, ch, handler.getName(), handler);
@@ -73,7 +71,7 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 
 							bungee.getPluginManager().callEvent(new PostLoginEvent(userCon));
 
-							ch.getHandle().pipeline().get(HandlerBoss.class).setHandler(new EntityRewriteUpstreamBridge(bungee, userCon));
+							ch.getHandle().pipeline().get(HandlerBoss.class).setHandler(new UpstreamBridge(bungee, userCon));
 							ServerInfo server;
 							if (bungee.getReconnectHandler() != null) {
 								server = bungee.getReconnectHandler().getServer(userCon);
