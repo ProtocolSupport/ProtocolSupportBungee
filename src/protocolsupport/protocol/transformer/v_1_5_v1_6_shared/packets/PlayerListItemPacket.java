@@ -10,6 +10,7 @@ import net.md_5.bungee.protocol.packet.PlayerListItem;
 import io.netty.buffer.ByteBuf;
 import protocolsupport.protocol.transformer.TransformedPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketDataSerializer;
+import protocolsupport.utils.Utils;
 
 public class PlayerListItemPacket extends PlayerListItem implements TransformedPacket {
 
@@ -41,7 +42,7 @@ public class PlayerListItemPacket extends PlayerListItem implements TransformedP
 
 	@Override
 	public void write(ByteBuf buf) {
-		PacketDataSerializer.writeString(items[0].getDisplayName(), buf);
+		PacketDataSerializer.writeString(Utils.clampString(items[0].getDisplayName(), 16), buf);
 		buf.writeBoolean(action == Action.ADD_PLAYER);
 		buf.writeShort(items[0].getPing());
 	}
