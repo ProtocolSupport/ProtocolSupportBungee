@@ -12,6 +12,16 @@ public class ScoreboardScorePacket extends ScoreboardScore implements Transforme
 	private String scoreName;
 	private int value;
 
+	public ScoreboardScorePacket() {
+	}
+
+	public ScoreboardScorePacket(String itemName, byte action, String scoreName, int value) {
+		this.itemName = itemName;
+		this.action = action;
+		this.scoreName = scoreName;
+		this.value = value;
+	}
+
 	@Override
 	public void read(ByteBuf buf) {
 		itemName = PacketDataSerializer.readString(buf);

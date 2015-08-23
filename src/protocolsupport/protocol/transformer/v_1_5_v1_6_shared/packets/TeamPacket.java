@@ -23,6 +23,16 @@ public class TeamPacket extends Team implements TransformedPacket {
 		this.mode = 1;
 	}
 
+	public TeamPacket(String name, byte mode, String displayName, String prefix, String suffix, byte friendlyFire, String[] players) {
+		this.name = name;
+		this.mode = mode;
+		this.displayName = displayName;
+		this.prefix = prefix;
+		this.suffix = suffix;
+		this.friendlyFire = friendlyFire;
+		this.players = players;
+	}
+
 	@Override
 	public void read(ByteBuf buf) {
 		this.name = PacketDataSerializer.readString(buf);

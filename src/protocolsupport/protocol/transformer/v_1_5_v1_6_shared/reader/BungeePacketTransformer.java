@@ -10,6 +10,10 @@ import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.LoginPacke
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.PlayerListItemPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.PluginMessagePacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.RespawnPacket;
+import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.ScoreboardDispayPacket;
+import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.ScoreboardObjectivePacket;
+import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.ScoreboardScorePacket;
+import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.TeamPacket;
 import protocolsupport.utils.PingSerializer;
 import protocolsupport.utils.Utils;
 import io.netty.buffer.ByteBuf;
@@ -25,7 +29,11 @@ import net.md_5.bungee.protocol.packet.PlayerListHeaderFooter;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.Respawn;
+import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
+import net.md_5.bungee.protocol.packet.ScoreboardObjective;
+import net.md_5.bungee.protocol.packet.ScoreboardScore;
 import net.md_5.bungee.protocol.packet.StatusResponse;
+import net.md_5.bungee.protocol.packet.Team;
 import net.md_5.bungee.protocol.packet.Title;
 
 public class BungeePacketTransformer {
@@ -33,19 +41,19 @@ public class BungeePacketTransformer {
 	public static TransformedPacket[] transformBungeePacket(Channel channel, DefinedPacket packet, ByteBuf buf) {
 		if (packet instanceof KeepAlive) {
 			return new TransformedPacket[] { new KeepAlivePacket(((KeepAlive) packet).getRandomId()) };
-		}
+		} else 
 		if (packet instanceof PluginMessage) {
 			PluginMessage pmessage = (PluginMessage) packet;
 			return new TransformedPacket[] { new PluginMessagePacket(pmessage.getTag(), pmessage.getData().clone(), pmessage.isAllowExtendedPacket()) };
-		}
+		} else
 		if (packet instanceof Chat) {
 			Chat chat = (Chat) packet;
 			return new TransformedPacket[] { new ChatPacket(Utils.toLegacyText(chat.getMessage())) };
-		}
+		} else
 		if (packet instanceof Respawn) {
 			Respawn respawn = (Respawn) packet;
 			return new TransformedPacket[] { new RespawnPacket(respawn.getDimension(), respawn.getDifficulty(), respawn.getGameMode(), respawn.getLevelType()) };
-		}
+		} else
 		if (packet instanceof PlayerListItem) {
 			PlayerListItem listitem = (PlayerListItem) packet;
 			TransformedPacket[] packets = new TransformedPacket[listitem.getItems().length];
@@ -53,25 +61,41 @@ public class BungeePacketTransformer {
 				packets[i] = new PlayerListItemPacket(listitem.getAction(), listitem.getItems()[i]);
 			}
 			return packets;
-		}
+		} else
 		if (packet instanceof Kick) {
 			Kick kick = (Kick) packet;
 			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
-		}
+		} else
 		if (packet instanceof LoginSuccess || packet instanceof Title || packet instanceof PlayerListHeaderFooter) {
 			return new TransformedPacket[0];
-		}
+		} else
 		if (packet instanceof StatusResponse) {
 			StatusResponse status = (StatusResponse) packet;
 			return new TransformedPacket[] { new KickPacket(PingSerializer.fromJSON(ProtocolSupportAPI.getProtocolVersion(channel.remoteAddress()).getId(), status.getResponse())) };
-		}
+		} else
 		if (packet instanceof EncryptionRequest) {
 			EncryptionRequest erequest = (EncryptionRequest) packet;
 			return new TransformedPacket[] { new EncryptionRequestPacket(erequest.getServerId(), erequest.getVerifyToken()) };
-		}
+		} else
 		if (packet instanceof Login) {
 			Login login = (Login) packet;
 			return new TransformedPacket[] { new LoginPacket(login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(), login.getMaxPlayers(), login.getLevelType()) };
+		} else
+		if (packet instanceof Team) {
+			Team team = (Team) packet;
+			return new TransformedPacket[] { new TeamPacket(team.getName(), team.getMode(), team.getDisplayName(), team.getPrefix(), team.getSuffix(), team.getFriendlyFire(), team.getPlayers()) };
+		} else
+		if (packet instanceof ScoreboardDisplay) {
+			ScoreboardDisplay sdisplay = (ScoreboardDisplay) packet;
+			return new TransformedPacket[] { new ScoreboardDispayPacket(sdisplay.getPosition(), sdisplay.getName()) };
+		} else
+		if (packet instanceof ScoreboardObjective) {
+			ScoreboardObjective sobjective = (ScoreboardObjective) packet;
+			return new TransformedPacket[] { new ScoreboardObjectivePacket(sobjective.getName(), sobjective.getValue(), sobjective.getAction()) };
+		} else
+		if (packet instanceof ScoreboardScore) {
+			ScoreboardScore sscore = (ScoreboardScore) packet;
+			return new TransformedPacket[] { new ScoreboardScorePacket(sscore.getItemName(), sscore.getAction(), sscore.getScoreName(), sscore.getValue()) };
 		}
 		return null;
 	}

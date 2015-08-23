@@ -10,6 +10,14 @@ public class ScoreboardDispayPacket extends ScoreboardDisplay implements Transfo
 	private byte position;
 	private String name;
 
+	public ScoreboardDispayPacket() {
+	}
+
+	public ScoreboardDispayPacket(byte position, String name) {
+		this.position = position;
+		this.name = name;
+	}
+
 	@Override
 	public void read(ByteBuf buf) {
 		position = buf.readByte();
