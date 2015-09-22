@@ -23,6 +23,10 @@ public class PlayerListItemPacket extends PlayerListItem implements TransformedP
 	public PlayerListItemPacket(Action action, Item item) {
 		this.action = action;
 		this.items = new Item[] { item };
+		if (this.items[0].getDisplayName() == null) {
+			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(this.items[0].getUuid());
+			this.items[0].setDisplayName(player != null ? player.getDisplayName() : "Unknown");
+		}
 	}
 
 	@Override
