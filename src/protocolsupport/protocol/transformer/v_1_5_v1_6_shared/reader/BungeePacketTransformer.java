@@ -38,6 +38,8 @@ import net.md_5.bungee.protocol.packet.Title;
 
 public class BungeePacketTransformer {
 
+	private static final TransformedPacket[] EMPTY = new TransformedPacket[0];
+
 	public static TransformedPacket[] transformBungeePacket(Channel channel, DefinedPacket packet, ByteBuf buf) {
 		if (packet instanceof KeepAlive) {
 			return new TransformedPacket[] { new KeepAlivePacket(((KeepAlive) packet).getRandomId()) };
@@ -56,18 +58,27 @@ public class BungeePacketTransformer {
 		} else
 		if (packet instanceof PlayerListItem) {
 			PlayerListItem listitem = (PlayerListItem) packet;
-			TransformedPacket[] packets = new TransformedPacket[listitem.getItems().length];
-			for (int i = 0; i < packets.length; i++) {
-				packets[i] = new PlayerListItemPacket(listitem.getAction(), listitem.getItems()[i]);
+			switch (listitem.getAction()) {
+				case ADD_PLAYER:
+				case REMOVE_PLAYER:
+				case UPDATE_DISPLAY_NAME: {
+					TransformedPacket[] packets = new TransformedPacket[listitem.getItems().length];
+					for (int i = 0; i < packets.length; i++) {
+						packets[i] = new PlayerListItemPacket(listitem.getAction(), listitem.getItems()[i]);
+					}
+					return packets;
+				}
+				default: {
+					return EMPTY;
+				}
 			}
-			return packets;
 		} else
 		if (packet instanceof Kick) {
 			Kick kick = (Kick) packet;
 			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
 		} else
 		if (packet instanceof LoginSuccess || packet instanceof Title || packet instanceof PlayerListHeaderFooter) {
-			return new TransformedPacket[0];
+			return EMPTY;
 		} else
 		if (packet instanceof StatusResponse) {
 			StatusResponse status = (StatusResponse) packet;

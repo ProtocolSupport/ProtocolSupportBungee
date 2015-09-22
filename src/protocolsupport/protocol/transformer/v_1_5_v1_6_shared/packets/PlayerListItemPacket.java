@@ -32,18 +32,18 @@ public class PlayerListItemPacket extends PlayerListItem implements TransformedP
 		boolean add = buf.readBoolean();
 		int ping = buf.readShort();
 		action = add ? Action.ADD_PLAYER : Action.REMOVE_PLAYER;
-		PlayerListItem.Item item = new PlayerListItem.Item();
+		Item item = new Item();
 		item.setDisplayName(username);
 		item.setUuid(player != null ? player.getUniqueId() : UUID.nameUUIDFromBytes(username.getBytes(StandardCharsets.UTF_8)));
 		item.setGamemode(0);
 		item.setPing(ping);
-		items = new PlayerListItem.Item[] { item };
+		items = new Item[] { item };
 	}
 
 	@Override
 	public void write(ByteBuf buf) {
 		PacketDataSerializer.writeString(Utils.clampString(items[0].getDisplayName(), 16), buf);
-		buf.writeBoolean(action == Action.ADD_PLAYER);
+		buf.writeBoolean(action == Action.ADD_PLAYER || action == Action.UPDATE_DISPLAY_NAME);
 		buf.writeShort(items[0].getPing());
 	}
 
