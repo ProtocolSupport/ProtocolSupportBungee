@@ -22,6 +22,11 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 
 	@SuppressWarnings("serial")
 	private static final EnumMap<ProtocolVersion, IPipeLineBuilder> pipelineBuilders = new EnumMap<ProtocolVersion, IPipeLineBuilder>(ProtocolVersion.class) {{
+		put(ProtocolVersion.MINECRAFT_1_9, new IPipeLineBuilder() {
+			@Override
+			public void buildPipeLine(Channel channel, ProtocolVersion version) {
+			}
+		});
 		put(ProtocolVersion.MINECRAFT_1_8, new IPipeLineBuilder() {
 			@Override
 			public void buildPipeLine(Channel channel, ProtocolVersion version) {
@@ -31,7 +36,10 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 		put(ProtocolVersion.MINECRAFT_1_7_5, new protocolsupport.protocol.transformer.v_1_7.PipeLineBuilder());
 		put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
 		put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		put(ProtocolVersion.MINECRAFT_1_6_1, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
 		put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		put(ProtocolVersion.MINECRAFT_1_5_1, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		put(ProtocolVersion.MINECRAFT_1_4_7, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
 	}};
 
 	protected ByteBuf receivedData = Unpooled.buffer();
