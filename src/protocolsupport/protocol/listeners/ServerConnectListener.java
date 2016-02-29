@@ -16,6 +16,7 @@ public class ServerConnectListener implements Listener {
 
 	@SuppressWarnings("serial")
 	private HashMap<ProtocolVersion, IServerConnector> connectors = new HashMap<ProtocolVersion, IServerConnector>() {{
+		put(ProtocolVersion.MINECRAFT_1_9, new protocolsupport.protocol.transformer.v_1_7.ServerConnector());
 		put(ProtocolVersion.MINECRAFT_1_7_10, new protocolsupport.protocol.transformer.v_1_7.ServerConnector());
 		put(ProtocolVersion.MINECRAFT_1_7_5, new protocolsupport.protocol.transformer.v_1_7.ServerConnector());
 		put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector());
