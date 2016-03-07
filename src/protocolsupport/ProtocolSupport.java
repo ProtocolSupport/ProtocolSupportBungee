@@ -14,12 +14,16 @@ public class ProtocolSupport extends Plugin {
 			LoggerUtil.init(getLogger());
 			getProxy().getPluginManager().registerCommand(this, new CommandHandler());
 			NettyInjector.inject();
-			getProxy().getPluginManager().registerListener(this, new LoginFinishInjector());
-			getProxy().getPluginManager().registerListener(this, new ServerConnectListener());
 		} catch (Throwable t) {
 			t.printStackTrace();
 			ProxyServer.getInstance().stop();
 		}
+	}
+
+	@Override
+	public void onEnable() {
+		getProxy().getPluginManager().registerListener(this, new LoginFinishInjector());
+		getProxy().getPluginManager().registerListener(this, new ServerConnectListener());
 	}
 
 }

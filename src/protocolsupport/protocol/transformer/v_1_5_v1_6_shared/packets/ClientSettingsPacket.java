@@ -9,7 +9,7 @@ public class ClientSettingsPacket extends ClientSettings implements TransformedP
 
 	private String locale;
 	private byte viewDistance;
-	private byte chatFlags;
+	private int chatFlags;
 	private boolean chatColours;
 	private byte difficulty;
 
@@ -44,7 +44,7 @@ public class ClientSettingsPacket extends ClientSettings implements TransformedP
 	}
 
 	@Override
-	public byte getChatFlags() {
+	public int getChatFlags() {
 		return this.chatFlags;
 	}
 
@@ -69,7 +69,7 @@ public class ClientSettingsPacket extends ClientSettings implements TransformedP
 	}
 
 	@Override
-	public void setChatFlags(final byte chatFlags) {
+	public void setChatFlags(final int chatFlags) {
 		this.chatFlags = chatFlags;
 	}
 

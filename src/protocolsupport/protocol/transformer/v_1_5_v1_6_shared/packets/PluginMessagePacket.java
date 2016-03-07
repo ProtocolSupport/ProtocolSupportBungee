@@ -1,7 +1,6 @@
 package protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
@@ -9,7 +8,6 @@ import java.io.DataInputStream;
 
 import protocolsupport.protocol.transformer.TransformedPacket;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketDataSerializer;
-import net.md_5.bungee.protocol.MinecraftInput;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 
 public class PluginMessagePacket extends PluginMessage implements TransformedPacket {
@@ -42,11 +40,6 @@ public class PluginMessagePacket extends PluginMessage implements TransformedPac
 	@Override
 	public DataInput getStream() {
 		return new DataInputStream(new ByteArrayInputStream(this.data));
-	}
-
-	@Override
-	public MinecraftInput getMCStream() {
-		return new MinecraftInput(Unpooled.wrappedBuffer(this.data));
 	}
 
 	@Override

@@ -62,6 +62,7 @@ public class LoginCallbackInjector implements ILoginCallbackInjector {
 				}
 
 				ch.getHandle().eventLoop().execute(new Runnable() {
+					@SuppressWarnings("deprecation")
 					public void run() {
 						if (ch.getHandle().isActive()) {
 							BungeeCord bungee = BungeeCord.getInstance();

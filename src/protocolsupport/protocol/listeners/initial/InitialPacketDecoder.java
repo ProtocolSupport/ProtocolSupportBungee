@@ -16,28 +16,32 @@ import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.listeners.IPipeLineBuilder;
 import protocolsupport.protocol.storage.ProtocolStorage;
 
+//TODO: Copy from protocolsupport
 public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 
 	public static final String NAME = "initial_decoder";
 
-	@SuppressWarnings("serial")
-	private static final EnumMap<ProtocolVersion, IPipeLineBuilder> pipelineBuilders = new EnumMap<ProtocolVersion, IPipeLineBuilder>(ProtocolVersion.class) {{
-		put(ProtocolVersion.MINECRAFT_1_8, new IPipeLineBuilder() {
+	private static final EnumMap<ProtocolVersion, IPipeLineBuilder> pipelineBuilders = new EnumMap<ProtocolVersion, IPipeLineBuilder>(ProtocolVersion.class);
+	static {
+		IPipeLineBuilder empty = new IPipeLineBuilder() {
 			@Override
 			public void buildPipeLine(Channel channel, ProtocolVersion version) {
 			}
-		});
-		put(ProtocolVersion.MINECRAFT_1_7_10, new protocolsupport.protocol.transformer.v_1_7.PipeLineBuilder());
-		put(ProtocolVersion.MINECRAFT_1_7_5, new protocolsupport.protocol.transformer.v_1_7.PipeLineBuilder());
-		put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
-		put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
-		put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
-	}};
+		};
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_9, empty);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_8, empty);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_7_10, empty);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_5_2, empty);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+	}
 
 	protected ByteBuf receivedData = Unpooled.buffer();
 
 	protected volatile boolean protocolSet = false;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void channelRead(final ChannelHandlerContext ctx, final Object inputObj) throws Exception {
 		try {
@@ -82,7 +86,7 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 					receivedData.readerIndex(0);
 					ByteBuf data = getVarIntPrefixedData(receivedData);
 					if (data != null) {
-						handshakeversion = read1_7_1_8Handshake(data);
+						handshakeversion = readNettyHandshake(data);
 					}
 					break;
 				}
@@ -129,7 +133,8 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 		throw new CorruptedFrameException("Packet length is wider than 21 bit");
 	}
 
-	private ProtocolVersion read1_7_1_8Handshake(ByteBuf data) {
+	@SuppressWarnings("deprecation")
+	private ProtocolVersion readNettyHandshake(ByteBuf data) {
 		if (readVarInt(data) == 0x00) {
 			return ProtocolVersion.fromId(readVarInt(data));
 		}

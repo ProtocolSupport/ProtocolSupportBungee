@@ -32,6 +32,7 @@ import net.md_5.bungee.protocol.packet.Respawn;
 import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
 import net.md_5.bungee.protocol.packet.ScoreboardObjective;
 import net.md_5.bungee.protocol.packet.ScoreboardScore;
+import net.md_5.bungee.protocol.packet.SetCompression;
 import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.Team;
 import net.md_5.bungee.protocol.packet.Title;
@@ -77,7 +78,7 @@ public class BungeePacketTransformer {
 			Kick kick = (Kick) packet;
 			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
 		} else
-		if (packet instanceof LoginSuccess || packet instanceof Title || packet instanceof PlayerListHeaderFooter) {
+		if (packet instanceof LoginSuccess || packet instanceof Title || packet instanceof PlayerListHeaderFooter || packet instanceof SetCompression) {
 			return EMPTY;
 		} else
 		if (packet instanceof StatusResponse) {

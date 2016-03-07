@@ -15,14 +15,13 @@ import net.md_5.bungee.BungeeServerInfo;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.Protocol;
+
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.protocol.listeners.ServerConnectListener.IServerConnector;
-import protocolsupport.protocol.listeners.ServerConnectListener.ProtocolSupoortBungeeServerConnectedEvent;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketDecoder;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketEncoder;
 import protocolsupport.utils.ReflectionUtils;
@@ -35,12 +34,7 @@ public class ServerConnector implements IServerConnector {
 	}
 
 	public static void connect(final BungeeCord bungee, final UserConnection connection, final ServerInfo info, final boolean retry) {
-		ServerConnectEvent event = new ProtocolSupoortBungeeServerConnectedEvent(connection, info);
-		if (bungee.getPluginManager().callEvent(event).isCancelled()) {
-			return;
-		}
-
-		final BungeeServerInfo target = (BungeeServerInfo) event.getTarget();
+		final BungeeServerInfo target = (BungeeServerInfo) info;
 		final ServerConnection serverconn = connection.getServer();
 		if ((serverconn != null) && (Objects.equals(serverconn.getInfo(), target))) {
 			connection.sendMessage(bungee.getTranslation("already_connected", new Object[0]));
@@ -69,6 +63,7 @@ public class ServerConnector implements IServerConnector {
 					future.channel().close();
 					connection.getPendingConnects().remove(target);
 
+					@SuppressWarnings("deprecation")
 					ServerInfo def = (ServerInfo) bungee.getServers().get(connection.getPendingConnection().getListener().getFallbackServer());
 					if ((retry) && (target != def) && ((serverconn == null) || (def != serverconn.getInfo()))) {
 						connection.sendMessage(bungee.getTranslation("fallback_lobby", new Object[0]));

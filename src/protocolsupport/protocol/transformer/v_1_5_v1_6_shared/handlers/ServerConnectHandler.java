@@ -6,6 +6,8 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.protocol.CheckedChannelWrapper;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.packets.HandshakePacket;
@@ -39,7 +41,6 @@ import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
-import net.md_5.bungee.protocol.MinecraftOutput;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.Handshake;
@@ -70,7 +71,7 @@ public class ServerConnectHandler extends PacketHandler {
 	}
 
 	private static enum State {
-		LOGIN, FINISHED;
+		LOGIN_SUCCESS, ENCRYPT_RESPONSE, LOGIN, FINISHED;
 
 		private State() {
 		}
@@ -115,12 +116,17 @@ public class ServerConnectHandler extends PacketHandler {
 
 	@Override
 	public void handle(LoginSuccess loginSuccess) throws Exception {
-		throw new RuntimeException("Server sent LoginSucess, that shouldn't have happened");
+		Preconditions.checkState(this.thisState == State.LOGIN_SUCCESS, "Not expecting LOGIN_SUCCESS");
+		this.ch.setProtocol(Protocol.GAME);
+		this.thisState = State.LOGIN;
+		if (this.user.getServer() != null && this.user.getForgeClientHandler().isHandshakeComplete() && this.user.getServer().isForgeServer()) {
+			this.user.getForgeClientHandler().resetHandshake();
+		}
+		throw CancelSendSignal.INSTANCE;
 	}
 
 	@Override
 	public void handle(SetCompression setCompression) throws Exception {
-		throw new RuntimeException("Server sent SetCompression, that shouldn't have happened");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -155,9 +161,10 @@ public class ServerConnectHandler extends PacketHandler {
 			LoginPacket modLogin = new LoginPacket(login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(), (short) (byte) this.user.getPendingConnection().getListener().getTabListSize(), login.getLevelType());
 
 			this.user.unsafe().sendPacket(modLogin);
-			MinecraftOutput out = new MinecraftOutput();
-			out.writeStringUTF8WithoutLengthHeaderBecauseDinnerboneStuffedUpTheMCBrandPacket(ProxyServer.getInstance().getName() + " (" + ProxyServer.getInstance().getVersion() + ")");
-			this.user.unsafe().sendPacket(new PluginMessagePacket("MC|Brand", out.toArray(), this.handshakeHandler.isServerForge()));
+			final ByteBuf brand = ByteBufAllocator.DEFAULT.heapBuffer();
+			DefinedPacket.writeString(this.bungee.getName() + " (" + this.bungee.getVersion() + ")", brand);
+			this.user.unsafe().sendPacket(new PluginMessagePacket("MC|Brand", brand.array().clone(), this.handshakeHandler.isServerForge()));
+			brand.release();
 		} else {
 			this.user.getTabListHandler().onServerChange();
 
@@ -209,6 +216,7 @@ public class ServerConnectHandler extends PacketHandler {
 		throw new RuntimeException("Server is online mode!");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void handle(Kick kick) throws Exception {
 		ServerInfo def = this.bungee.getServerInfo(this.user.getPendingConnection().getListener().getFallbackServer());
@@ -220,7 +228,6 @@ public class ServerConnectHandler extends PacketHandler {
 			this.user.connect(event.getCancelServer());
 			throw CancelSendSignal.INSTANCE;
 		}
-		@SuppressWarnings("deprecation")
 		String message = this.bungee.getTranslation("connect_kick", new Object[] { this.target.getName(), event.getKickReason() });
 		if (this.user.isDimensionChange()) {
 			this.user.disconnect(message);
@@ -233,31 +240,27 @@ public class ServerConnectHandler extends PacketHandler {
 	@Override
 	public void handle(PluginMessage pluginMessage) throws Exception {
 		if (pluginMessage.getTag().equals("REGISTER")) {
-			Set<String> channels = ForgeUtils.readRegisteredChannels(pluginMessage);
+			final Set<String> channels = (Set<String>) ForgeUtils.readRegisteredChannels(pluginMessage);
 			boolean isForgeServer = false;
-			for (String channel : channels) {
+			for (final String channel : channels) {
 				if (channel.equals("FML|HS")) {
-					if ((this.user.getServer() != null) && (this.user.getForgeClientHandler().isHandshakeComplete())) {
+					if (this.user.getServer() != null && this.user.getForgeClientHandler().isHandshakeComplete()) {
 						this.user.getForgeClientHandler().resetHandshake();
 					}
 					isForgeServer = true;
 					break;
 				}
 			}
-			if ((isForgeServer) && (!this.handshakeHandler.isServerForge())) {
+			if (isForgeServer && !this.handshakeHandler.isServerForge()) {
 				this.handshakeHandler.setServerAsForgeServer();
 				this.user.setForgeServerHandler(this.handshakeHandler);
 			}
 		}
-		if ((pluginMessage.getTag().equals("FML|HS")) || (pluginMessage.getTag().equals("FORGE"))) {
+		if (pluginMessage.getTag().equals("FML|HS") || pluginMessage.getTag().equals("FORGE")) {
 			this.handshakeHandler.handle(pluginMessage);
-			if (this.user.getForgeClientHandler().checkUserOutdated()) {
-				this.ch.close();
-				this.user.getPendingConnects().remove(this.target);
-			}
 			throw CancelSendSignal.INSTANCE;
 		}
-		this.user.unsafe().sendPacket(pluginMessage);
+		this.user.unsafe().sendPacket((DefinedPacket) pluginMessage);
 	}
 
 	@Override
