@@ -1,6 +1,7 @@
 package protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.reader;
 
 import protocolsupport.api.ProtocolSupportAPI;
+import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.transformer.TransformedPacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.ChatPacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.EncryptionRequestPacket;
@@ -51,7 +52,20 @@ public class BungeePacketTransformer {
 		} else
 		if (packet instanceof Chat) {
 			Chat chat = (Chat) packet;
-			return new TransformedPacket[] { new ChatPacket(Utils.toLegacyText(chat.getMessage())) };
+			String message = Utils.toLegacyText(chat.getMessage());
+			ProtocolVersion version = ProtocolSupportAPI.getProtocolVersion(channel.remoteAddress());
+			switch (version) {
+				case MINECRAFT_1_6_4:
+				case MINECRAFT_1_6_2:
+				case MINECRAFT_1_6_1: {
+					message = "{\"text\":\""+message+"\"}";
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+			return new TransformedPacket[] { new ChatPacket(message) };
 		} else
 		if (packet instanceof Respawn) {
 			Respawn respawn = (Respawn) packet;
