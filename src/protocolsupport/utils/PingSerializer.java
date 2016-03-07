@@ -10,9 +10,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import net.md_5.bungee.chat.TextComponentSerializer;
+import net.md_5.bungee.chat.TranslatableComponentSerializer;
+
 public class PingSerializer {
 
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(ServerPing.class, new ServerPingDeserializer()).create();
+
+	private static final Gson chatGson = new GsonBuilder()
+	.registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
+	.registerTypeAdapter(TextComponent.class, new TextComponentSerializer())
+	.registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer())
+	.create();
 
 	public static String fromJSON(int protocolVersion, String json) {
 		ServerPing serverPing = gson.fromJson(json, ServerPing.class);
@@ -40,7 +53,7 @@ public class PingSerializer {
 			return new ServerPing(
 				new ServerPingVersion(version.get("name").getAsString()),
 				new ServerPingPlayers(players.get("online").getAsInt(), players.get("max").getAsInt()),
-				root.get("description").getAsString()
+				chatGson.fromJson(root.get("description"), BaseComponent.class).toLegacyText()
 			);
 		}
 		
