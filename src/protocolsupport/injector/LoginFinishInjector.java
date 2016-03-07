@@ -13,9 +13,11 @@ public class LoginFinishInjector implements Listener {
 
 	private final HashMap<ProtocolVersion, ILoginCallbackInjector> injectors = new HashMap<ProtocolVersion, ILoginCallbackInjector>();
 	{
-		injectors.put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.LoginCallbackInjector());
-		injectors.put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.LoginCallbackInjector());
-		injectors.put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.LoginCallbackInjector());
+		protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.LoginCallbackInjector legacyInjector = new protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.LoginCallbackInjector();
+		injectors.put(ProtocolVersion.MINECRAFT_1_6_4, legacyInjector);
+		injectors.put(ProtocolVersion.MINECRAFT_1_6_2, legacyInjector);
+		injectors.put(ProtocolVersion.MINECRAFT_1_5_2, legacyInjector);
+		injectors.put(ProtocolVersion.MINECRAFT_1_4_7, legacyInjector);
 	};
 
 	@EventHandler(priority = EventPriority.LOWEST)

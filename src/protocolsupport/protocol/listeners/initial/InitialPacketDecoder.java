@@ -32,9 +32,11 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_8, empty);
 		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_7_10, empty);
 		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_5_2, empty);
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PipeLineBuilder());
+		protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PipeLineBuilder legacyBuilder = new protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PipeLineBuilder();
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_4, legacyBuilder);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_2, legacyBuilder);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_5_2, legacyBuilder);
+		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_4_7, legacyBuilder);
 	}
 
 	protected ByteBuf receivedData = Unpooled.buffer();

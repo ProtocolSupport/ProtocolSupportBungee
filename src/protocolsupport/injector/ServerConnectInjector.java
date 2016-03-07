@@ -15,9 +15,11 @@ public class ServerConnectInjector implements Listener {
 
 	private HashMap<ProtocolVersion, IServerConnector> connectors = new HashMap<ProtocolVersion, IServerConnector>();
 	{
-		connectors.put(ProtocolVersion.MINECRAFT_1_6_4, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector());
-		connectors.put(ProtocolVersion.MINECRAFT_1_6_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector());
-		connectors.put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector());
+		protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.handlers.ServerConnector legacyConnector = new protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.handlers.ServerConnector();
+		connectors.put(ProtocolVersion.MINECRAFT_1_6_4, legacyConnector);
+		connectors.put(ProtocolVersion.MINECRAFT_1_6_2, legacyConnector);
+		connectors.put(ProtocolVersion.MINECRAFT_1_5_2, legacyConnector);
+		connectors.put(ProtocolVersion.MINECRAFT_1_4_7, legacyConnector);
 	};
 
 	@EventHandler(priority = EventPriority.HIGHEST)

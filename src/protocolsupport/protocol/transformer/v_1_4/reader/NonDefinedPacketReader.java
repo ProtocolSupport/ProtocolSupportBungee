@@ -1,11 +1,11 @@
-package protocolsupport.protocol.transformer.v_1_6.reader;
+package protocolsupport.protocol.transformer.v_1_4.reader;
 
 import java.util.Arrays;
 
-import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PacketDataSerializer;
-import protocolsupport.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PacketDataSerializer;
+import protocolsupport.utils.Utils;
 
 public class NonDefinedPacketReader {
 
@@ -20,7 +20,7 @@ public class NonDefinedPacketReader {
 		PACKET_LENGTH[0x05] = MUST_READ_ALL; //EntityEquipment
 		PACKET_LENGTH[0x06] = 12; //SpawnPosition
 		PACKET_LENGTH[0x07] = 9; //UseEntity 
-		PACKET_LENGTH[0x08] = 10; //UpdateHealth
+		PACKET_LENGTH[0x08] = 8; //UpdateHealth
 		PACKET_LENGTH[0x0A] = 1; //Player
 		PACKET_LENGTH[0x0B] = 33; //PlayerPosition
 		PACKET_LENGTH[0x0C] = 9; //PlayerLook
@@ -30,14 +30,13 @@ public class NonDefinedPacketReader {
 		PACKET_LENGTH[0x10] = 2; //HeldItemChange
 		PACKET_LENGTH[0x11] = 14; //UseBed
 		PACKET_LENGTH[0x12] = 5; //Animation
-		PACKET_LENGTH[0x13] = 9; //EntityAction
+		PACKET_LENGTH[0x13] = 5; //EntityAction
 		PACKET_LENGTH[0x14] = MUST_READ_ALL; //SpawnNamedEntity
 		PACKET_LENGTH[0x16] = 8; //CollectItem
 		PACKET_LENGTH[0x17] = MUST_READ_ALL; //SpawnObject
 		PACKET_LENGTH[0x18] = MUST_READ_ALL; //SpawnMob
 		PACKET_LENGTH[0x19] = MUST_READ_ALL; //SpawnPainting
 		PACKET_LENGTH[0x1A] = 18; //SpawnEXPOrb
-		PACKET_LENGTH[0x1B] = 10; //SteerVehicle
 		PACKET_LENGTH[0x1C] = 10; //EntityVelocity
 		PACKET_LENGTH[0x1D] = MUST_READ_ALL; //DestroyEntity
 		PACKET_LENGTH[0x1E] = 4; //Entity
@@ -47,12 +46,11 @@ public class NonDefinedPacketReader {
 		PACKET_LENGTH[0x22] = 18; //EntityTeleport
 		PACKET_LENGTH[0x23] = 5; //EntityHeadLook
 		PACKET_LENGTH[0x26] = 5; //EntityStatus
-		PACKET_LENGTH[0x27] = 9; //AttachEntity
+		PACKET_LENGTH[0x27] = 8; //AttachEntity
 		PACKET_LENGTH[0x28] = MUST_READ_ALL; //EntityMetadata
 		PACKET_LENGTH[0x29] = 8; //EntityEffect
 		PACKET_LENGTH[0x2A] = 5; //RemoveEntityEffect
 		PACKET_LENGTH[0x2B] = 8; //SetEXP
-		PACKET_LENGTH[0x2C] = MUST_READ_ALL; //EntityProperties
 		PACKET_LENGTH[0x33] = MUST_READ_ALL; //ChunkData
 		PACKET_LENGTH[0x34] = MUST_READ_ALL; //MultiBlockChange
 		PACKET_LENGTH[0x35] = 12; //BlockChange
@@ -77,8 +75,8 @@ public class NonDefinedPacketReader {
 		PACKET_LENGTH[0x82] = MUST_READ_ALL; //UpdateSign
 		PACKET_LENGTH[0x83] = MUST_READ_ALL; //ItemData
 		PACKET_LENGTH[0x84] = MUST_READ_ALL; //UpdateTileEntity
-		PACKET_LENGTH[0xC8] = 8; //IncrementStatistic
-		PACKET_LENGTH[0xCA] = 9; //PlayerAbilities
+		PACKET_LENGTH[0xC8] = 5; //IncrementStatistic
+		PACKET_LENGTH[0xCA] = 3; //PlayerAbilities
 		PACKET_LENGTH[0xCB] = MUST_READ_ALL; //TabComplete, TODO: handle on bungee
 		PACKET_LENGTH[0xCD] = 1; //ClientStatuses
 	}
@@ -143,21 +141,6 @@ public class NonDefinedPacketReader {
 				packetdata.writeBytes(PacketDataSerializer.readDatawatcherData(buf));
 				break;
 			}
-			case 0x2C: { //EntityProperties
-				Utils.rewriteBytes(buf, packetdata, Integer.BYTES);
-				int count = buf.readInt();
-				packetdata.writeInt(count);
-				for (int i = 0; i < count; i++) {
-					PacketDataSerializer.writeString(PacketDataSerializer.readString(buf), packetdata);
-					Utils.rewriteBytes(buf, packetdata, Double.BYTES);
-					int scount = buf.readShort();
-					packetdata.writeShort(scount);
-					for (int j = 0; j < scount; j++) {
-						Utils.rewriteBytes(buf, packetdata, Long.BYTES * 2 + Double.BYTES + Byte.BYTES);
-					}
-				}
-				break;
-			}
 			case 0x33: { //ChunkData
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES * 2 + Byte.BYTES + Short.BYTES * 2);
 				int size = buf.readInt();
@@ -203,7 +186,7 @@ public class NonDefinedPacketReader {
 			case 0x64: { //OpenWindow
 				Utils.rewriteBytes(buf, packetdata, Byte.BYTES * 2);
 				PacketDataSerializer.writeString(PacketDataSerializer.readString(buf), packetdata);
-				Utils.rewriteBytes(buf, packetdata, Byte.BYTES * 2);
+				Utils.rewriteBytes(buf, packetdata, Byte.BYTES);
 				break;
 			}
 			case 0x66: { //ClickWindow
