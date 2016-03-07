@@ -21,7 +21,7 @@ import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.Protocol;
 
 import protocolsupport.api.ProtocolSupportAPI;
-import protocolsupport.protocol.listeners.ServerConnectListener.IServerConnector;
+import protocolsupport.injector.ServerConnectInjector.IServerConnector;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketDecoder;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.PacketEncoder;
 import protocolsupport.utils.ReflectionUtils;

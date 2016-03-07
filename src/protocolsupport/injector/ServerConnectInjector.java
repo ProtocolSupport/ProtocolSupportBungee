@@ -1,4 +1,4 @@
-package protocolsupport.protocol.listeners;
+package protocolsupport.injector;
 
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
-public class ServerConnectListener implements Listener {
+public class ServerConnectInjector implements Listener {
 
 	private HashMap<ProtocolVersion, IServerConnector> connectors = new HashMap<ProtocolVersion, IServerConnector>();
 	{

@@ -1,6 +1,6 @@
 package protocolsupport.protocol.transformer.v_1_5_v1_6_shared;
 
-import protocolsupport.protocol.listeners.LoginFinishInjector.ILoginCallbackInjector;
+import protocolsupport.injector.LoginFinishInjector.ILoginCallbackInjector;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.EntityRewriteUpstreamBridge;
 import protocolsupport.protocol.transformer.v_1_5_v1_6_shared.handlers.ServerConnector;
 import protocolsupport.utils.ReflConstants;
