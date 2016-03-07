@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
+
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 
 public class LoginFinishInjector implements Listener {
 
@@ -20,7 +20,7 @@ public class LoginFinishInjector implements Listener {
 		injectors.put(ProtocolVersion.MINECRAFT_1_4_7, legacyInjector);
 	};
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = -65)
 	public void onLogin(LoginEvent event) {
 		ILoginCallbackInjector injector = injectors.get(ProtocolSupportAPI.getProtocolVersion(event.getConnection().getAddress()));
 		if (injector != null) {

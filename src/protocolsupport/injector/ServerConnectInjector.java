@@ -9,7 +9,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 
 public class ServerConnectInjector implements Listener {
 
@@ -22,7 +21,7 @@ public class ServerConnectInjector implements Listener {
 		connectors.put(ProtocolVersion.MINECRAFT_1_4_7, legacyConnector);
 	};
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = 65)
 	public void onServerConnect(ServerConnectEvent event) {
 		IServerConnector connector = connectors.get(ProtocolSupportAPI.getProtocolVersion(event.getPlayer().getAddress()));
 		if (connector == null) {
