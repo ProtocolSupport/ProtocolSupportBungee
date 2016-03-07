@@ -17,12 +17,10 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 		this.server = server;
 	}
 
-	private ClientboundEntityRewrite rewrite = new ClientboundEntityRewrite();
-
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
 		if (!this.server.isObsolete()) {
-			rewrite.rewriteClientbound(packet.buf, this.con.getServerEntityId(), this.con.getClientEntityId());
+			ClientboundEntityRewrite.rewriteClientbound(packet.buf, this.con.getServerEntityId(), this.con.getClientEntityId());
 			this.con.sendPacket(packet);
 		}
 	}

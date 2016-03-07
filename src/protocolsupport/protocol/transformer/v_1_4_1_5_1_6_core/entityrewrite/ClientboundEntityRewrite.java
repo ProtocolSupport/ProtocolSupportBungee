@@ -32,7 +32,7 @@ public class ClientboundEntityRewrite {
 		rewriteBasic[0x47] = true; //SpawnGlobalEntity
 	}
 
-	public void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
+	public static void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
 		int packetId = buf.readByte() & 0xFF;
 		if (rewriteBasic[packetId]) {

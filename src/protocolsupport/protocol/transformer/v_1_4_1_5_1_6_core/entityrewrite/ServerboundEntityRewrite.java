@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 public class ServerboundEntityRewrite {
 
-	public void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
+	public static void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
 		int packetId = buf.readByte() & 0xFF;
 		switch (packetId) {
