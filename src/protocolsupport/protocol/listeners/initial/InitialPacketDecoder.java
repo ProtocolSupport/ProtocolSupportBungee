@@ -23,15 +23,6 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 
 	private static final EnumMap<ProtocolVersion, IPipeLineBuilder> pipelineBuilders = new EnumMap<ProtocolVersion, IPipeLineBuilder>(ProtocolVersion.class);
 	static {
-		IPipeLineBuilder empty = new IPipeLineBuilder() {
-			@Override
-			public void buildPipeLine(Channel channel, ProtocolVersion version) {
-			}
-		};
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_9, empty);
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_8, empty);
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_7_10, empty);
-		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_7_5, empty);
 		protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PipeLineBuilder legacyBuilder = new protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.PipeLineBuilder();
 		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_4, legacyBuilder);
 		pipelineBuilders.put(ProtocolVersion.MINECRAFT_1_6_2, legacyBuilder);
@@ -111,7 +102,10 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 		protocolSet = true;
 		ProtocolStorage.setProtocolVersion(channel.remoteAddress(), version);
 		channel.pipeline().remove(NAME);
-		pipelineBuilders.get(version).buildPipeLine(channel, version);
+		IPipeLineBuilder builder = pipelineBuilders.get(version);
+		if (builder != null) {
+			builder.buildPipeLine(channel, version);
+		}
 		input.readerIndex(0);
 		channel.pipeline().firstContext().fireChannelRead(input);
 	}
