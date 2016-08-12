@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.listeners.IPipeLineBuilder;
 import protocolsupport.protocol.storage.ProtocolStorage;
+import protocolsupport.utils.Utils;
 
 //TODO: Copy from protocolsupport
 public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
@@ -58,7 +59,7 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 								ctx.executor().schedule(new Minecraft152PingResponseTask(this, channel), 500, TimeUnit.MILLISECONDS);
 							} else if (
 								(receivedData.readUnsignedByte() == 0xFA) &&
-								"MC|PingHost".equals(new String(receivedData.readBytes(receivedData.readUnsignedShort() * 2).array(), StandardCharsets.UTF_16BE))
+								"MC|PingHost".equals(new String(Utils.readBytes(receivedData, receivedData.readUnsignedShort() * 2), StandardCharsets.UTF_16BE))
 							) { //1.6.*
 								receivedData.readUnsignedShort();
 								handshakeversion = ProtocolVersion.fromId(receivedData.readUnsignedByte());

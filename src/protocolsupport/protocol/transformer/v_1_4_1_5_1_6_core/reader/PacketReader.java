@@ -21,6 +21,7 @@ import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.Scoreboar
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.ScoreboardScorePacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.StatusRequestPacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.TeamPacket;
+import protocolsupport.utils.Utils;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.PacketWrapper;
 import io.netty.buffer.ByteBuf;
@@ -112,8 +113,8 @@ public class PacketReader {
 		buf.readerIndex(readerIndex);
 		ByteBuf data = Unpooled.buffer();
 		data.writeByte(packetId);
-		data.writeBytes(buf.readBytes(length).array());
-		return new PacketWrapper(packet, data.readBytes(data.readableBytes()));
+		Utils.rewriteBytes(buf, data, length);
+		return new PacketWrapper(packet, data);
 	}
 
 }

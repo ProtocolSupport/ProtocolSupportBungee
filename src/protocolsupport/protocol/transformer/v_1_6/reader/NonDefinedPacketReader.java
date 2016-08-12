@@ -91,17 +91,17 @@ public class NonDefinedPacketReader {
 		ByteBuf packetdata = Unpooled.buffer();
 		packetdata.writeByte(packetId);
 		if (length != MUST_READ_ALL) {
-			packetdata.writeBytes(buf.readBytes(length).array());
+			Utils.rewriteBytes(buf, packetdata, length);
 		}
 		switch (packetId) {
 			case 0x05: { //EntityEquipment
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES + Short.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				break;
 			}
 			case 0x0F: { //PlayerBlockPlace
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES + Byte.BYTES + Integer.BYTES + Byte.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				Utils.rewriteBytes(buf, packetdata, Byte.BYTES * 3);
 				break;
 			}
@@ -109,7 +109,7 @@ public class NonDefinedPacketReader {
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES);
 				PacketDataSerializer.writeString(PacketDataSerializer.readString(buf), packetdata);
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES * 3 + Byte.BYTES * 2 + Short.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readDatawatcherData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readDatawatcherData(buf));
 				break;
 			}
 			case 0x17: { //SpawnObject
@@ -123,7 +123,7 @@ public class NonDefinedPacketReader {
 			}
 			case 0x18: { //SpawnMob
 				Utils.rewriteBytes(buf, packetdata, Integer.BYTES + Byte.BYTES + Integer.BYTES * 3 + Byte.BYTES * 3 + Short.BYTES * 3);
-				packetdata.writeBytes(PacketDataSerializer.readDatawatcherData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readDatawatcherData(buf));
 				break;
 			}
 			case 0x19: { //SpawnPainting
@@ -208,12 +208,12 @@ public class NonDefinedPacketReader {
 			}
 			case 0x66: { //ClickWindow
 				Utils.rewriteBytes(buf, packetdata, Byte.BYTES + Short.BYTES + Byte.BYTES + Short.BYTES + Byte.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				break;
 			}
 			case 0x67: { //SetSlot
 				Utils.rewriteBytes(buf, packetdata, Byte.BYTES + Short.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				break;
 			}
 			case 0x68: { //SetWindowItems
@@ -221,13 +221,13 @@ public class NonDefinedPacketReader {
 				int count = buf.readShort();
 				packetdata.writeShort(count);
 				for (int i = 0; i < count; i++) {
-					packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+					packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				}
 				break;
 			}
 			case 0x6B: { //CreativeInventoryAction
 				Utils.rewriteBytes(buf, packetdata, Short.BYTES);
-				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+				packetdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 				break;
 			}
 			case 0x82: { //UpdateSign
@@ -260,7 +260,7 @@ public class NonDefinedPacketReader {
 				break;
 			}
 		}
-		return packetdata.readBytes(packetdata.readableBytes());
+		return packetdata;
 	}
 
 }

@@ -11,7 +11,13 @@ public class Utils {
 	}
 
 	public static void rewriteBytes(ByteBuf from, ByteBuf to, int length) {
-		to.writeBytes(from.readBytes(length).array());
+		to.writeBytes(from.readBytes(length));
+	}
+
+	public static byte[] readBytes(ByteBuf from, int length) {
+		byte[] data = new byte[length];
+		from.readBytes(data, 0, length);
+		return data;
 	}
 
 	public static String toLegacyText(String json) {
