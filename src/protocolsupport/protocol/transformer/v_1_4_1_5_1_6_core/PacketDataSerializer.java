@@ -79,7 +79,7 @@ public class PacketDataSerializer {
 	}
 
 	public static byte[] readArray(ByteBuf buf) {
-		return buf.readBytes(buf.readShort()).array();
+		return buf.array();
 	}
 
 	public static void writeArray(byte[] array, ByteBuf buf) {
