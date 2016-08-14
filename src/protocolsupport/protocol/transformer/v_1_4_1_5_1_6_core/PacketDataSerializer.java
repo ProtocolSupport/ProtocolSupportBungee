@@ -9,7 +9,7 @@ public class PacketDataSerializer {
 
 	public static String readString(ByteBuf buf) {
 		int length = buf.readUnsignedShort();
-		return new String(buf.readBytes(length * 2).array(), StandardCharsets.UTF_16BE);
+		return buf.readBytes(length * 2).toString(StandardCharsets.UTF_16BE);
 	}
 
 	public static void writeString(String string, ByteBuf buf) {
@@ -79,7 +79,7 @@ public class PacketDataSerializer {
 	}
 
 	public static byte[] readArray(ByteBuf buf) {
-		return buf.readBytes(buf.readShort()).array();
+		return buf.array();
 	}
 
 	public static void writeArray(byte[] array, ByteBuf buf) {
