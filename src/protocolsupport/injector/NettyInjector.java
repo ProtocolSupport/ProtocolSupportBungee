@@ -2,11 +2,11 @@ package protocolsupport.injector;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-import protocolsupport.protocol.CheckedInitialHandler;
 import protocolsupport.protocol.listeners.initial.InitialPacketDecoder;
 import protocolsupport.utils.ReflectionUtils;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.MinecraftDecoder;
@@ -29,7 +29,7 @@ public class NettyInjector {
 			channel.pipeline()
 			.addAfter(PipelineUtils.FRAME_DECODER, PipelineUtils.PACKET_DECODER, new MinecraftDecoder(Protocol.HANDSHAKE, true, ProxyServer.getInstance().getProtocolVersion()))
 			.addAfter(PipelineUtils.FRAME_PREPENDER, PipelineUtils.PACKET_ENCODER, new MinecraftEncoder(Protocol.HANDSHAKE, true, ProxyServer.getInstance().getProtocolVersion()))
-			.get(HandlerBoss.class).setHandler(new CheckedInitialHandler(BungeeCord.getInstance(), channel.attr(PipelineUtils.LISTENER).get()));
+			.get(HandlerBoss.class).setHandler(new InitialHandler(BungeeCord.getInstance(), channel.attr(PipelineUtils.LISTENER).get()));
 		}
 		
 	}

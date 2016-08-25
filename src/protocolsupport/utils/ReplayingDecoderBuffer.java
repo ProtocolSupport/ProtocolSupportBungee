@@ -396,7 +396,7 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public int readableBytes() {
-		return Integer.MAX_VALUE - buffer.readerIndex();
+		return buffer.readableBytes();
 	}
 
 	@Override

@@ -9,14 +9,12 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import protocolsupport.api.ProtocolSupportAPI;
-import protocolsupport.protocol.CheckedChannelWrapper;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.HandshakePacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.LoginPacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.PluginMessagePacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.RespawnPacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.ScoreboardObjectivePacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.TeamPacket;
-import protocolsupport.utils.FakeChannelContext;
 import protocolsupport.utils.ReflectionUtils;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.BungeeServerInfo;
@@ -89,8 +87,7 @@ public class ServerConnectHandler extends PacketHandler {
 
 	@Override
 	public void connected(ChannelWrapper channel) throws Exception {
-		this.ch = new CheckedChannelWrapper(new FakeChannelContext(channel.getHandle()));
-
+		this.ch = channel;
 		this.handshakeHandler = new ForgeServerHandler(this.user, this.ch, this.target);
 		Handshake originalHandshake = this.user.getPendingConnection().getHandshake();
 		HandshakePacket copiedHandshake = new HandshakePacket(ProtocolSupportAPI.getProtocolVersion(this.user.getAddress()).getId(), this.user.getPendingConnection().getLoginRequest().getData(), originalHandshake.getHost(), originalHandshake.getPort());
