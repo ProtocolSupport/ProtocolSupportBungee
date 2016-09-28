@@ -47,7 +47,7 @@ public class PacketDecoder extends MinecraftDecoder {
 						);
 					}
 					packets.add(wrapper);
-					replay.discardSomeReadBytes();
+					internal.discardSomeReadBytes();
 				}
 			}
 		} catch (EOFSignal e) {
