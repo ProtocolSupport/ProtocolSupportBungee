@@ -9,8 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class PacketDataSerializer {
 
 	public static String readString(ByteBuf buf) {
-		int length = buf.readUnsignedShort();
-		return new String(Utils.readBytes(buf, length * 2), StandardCharsets.UTF_16BE);
+		return new String(Utils.readBytes(buf, buf.readUnsignedShort() * 2), StandardCharsets.UTF_16BE);
 	}
 
 	public static void writeString(String string, ByteBuf buf) {
@@ -28,7 +27,7 @@ public class PacketDataSerializer {
 			int nbtlength = buf.readShort();
 			itemdata.writeShort(nbtlength);
 			if (nbtlength != -1) {
-				itemdata.writeBytes(buf, nbtlength);
+				itemdata.writeBytes(buf, 0, nbtlength);
 			}
 		}
 		return itemdata;
