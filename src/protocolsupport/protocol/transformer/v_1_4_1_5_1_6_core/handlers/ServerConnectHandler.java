@@ -16,6 +16,7 @@ import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.RespawnPa
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.ScoreboardObjectivePacket;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.packets.TeamPacket;
 import protocolsupport.utils.ReflectionUtils;
+import protocolsupport.utils.Utils;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.BungeeServerInfo;
 import net.md_5.bungee.ServerConnection;
@@ -160,7 +161,7 @@ public class ServerConnectHandler extends PacketHandler {
 			this.user.unsafe().sendPacket(modLogin);
 			final ByteBuf brand = ByteBufAllocator.DEFAULT.heapBuffer();
 			DefinedPacket.writeString(this.bungee.getName() + " (" + this.bungee.getVersion() + ")", brand);
-			this.user.unsafe().sendPacket(new PluginMessagePacket("MC|Brand", brand.array().clone(), this.handshakeHandler.isServerForge()));
+			this.user.unsafe().sendPacket(new PluginMessagePacket("MC|Brand", Utils.readBytes(brand, brand.readableBytes()), this.handshakeHandler.isServerForge()));
 			brand.release();
 		} else {
 			this.user.getTabListHandler().onServerChange();
