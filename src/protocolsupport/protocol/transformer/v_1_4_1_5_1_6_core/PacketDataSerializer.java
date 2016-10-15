@@ -2,6 +2,7 @@ package protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import protocolsupport.utils.Utils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -9,7 +10,7 @@ public class PacketDataSerializer {
 
 	public static String readString(ByteBuf buf) {
 		int length = buf.readUnsignedShort();
-		return new String(buf.readBytes(length * 2).array(), StandardCharsets.UTF_16BE);
+		return new String(Utils.readBytes(buf, length * 2), StandardCharsets.UTF_16BE);
 	}
 
 	public static void writeString(String string, ByteBuf buf) {
@@ -27,10 +28,10 @@ public class PacketDataSerializer {
 			int nbtlength = buf.readShort();
 			itemdata.writeShort(nbtlength);
 			if (nbtlength != -1) {
-				itemdata.writeBytes(buf.readBytes(nbtlength).array());
+				itemdata.writeBytes(buf, nbtlength);
 			}
 		}
-		return itemdata.readBytes(itemdata.readableBytes());
+		return itemdata;
 	}
 
 	public static ByteBuf readDatawatcherData(ByteBuf buf) {
@@ -64,7 +65,7 @@ public class PacketDataSerializer {
 					break;
 				}
 				case 5: {
-					datawatcherdata.writeBytes(PacketDataSerializer.readItemStackData(buf).array());
+					datawatcherdata.writeBytes(PacketDataSerializer.readItemStackData(buf));
 					break;
 				}
 				case 6: {
@@ -75,11 +76,11 @@ public class PacketDataSerializer {
 				}
 			}
 		} while (true);
-		return datawatcherdata.readBytes(datawatcherdata.readableBytes());
+		return datawatcherdata;
 	}
 
 	public static byte[] readArray(ByteBuf buf) {
-		return buf.readBytes(buf.readShort()).array();
+		return Utils.readBytes(buf, buf.readShort());
 	}
 
 	public static void writeArray(byte[] array, ByteBuf buf) {
