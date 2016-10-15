@@ -27,7 +27,7 @@ public class PacketDataSerializer {
 			int nbtlength = buf.readShort();
 			itemdata.writeShort(nbtlength);
 			if (nbtlength != -1) {
-				itemdata.writeBytes(buf, 0, nbtlength);
+				itemdata.writeBytes(buf.readBytes(nbtlength));
 			}
 		}
 		return itemdata;
