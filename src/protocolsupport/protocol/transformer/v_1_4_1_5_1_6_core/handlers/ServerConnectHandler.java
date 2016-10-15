@@ -142,7 +142,7 @@ public class ServerConnectHandler extends PacketHandler {
 				this.ch.write(packetQueue.poll());
 			}
 		}
-		for (PluginMessage message : this.user.getPendingConnection().getRegisterMessages()) {
+		for (PluginMessage message : this.user.getPendingConnection().getRelayMessages()) {
 			this.ch.write(message);
 		}
 		if (this.user.getSettings() != null) {

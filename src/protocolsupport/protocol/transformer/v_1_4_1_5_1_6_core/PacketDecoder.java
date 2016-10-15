@@ -9,7 +9,7 @@ import protocolsupport.LoggerUtil;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.transformer.v_1_4_1_5_1_6_core.reader.PacketReader;
 import protocolsupport.utils.ReplayingDecoderBuffer;
-import protocolsupport.utils.ReplayingDecoderBuffer.EOFSignal;
+import protocolsupport.utils.ReplayingDecoderBuffer.EOSSignal;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -50,7 +50,7 @@ public class PacketDecoder extends MinecraftDecoder {
 					internal.discardSomeReadBytes();
 				}
 			}
-		} catch (EOFSignal e) {
+		} catch (EOSSignal e) {
 			replay.resetReaderIndex();
 		}
 	}

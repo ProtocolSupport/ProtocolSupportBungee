@@ -44,7 +44,7 @@ public class InitialPacketDecoder extends ChannelInboundHandlerAdapter {
 				return;
 			}
 			final Channel channel = ctx.channel();
-			receivedData.writeBytes(input.readBytes(input.readableBytes()));
+			receivedData.writeBytes(input);
 			ProtocolVersion handshakeversion = ProtocolVersion.UNKNOWN;
 			receivedData.readerIndex(0);
 			int firstbyte = receivedData.readUnsignedByte();

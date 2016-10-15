@@ -1,35 +1,48 @@
 package protocolsupport.utils;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufProcessor;
-import io.netty.buffer.SwappedByteBuf;
-import io.netty.util.internal.StringUtil;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 
-public final class ReplayingDecoderBuffer extends ByteBuf {
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.SwappedByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.util.ByteProcessor;
+import io.netty.util.internal.StringUtil;
 
-	public static final EOFSignal EOF = new EOFSignal();
+@SuppressWarnings("deprecation")
+public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	private ByteBuf buffer;
 	private SwappedByteBuf swapped;
 
 	public ReplayingDecoderBuffer(final ByteBuf buffer) {
-		setCumulation(buffer);
-	}
-
-	public ReplayingDecoderBuffer() {
+		this.setCumulation(buffer);
 	}
 
 	public void setCumulation(final ByteBuf buffer) {
 		this.buffer = buffer;
+	}
+
+	@Override
+	public boolean isReadable() {
+		return this.buffer.isReadable();
+	}
+
+	@Override
+	public boolean isReadable(final int size) {
+		return this.buffer.isReadable(size);
+	}
+
+	@Override
+	public int readableBytes() {
+		return this.buffer.readableBytes();
 	}
 
 	@Override
@@ -39,8 +52,7 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public ByteBuf capacity(final int newCapacity) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
@@ -50,12 +62,22 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public ByteBufAllocator alloc() {
-		return buffer.alloc();
+		return this.buffer.alloc();
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	@Override
+	public ByteBuf asReadOnly() {
+		return Unpooled.unmodifiableBuffer(this);
 	}
 
 	@Override
 	public boolean isDirect() {
-		return buffer.isDirect();
+		return this.buffer.isDirect();
 	}
 
 	@Override
@@ -85,8 +107,7 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public ByteBuf clear() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
@@ -96,179 +117,225 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public int compareTo(final ByteBuf buffer) {
-		reject();
-		return 0;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf copy() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf copy(final int index, final int length) {
-		checkIndex(index, length);
-		return buffer.copy(index, length);
+		this.checkIndex(index, length);
+		return this.buffer.copy(index, length);
 	}
 
 	@Override
 	public ByteBuf discardReadBytes() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf ensureWritable(final int writableBytes) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int ensureWritable(final int minWritableBytes, final boolean force) {
-		reject();
-		return 0;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf duplicate() {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf retainedDuplicate() {
+		throw reject();
 	}
 
 	@Override
 	public boolean getBoolean(final int index) {
-		checkIndex(index, 1);
-		return buffer.getBoolean(index);
+		this.checkIndex(index, 1);
+		return this.buffer.getBoolean(index);
 	}
 
 	@Override
 	public byte getByte(final int index) {
-		checkIndex(index, 1);
-		return buffer.getByte(index);
+		this.checkIndex(index, 1);
+		return this.buffer.getByte(index);
 	}
 
 	@Override
 	public short getUnsignedByte(final int index) {
-		checkIndex(index, 1);
-		return buffer.getUnsignedByte(index);
+		this.checkIndex(index, 1);
+		return this.buffer.getUnsignedByte(index);
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final byte[] dst, final int dstIndex, final int length) {
-		checkIndex(index, length);
-		buffer.getBytes(index, dst, dstIndex, length);
+		this.checkIndex(index, length);
+		this.buffer.getBytes(index, dst, dstIndex, length);
 		return this;
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final byte[] dst) {
-		checkIndex(index, dst.length);
-		buffer.getBytes(index, dst);
+		this.checkIndex(index, dst.length);
+		this.buffer.getBytes(index, dst);
 		return this;
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final ByteBuffer dst) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final ByteBuf dst, final int dstIndex, final int length) {
-		checkIndex(index, length);
-		buffer.getBytes(index, dst, dstIndex, length);
+		this.checkIndex(index, length);
+		this.buffer.getBytes(index, dst, dstIndex, length);
 		return this;
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final ByteBuf dst, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final ByteBuf dst) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int getBytes(final int index, final GatheringByteChannel out, final int length) {
-		reject();
-		return 0;
+		throw reject();
+	}
+
+	@Override
+	public int getBytes(final int index, final FileChannel out, final long position, final int length) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf getBytes(final int index, final OutputStream out, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int getInt(final int index) {
-		checkIndex(index, 4);
-		return buffer.getInt(index);
+		this.checkIndex(index, 4);
+		return this.buffer.getInt(index);
+	}
+
+	@Override
+	public int getIntLE(final int index) {
+		this.checkIndex(index, 4);
+		return this.buffer.getIntLE(index);
 	}
 
 	@Override
 	public long getUnsignedInt(final int index) {
-		checkIndex(index, 4);
-		return buffer.getUnsignedInt(index);
+		this.checkIndex(index, 4);
+		return this.buffer.getUnsignedInt(index);
+	}
+
+	@Override
+	public long getUnsignedIntLE(final int index) {
+		this.checkIndex(index, 4);
+		return this.buffer.getUnsignedIntLE(index);
 	}
 
 	@Override
 	public long getLong(final int index) {
-		checkIndex(index, 8);
-		return buffer.getLong(index);
+		this.checkIndex(index, 8);
+		return this.buffer.getLong(index);
+	}
+
+	@Override
+	public long getLongLE(final int index) {
+		this.checkIndex(index, 8);
+		return this.buffer.getLongLE(index);
 	}
 
 	@Override
 	public int getMedium(final int index) {
-		checkIndex(index, 3);
-		return buffer.getMedium(index);
+		this.checkIndex(index, 3);
+		return this.buffer.getMedium(index);
+	}
+
+	@Override
+	public int getMediumLE(final int index) {
+		this.checkIndex(index, 3);
+		return this.buffer.getMediumLE(index);
 	}
 
 	@Override
 	public int getUnsignedMedium(final int index) {
-		checkIndex(index, 3);
-		return buffer.getUnsignedMedium(index);
+		this.checkIndex(index, 3);
+		return this.buffer.getUnsignedMedium(index);
+	}
+
+	@Override
+	public int getUnsignedMediumLE(final int index) {
+		this.checkIndex(index, 3);
+		return this.buffer.getUnsignedMediumLE(index);
 	}
 
 	@Override
 	public short getShort(final int index) {
-		checkIndex(index, 2);
-		return buffer.getShort(index);
+		this.checkIndex(index, 2);
+		return this.buffer.getShort(index);
+	}
+
+	@Override
+	public short getShortLE(final int index) {
+		this.checkIndex(index, 2);
+		return this.buffer.getShortLE(index);
 	}
 
 	@Override
 	public int getUnsignedShort(final int index) {
-		checkIndex(index, 2);
-		return buffer.getUnsignedShort(index);
+		this.checkIndex(index, 2);
+		return this.buffer.getUnsignedShort(index);
+	}
+
+	@Override
+	public int getUnsignedShortLE(final int index) {
+		this.checkIndex(index, 2);
+		return this.buffer.getUnsignedShortLE(index);
 	}
 
 	@Override
 	public char getChar(final int index) {
-		checkIndex(index, 2);
-		return buffer.getChar(index);
+		this.checkIndex(index, 2);
+		return this.buffer.getChar(index);
 	}
 
 	@Override
 	public float getFloat(final int index) {
-		checkIndex(index, 4);
-		return buffer.getFloat(index);
+		this.checkIndex(index, 4);
+		return this.buffer.getFloat(index);
 	}
 
 	@Override
 	public double getDouble(final int index) {
-		checkIndex(index, 8);
-		return buffer.getDouble(index);
+		this.checkIndex(index, 8);
+		return this.buffer.getDouble(index);
+	}
+
+	@Override
+	public CharSequence getCharSequence(final int index, final int length, final Charset charset) {
+		this.checkIndex(index, length);
+		return this.buffer.getCharSequence(index, length, charset);
 	}
 
 	@Override
 	public int hashCode() {
-		reject();
-		return 0;
+		throw reject();
 	}
 
 	@Override
@@ -276,97 +343,94 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 		if (fromIndex == toIndex) {
 			return -1;
 		}
-		if (Math.max(fromIndex, toIndex) > buffer.writerIndex()) {
-			throw EOF;
+		if (Math.max(fromIndex, toIndex) > this.buffer.writerIndex()) {
+			throw EOSSignal.instance;
 		}
-		return buffer.indexOf(fromIndex, toIndex, value);
+		return this.buffer.indexOf(fromIndex, toIndex, value);
 	}
 
 	@Override
 	public int bytesBefore(final byte value) {
-		final int bytes = buffer.bytesBefore(value);
+		final int bytes = this.buffer.bytesBefore(value);
 		if (bytes < 0) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		return bytes;
 	}
 
 	@Override
 	public int bytesBefore(final int length, final byte value) {
-		final int readerIndex = buffer.readerIndex();
-		return this.bytesBefore(readerIndex, buffer.writerIndex() - readerIndex, value);
+		return this.bytesBefore(this.buffer.readerIndex(), length, value);
 	}
 
 	@Override
 	public int bytesBefore(final int index, final int length, final byte value) {
-		final int writerIndex = buffer.writerIndex();
+		final int writerIndex = this.buffer.writerIndex();
 		if (index >= writerIndex) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		if (index <= (writerIndex - length)) {
-			return buffer.bytesBefore(index, length, value);
+			return this.buffer.bytesBefore(index, length, value);
 		}
-		final int res = buffer.bytesBefore(index, writerIndex - index, value);
+		final int res = this.buffer.bytesBefore(index, writerIndex - index, value);
 		if (res < 0) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		return res;
 	}
 
 	@Override
-	public int forEachByte(final ByteBufProcessor processor) {
-		final int ret = buffer.forEachByte(processor);
+	public int forEachByte(final ByteProcessor processor) {
+		final int ret = this.buffer.forEachByte(processor);
 		if (ret < 0) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		return ret;
 	}
 
 	@Override
-	public int forEachByte(final int index, final int length, final ByteBufProcessor processor) {
-		final int writerIndex = buffer.writerIndex();
+	public int forEachByte(final int index, final int length, final ByteProcessor processor) {
+		final int writerIndex = this.buffer.writerIndex();
 		if (index >= writerIndex) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		if (index <= (writerIndex - length)) {
-			return buffer.forEachByte(index, length, processor);
+			return this.buffer.forEachByte(index, length, processor);
 		}
-		final int ret = buffer.forEachByte(index, writerIndex - index, processor);
+		final int ret = this.buffer.forEachByte(index, writerIndex - index, processor);
 		if (ret < 0) {
-			throw EOF;
+			throw EOSSignal.instance;
 		}
 		return ret;
 	}
 
 	@Override
-	public int forEachByteDesc(final ByteBufProcessor processor) {
-		reject();
-		return 0;
+	public int forEachByteDesc(final ByteProcessor processor) {
+		throw reject();
 	}
 
 	@Override
-	public int forEachByteDesc(final int index, final int length, final ByteBufProcessor processor) {
-		if ((index + length) > buffer.writerIndex()) {
-			throw EOF;
+	public int forEachByteDesc(final int index, final int length, final ByteProcessor processor) {
+		if ((index + length) > this.buffer.writerIndex()) {
+			throw EOSSignal.instance;
 		}
-		return buffer.forEachByteDesc(index, length, processor);
+		return this.buffer.forEachByteDesc(index, length, processor);
 	}
 
 	@Override
 	public ByteBuf markReaderIndex() {
-		buffer.markReaderIndex();
+		this.buffer.markReaderIndex();
 		return this;
 	}
 
 	@Override
 	public ByteBuf markWriterIndex() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteOrder order() {
-		return buffer.order();
+		return this.buffer.order();
 	}
 
 	@Override
@@ -385,368 +449,421 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 	}
 
 	@Override
-	public boolean isReadable() {
-		return buffer.isReadable();
-	}
-
-	@Override
-	public boolean isReadable(final int size) {
-		return buffer.isReadable(size);
-	}
-
-	@Override
-	public int readableBytes() {
-		return buffer.readableBytes();
-	}
-
-	@Override
 	public boolean readBoolean() {
-		checkReadableBytes(1);
-		return buffer.readBoolean();
+		this.checkReadableBytes(1);
+		return this.buffer.readBoolean();
 	}
 
 	@Override
 	public byte readByte() {
-		checkReadableBytes(1);
-		return buffer.readByte();
+		this.checkReadableBytes(1);
+		return this.buffer.readByte();
 	}
 
 	@Override
 	public short readUnsignedByte() {
-		checkReadableBytes(1);
-		return buffer.readUnsignedByte();
+		this.checkReadableBytes(1);
+		return this.buffer.readUnsignedByte();
 	}
 
 	@Override
 	public ByteBuf readBytes(final byte[] dst, final int dstIndex, final int length) {
-		checkReadableBytes(length);
-		buffer.readBytes(dst, dstIndex, length);
+		this.checkReadableBytes(length);
+		this.buffer.readBytes(dst, dstIndex, length);
 		return this;
 	}
 
 	@Override
 	public ByteBuf readBytes(final byte[] dst) {
-		checkReadableBytes(dst.length);
-		buffer.readBytes(dst);
+		this.checkReadableBytes(dst.length);
+		this.buffer.readBytes(dst);
 		return this;
 	}
 
 	@Override
 	public ByteBuf readBytes(final ByteBuffer dst) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf readBytes(final ByteBuf dst, final int dstIndex, final int length) {
-		checkReadableBytes(length);
-		buffer.readBytes(dst, dstIndex, length);
+		this.checkReadableBytes(length);
+		this.buffer.readBytes(dst, dstIndex, length);
 		return this;
 	}
 
 	@Override
 	public ByteBuf readBytes(final ByteBuf dst, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf readBytes(final ByteBuf dst) {
-		checkReadableBytes(dst.writableBytes());
-		buffer.readBytes(dst);
+		this.checkReadableBytes(dst.writableBytes());
+		this.buffer.readBytes(dst);
 		return this;
 	}
 
 	@Override
 	public int readBytes(final GatheringByteChannel out, final int length) {
-		reject();
-		return 0;
+		throw reject();
+	}
+
+	@Override
+	public int readBytes(final FileChannel out, final long position, final int length) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf readBytes(final int length) {
-		checkReadableBytes(length);
-		return buffer.readBytes(length);
+		this.checkReadableBytes(length);
+		return this.buffer.readBytes(length);
 	}
 
 	@Override
 	public ByteBuf readSlice(final int length) {
-		checkReadableBytes(length);
-		return buffer.readSlice(length);
+		this.checkReadableBytes(length);
+		return this.buffer.readSlice(length);
+	}
+
+	@Override
+	public ByteBuf readRetainedSlice(final int length) {
+		this.checkReadableBytes(length);
+		return this.buffer.readRetainedSlice(length);
 	}
 
 	@Override
 	public ByteBuf readBytes(final OutputStream out, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int readerIndex() {
-		return buffer.readerIndex();
+		return this.buffer.readerIndex();
 	}
 
 	@Override
 	public ByteBuf readerIndex(final int readerIndex) {
-		buffer.readerIndex(readerIndex);
+		this.buffer.readerIndex(readerIndex);
 		return this;
 	}
 
 	@Override
 	public int readInt() {
-		checkReadableBytes(4);
-		return buffer.readInt();
+		this.checkReadableBytes(4);
+		return this.buffer.readInt();
+	}
+
+	@Override
+	public int readIntLE() {
+		this.checkReadableBytes(4);
+		return this.buffer.readIntLE();
 	}
 
 	@Override
 	public long readUnsignedInt() {
-		checkReadableBytes(4);
-		return buffer.readUnsignedInt();
+		this.checkReadableBytes(4);
+		return this.buffer.readUnsignedInt();
+	}
+
+	@Override
+	public long readUnsignedIntLE() {
+		this.checkReadableBytes(4);
+		return this.buffer.readUnsignedIntLE();
 	}
 
 	@Override
 	public long readLong() {
-		checkReadableBytes(8);
-		return buffer.readLong();
+		this.checkReadableBytes(8);
+		return this.buffer.readLong();
+	}
+
+	@Override
+	public long readLongLE() {
+		this.checkReadableBytes(8);
+		return this.buffer.readLongLE();
 	}
 
 	@Override
 	public int readMedium() {
-		checkReadableBytes(3);
-		return buffer.readMedium();
+		this.checkReadableBytes(3);
+		return this.buffer.readMedium();
+	}
+
+	@Override
+	public int readMediumLE() {
+		this.checkReadableBytes(3);
+		return this.buffer.readMediumLE();
 	}
 
 	@Override
 	public int readUnsignedMedium() {
-		checkReadableBytes(3);
-		return buffer.readUnsignedMedium();
+		this.checkReadableBytes(3);
+		return this.buffer.readUnsignedMedium();
+	}
+
+	@Override
+	public int readUnsignedMediumLE() {
+		this.checkReadableBytes(3);
+		return this.buffer.readUnsignedMediumLE();
 	}
 
 	@Override
 	public short readShort() {
-		checkReadableBytes(2);
-		return buffer.readShort();
+		this.checkReadableBytes(2);
+		return this.buffer.readShort();
+	}
+
+	@Override
+	public short readShortLE() {
+		this.checkReadableBytes(2);
+		return this.buffer.readShortLE();
 	}
 
 	@Override
 	public int readUnsignedShort() {
-		checkReadableBytes(2);
-		return buffer.readUnsignedShort();
+		this.checkReadableBytes(2);
+		return this.buffer.readUnsignedShort();
+	}
+
+	@Override
+	public int readUnsignedShortLE() {
+		this.checkReadableBytes(2);
+		return this.buffer.readUnsignedShortLE();
 	}
 
 	@Override
 	public char readChar() {
-		checkReadableBytes(2);
-		return buffer.readChar();
+		this.checkReadableBytes(2);
+		return this.buffer.readChar();
 	}
 
 	@Override
 	public float readFloat() {
-		checkReadableBytes(4);
-		return buffer.readFloat();
+		this.checkReadableBytes(4);
+		return this.buffer.readFloat();
 	}
 
 	@Override
 	public double readDouble() {
-		checkReadableBytes(8);
-		return buffer.readDouble();
+		this.checkReadableBytes(8);
+		return this.buffer.readDouble();
+	}
+
+	@Override
+	public CharSequence readCharSequence(final int length, final Charset charset) {
+		this.checkReadableBytes(length);
+		return this.buffer.readCharSequence(length, charset);
 	}
 
 	@Override
 	public ByteBuf resetReaderIndex() {
-		buffer.resetReaderIndex();
+		this.buffer.resetReaderIndex();
 		return this;
 	}
 
 	@Override
 	public ByteBuf resetWriterIndex() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBoolean(final int index, final boolean value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setByte(final int index, final int value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final byte[] src, final int srcIndex, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final byte[] src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final ByteBuffer src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final ByteBuf src, final int srcIndex, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final ByteBuf src, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setBytes(final int index, final ByteBuf src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int setBytes(final int index, final InputStream in, final int length) {
-		reject();
-		return 0;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setZero(final int index, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int setBytes(final int index, final ScatteringByteChannel in, final int length) {
-		reject();
-		return 0;
+		throw reject();
+	}
+
+	@Override
+	public int setBytes(final int index, final FileChannel in, final long position, final int length) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setIndex(final int readerIndex, final int writerIndex) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setInt(final int index, final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf setIntLE(final int index, final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setLong(final int index, final long value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf setLongLE(final int index, final long value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setMedium(final int index, final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf setMediumLE(final int index, final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setShort(final int index, final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf setShortLE(final int index, final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setChar(final int index, final int value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setFloat(final int index, final float value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf setDouble(final int index, final double value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf skipBytes(final int length) {
-		checkReadableBytes(length);
-		buffer.skipBytes(length);
+		this.checkReadableBytes(length);
+		this.buffer.skipBytes(length);
 		return this;
 	}
 
 	@Override
 	public ByteBuf slice() {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf retainedSlice() {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf slice(final int index, final int length) {
-		checkIndex(index, length);
-		return buffer.slice(index, length);
+		this.checkIndex(index, length);
+		return this.buffer.slice(index, length);
+	}
+
+	@Override
+	public ByteBuf retainedSlice(final int index, final int length) {
+		this.checkIndex(index, length);
+		return this.buffer.slice(index, length);
 	}
 
 	@Override
 	public int nioBufferCount() {
-		return buffer.nioBufferCount();
+		return this.buffer.nioBufferCount();
 	}
 
 	@Override
 	public ByteBuffer nioBuffer() {
-		reject();
-		return null;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuffer nioBuffer(final int index, final int length) {
-		checkIndex(index, length);
-		return buffer.nioBuffer(index, length);
+		this.checkIndex(index, length);
+		return this.buffer.nioBuffer(index, length);
 	}
 
 	@Override
 	public ByteBuffer[] nioBuffers() {
-		reject();
-		return null;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuffer[] nioBuffers(final int index, final int length) {
-		checkIndex(index, length);
-		return buffer.nioBuffers(index, length);
+		this.checkIndex(index, length);
+		return this.buffer.nioBuffers(index, length);
 	}
 
 	@Override
 	public ByteBuffer internalNioBuffer(final int index, final int length) {
-		checkIndex(index, length);
-		return buffer.internalNioBuffer(index, length);
+		this.checkIndex(index, length);
+		return this.buffer.internalNioBuffer(index, length);
 	}
 
 	@Override
 	public String toString(final int index, final int length, final Charset charset) {
-		checkIndex(index, length);
-		return buffer.toString(index, length, charset);
+		this.checkIndex(index, length);
+		return this.buffer.toString(index, length, charset);
 	}
 
 	@Override
 	public String toString(final Charset charsetName) {
-		reject();
-		return null;
+		throw reject();
 	}
 
 	@Override
 	public String toString() {
-		return StringUtil.simpleClassName(this) + '(' + "ridx=" + this.readerIndex() + ", " + "widx=" + this.writerIndex() + ')';
+		return StringUtil.simpleClassName(this) + '(' + "ridx=" + this.readerIndex() + ", " + "widx="
+				+ this.writerIndex() + ')';
 	}
 
 	@Override
@@ -771,189 +888,210 @@ public final class ReplayingDecoderBuffer extends ByteBuf {
 
 	@Override
 	public ByteBuf writeBoolean(final boolean value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeByte(final int value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final byte[] src, final int srcIndex, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final byte[] src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final ByteBuffer src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final ByteBuf src, final int srcIndex, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final ByteBuf src, final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeBytes(final ByteBuf src) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int writeBytes(final InputStream in, final int length) {
-		reject();
-		return 0;
+		throw reject();
 	}
 
 	@Override
 	public int writeBytes(final ScatteringByteChannel in, final int length) {
-		reject();
-		return 0;
+		throw reject();
+	}
+
+	@Override
+	public int writeBytes(final FileChannel in, final long position, final int length) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeInt(final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf writeIntLE(final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeLong(final long value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf writeLongLE(final long value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeMedium(final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf writeMediumLE(final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeZero(final int length) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int writerIndex() {
-		return buffer.writerIndex();
+		return this.buffer.writerIndex();
 	}
 
 	@Override
 	public ByteBuf writerIndex(final int writerIndex) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeShort(final int value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf writeShortLE(final int value) {
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeChar(final int value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeFloat(final float value) {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf writeDouble(final double value) {
-		reject();
-		return this;
+		throw reject();
+	}
+
+	@Override
+	public int setCharSequence(final int index, final CharSequence sequence, final Charset charset) {
+		throw reject();
+	}
+
+	@Override
+	public int writeCharSequence(final CharSequence sequence, final Charset charset) {
+		throw reject();
 	}
 
 	private void checkIndex(final int index, final int length) {
-		if ((index + length) > buffer.writerIndex()) {
-			throw EOF;
+		if ((index + length) > this.buffer.writerIndex()) {
+			throw EOSSignal.instance;
 		}
 	}
 
 	private void checkReadableBytes(final int readableBytes) {
-		if (buffer.readableBytes() < readableBytes) {
-			throw EOF;
+		if (this.buffer.readableBytes() < readableBytes) {
+			throw EOSSignal.instance;
 		}
 	}
 
 	@Override
 	public ByteBuf discardSomeReadBytes() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public int refCnt() {
-		return buffer.refCnt();
+		return this.buffer.refCnt();
 	}
 
 	@Override
 	public ByteBuf retain() {
-		reject();
-		return this;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf retain(final int increment) {
-		reject();
+		throw reject();
+	}
+
+	@Override
+	public ByteBuf touch() {
+		this.buffer.touch();
+		return this;
+	}
+
+	@Override
+	public ByteBuf touch(final Object hint) {
+		this.buffer.touch(hint);
 		return this;
 	}
 
 	@Override
 	public boolean release() {
-		reject();
-		return false;
+		throw reject();
 	}
 
 	@Override
 	public boolean release(final int decrement) {
-		reject();
-		return false;
+		throw reject();
 	}
 
 	@Override
 	public ByteBuf unwrap() {
-		reject();
-		return this;
+		throw reject();
 	}
 
-	private static void reject() {
-		throw new UnsupportedOperationException("not a replayable operation");
+	private static UnsupportedOperationException reject() {
+		return new UnsupportedOperationException("not a replayable operation");
 	}
 
-	public static final class EOFSignal extends RuntimeException {
-
+	public static class EOSSignal extends RuntimeException {
+		protected static final EOSSignal instance = new EOSSignal();
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public EOFSignal fillInStackTrace() {
+		public synchronized Throwable fillInStackTrace() {
 			return this;
 		}
-
 	}
 
 }
