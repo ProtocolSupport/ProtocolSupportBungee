@@ -2,24 +2,9 @@ package protocolsupport.utils;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class ReflectionUtils {
-
-	@SuppressWarnings("unchecked")
-	public static <T> T invokeMethod(Object target, String name) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Class<?> clazz = target.getClass();
-		do {
-			for (Method method : clazz.getDeclaredMethods()) {
-				if (method.getName().equals(name)) {
-					return (T) setAccessible(method).invoke(target);
-				}
-			}
-		} while ((clazz = clazz.getSuperclass()) != null);
-		return null;
-	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(Object target, String name) throws IllegalArgumentException, IllegalAccessException {
@@ -40,6 +25,7 @@ public class ReflectionUtils {
 			for (Field field : clazz.getDeclaredFields()) {
 				if (field.getName().equals(name)) {
 					setAccessible(field).set(target, value);
+					return;
 				}
 			}
 		} while ((clazz = clazz.getSuperclass()) != null);

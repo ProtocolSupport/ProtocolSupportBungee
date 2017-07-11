@@ -1,0 +1,85 @@
+buildscript {
+	dependencies {
+		classpath 'org.jdom:jdom2:2.0.6'
+		classpath 'org.ow2.asm:asm:5.1'
+		classpath 'org.ow2.asm:asm-commons:5.1'
+		classpath 'commons-io:commons-io:2.5'
+		classpath 'org.apache.ant:ant:1.9.7'
+		classpath 'org.codehaus.plexus:plexus-utils:3.0.24'
+		classpath 'org.vafer:jdependency:1.1'
+		classpath files('gradle/plugins/shadowPlugin.jar')
+	}
+}
+
+plugins {
+	id 'java'
+	id 'de.undercouch.download' version '3.1.1'
+}
+
+apply plugin: com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+
+tasks.withType(AbstractCompile) {
+	classpath += configurations.shadow
+}
+
+group 'protocolsupport'
+version '1.4.dev'
+
+sourceCompatibility = 1.8
+
+import de.undercouch.gradle.tasks.download.Download
+
+File dllibs = new File('dllibs')
+dllibs.mkdirs()
+
+task updateLibs(type: Download) {
+	src([
+		'https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar',
+	])
+	dest dllibs
+	onlyIfNewer true
+	overwrite true
+}
+
+compileJava.dependsOn(clean)
+compileJava.dependsOn(updateLibs)
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src']
+		}
+		resources {
+			srcDirs = ['resources']
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	shadow files(new File(dllibs, 'BungeeCord.jar'))
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+}
+
+shadowJar {
+	doFirst {
+		new File(destinationDir, archiveName).delete()
+	}
+
+	from sourceSets.main.java.srcDirs
+	from 'LICENSE'
+
+	minimizeJar = true
+
+	destinationDir = file('target')
+	archiveName = 'ProtocolSupportBungee.jar'
+
+	exclude 'META-INF/**'
+	relocate 'org.apache', 'protocolsupport.libs.org.apache'
+}
+
+jar.enabled = false
+jar.finalizedBy(shadowJar)

@@ -7,12 +7,12 @@ import net.md_5.bungee.api.plugin.Command;
 public class CommandHandler extends Command {
 
 	public CommandHandler() {
-		super("protocolsupport", "protocolsupport.cmds", "ps");
+		super("protocolsupportbungee", "protocolsupport.cmds", "psb");
 	}
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length == 1 && args[0].equals("debug")) {
+		if ((args.length == 1) && args[0].equals("debug")) {
 			if (LoggerUtil.isEnabled()) {
 				sender.sendMessage(new TextComponent("Disabled logger"));
 				LoggerUtil.setEnabled(false);

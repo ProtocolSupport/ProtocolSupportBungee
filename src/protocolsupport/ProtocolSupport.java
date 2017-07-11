@@ -2,9 +2,7 @@ package protocolsupport;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
-import protocolsupport.injector.LoginFinishInjector;
 import protocolsupport.injector.NettyInjector;
-import protocolsupport.injector.ServerConnectInjector;
 
 public class ProtocolSupport extends Plugin {
 
@@ -18,12 +16,6 @@ public class ProtocolSupport extends Plugin {
 			t.printStackTrace();
 			ProxyServer.getInstance().stop();
 		}
-	}
-
-	@Override
-	public void onEnable() {
-		getProxy().getPluginManager().registerListener(this, new LoginFinishInjector());
-		getProxy().getPluginManager().registerListener(this, new ServerConnectInjector());
 	}
 
 }

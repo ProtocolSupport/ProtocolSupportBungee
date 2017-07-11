@@ -56,13 +56,13 @@ public class PingSerializer {
 				chatGson.fromJson(root.get("description"), BaseComponent.class).toLegacyText()
 			);
 		}
-		
+
 	}
 
 	private static final class ServerPing {
-		private ServerPingVersion version;
-		private ServerPingPlayers players;
-		private String description;
+		private final ServerPingVersion version;
+		private final ServerPingPlayers players;
+		private final String description;
 		public ServerPing(ServerPingVersion version, ServerPingPlayers players, String description) {
 			this.version = version;
 			this.players = players;
@@ -71,15 +71,15 @@ public class PingSerializer {
 	}
 
 	private static final class ServerPingVersion {
-		private String name;
+		private final String name;
 		public ServerPingVersion(String name) {
 			this.name = name;
 		}
 	}
 
 	private static final class ServerPingPlayers {
-		private int max;
-		private int online;
+		private final int max;
+		private final int online;
 		public ServerPingPlayers(int online, int max) {
 			this.online = online;
 			this.max = max;

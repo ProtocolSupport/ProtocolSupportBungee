@@ -1,0 +1,4 @@
+name: ProtocolSupportBungee
+main: protocolsupport.ProtocolSupport
+version: 1.4.dev
+author: _Shevchik_

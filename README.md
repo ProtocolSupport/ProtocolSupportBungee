@@ -1,10 +1,7 @@
-!!! This plugin is no longer maintained
-
-
 ProtocolSupportBungee
 ================
 
-Support for 1.6 and 1.5.2 clients on BungeeCord
+Support for 1.6, 1.5, 1.4.7 clients on BungeeCord
 
 ================
 
