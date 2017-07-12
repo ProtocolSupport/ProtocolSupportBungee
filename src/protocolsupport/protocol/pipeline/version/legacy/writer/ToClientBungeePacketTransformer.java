@@ -7,17 +7,14 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.Kick;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
-import net.md_5.bungee.protocol.packet.PlayerListHeaderFooter;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.Respawn;
 import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
 import net.md_5.bungee.protocol.packet.ScoreboardObjective;
 import net.md_5.bungee.protocol.packet.ScoreboardScore;
-import net.md_5.bungee.protocol.packet.SetCompression;
 import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.Team;
-import net.md_5.bungee.protocol.packet.Title;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.pipeline.version.legacy.packets.ChatPacket;
 import protocolsupport.protocol.pipeline.version.legacy.packets.EncryptionRequestPacket;
@@ -36,8 +33,6 @@ import protocolsupport.utils.PingSerializer;
 import protocolsupport.utils.Utils;
 
 public class ToClientBungeePacketTransformer implements BungeePacketTransformer {
-
-	private static final TransformedPacket[] EMPTY = new TransformedPacket[0];
 
 	public TransformedPacket[] transformBungeePacket(ProtocolVersion version, DefinedPacket packet) {
 		if (packet instanceof KeepAlive) {
@@ -76,21 +71,21 @@ public class ToClientBungeePacketTransformer implements BungeePacketTransformer 
 					return packets;
 				}
 				default: {
-					return EMPTY;
+					return new TransformedPacket[0];
 				}
 			}
 		} else if (packet instanceof Kick) {
 			Kick kick = (Kick) packet;
 			return new TransformedPacket[] { new KickPacket(Utils.toLegacyText(kick.getMessage())) };
-		} else if ((packet instanceof LoginSuccess) || (packet instanceof Title) || (packet instanceof PlayerListHeaderFooter) || (packet instanceof SetCompression)) {
-			return EMPTY;
 		} else if (packet instanceof StatusResponse) {
 			StatusResponse status = (StatusResponse) packet;
 			return new TransformedPacket[] { new KickPacket(PingSerializer.fromJSON(version.getId(), status.getResponse())) };
 		} else if (packet instanceof EncryptionRequest) {
 			EncryptionRequest erequest = (EncryptionRequest) packet;
-			return new TransformedPacket[] { new EncryptionRequestPacket(erequest.getServerId(), erequest.getVerifyToken()) };
-		} else if (packet instanceof Login) {
+			return new TransformedPacket[] { new EncryptionRequestPacket(erequest.getServerId(), erequest.getPublicKey(), erequest.getVerifyToken()) };
+		} else if (packet instanceof LoginSuccess) {
+			return new TransformedPacket[0];
+		} if (packet instanceof Login) {
 			Login login = (Login) packet;
 			return new TransformedPacket[] { new LoginPacket(login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(), login.getMaxPlayers(), login.getLevelType()) };
 		} else if (packet instanceof Team) {

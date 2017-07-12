@@ -6,7 +6,7 @@ public class ClientStatusPacket extends ClientStatus implements TransformedPacke
 
 	@Override
 	public boolean shouldWrite() {
-		return true;
+		return getPayload() == 1;
 	}
 
 	@Override

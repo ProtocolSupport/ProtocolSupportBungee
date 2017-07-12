@@ -1,13 +1,15 @@
 package protocolsupport.protocol.pipeline.version.legacy.packets;
 
 import io.netty.buffer.ByteBuf;
+import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.packet.EncryptionResponse;
 import protocolsupport.protocol.serializer.LegacySerializer;
 
 public class EncryptionResponsePacket extends EncryptionResponse implements TransformedPacket {
 
-	private byte[] sharedSecret;
-	private byte[] verifyToken;
+	private byte[] sharedSecret = new byte[0];
+	private byte[] verifyToken = new byte[0];
 
 	@Override
 	public void read(ByteBuf buf) {
@@ -49,6 +51,12 @@ public class EncryptionResponsePacket extends EncryptionResponse implements Tran
 	@Override
 	public int getId() {
 		return 0xFC;
+	}
+
+	@Override
+	public void handle(AbstractPacketHandler handler) throws Exception {
+		((InitialHandler) handler).unsafe().sendPacket(new EncryptionResponsePacket());
+		handler.handle(this);
 	}
 
 }

@@ -1,21 +1,21 @@
 package protocolsupport.protocol.pipeline.version.legacy.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.md_5.bungee.EncryptionUtil;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import protocolsupport.protocol.serializer.LegacySerializer;
 
 public class EncryptionRequestPacket extends EncryptionRequest implements TransformedPacket {
 
 	private String serverId;
-	private byte[] publicKey = EncryptionUtil.keys.getPublic().getEncoded();
+	private byte[] publicKey;
 	private byte[] verifyToken;
 
 	public EncryptionRequestPacket() {
 	}
 
-	public EncryptionRequestPacket(String serverId, byte[] verifyToken) {
+	public EncryptionRequestPacket(String serverId, byte[] publicKey, byte[] verifyToken) {
 		this.serverId = serverId;
+		this.publicKey = publicKey;
 		this.verifyToken = verifyToken.clone();
 	}
 
