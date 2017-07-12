@@ -20,6 +20,7 @@ public class ToServerBungeePacketTransformer implements BungeePacketTransformer 
 
 	private Handshake cachedHandshake;
 
+	@Override
 	public TransformedPacket[] transformBungeePacket(ProtocolVersion version, DefinedPacket packet) {
 		if (packet instanceof KeepAlive) {
 			return new TransformedPacket[] { new KeepAlivePacket(((KeepAlive) packet).getRandomId()) };
@@ -36,6 +37,7 @@ public class ToServerBungeePacketTransformer implements BungeePacketTransformer 
 		}
 	}
 
+	@Override
 	public TransformedPacket[] transformTransformedPacket(ProtocolVersion version, TransformedPacket packet) {
 		if (packet instanceof LoginRequestPacket) {
 			return new TransformedPacket[] { new HandshakePacket(version.getId(), ((LoginRequestPacket) packet).getData(), cachedHandshake.getHost(), cachedHandshake.getPort()) };

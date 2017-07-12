@@ -34,6 +34,7 @@ import protocolsupport.utils.Utils;
 
 public class ToClientBungeePacketTransformer implements BungeePacketTransformer {
 
+	@Override
 	public TransformedPacket[] transformBungeePacket(ProtocolVersion version, DefinedPacket packet) {
 		if (packet instanceof KeepAlive) {
 			return new TransformedPacket[] { new KeepAlivePacket(((KeepAlive) packet).getRandomId()) };
@@ -105,6 +106,7 @@ public class ToClientBungeePacketTransformer implements BungeePacketTransformer 
 		}
 	}
 
+	@Override
 	public TransformedPacket[] transformTransformedPacket(ProtocolVersion version, TransformedPacket packet) {
 		return new TransformedPacket[] { packet };
 	}

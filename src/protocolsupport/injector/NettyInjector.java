@@ -85,7 +85,7 @@ public class NettyInjector extends Varint21LengthFieldPrepender {
 		}
 
 		public boolean isConnected() {
-			return channel != null && channel.isActive();
+			return (channel != null) && channel.isActive();
 		}
 
 		public Channel getChannel() {

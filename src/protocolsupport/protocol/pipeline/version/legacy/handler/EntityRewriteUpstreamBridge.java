@@ -8,7 +8,7 @@ import protocolsupport.protocol.pipeline.version.legacy.LegacyEntityMap;
 
 public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 
-	private UserConnection con;
+	private final UserConnection con;
 	public EntityRewriteUpstreamBridge(ProxyServer bungee, UserConnection con) {
 		super(bungee, con);
 		this.con = con;
