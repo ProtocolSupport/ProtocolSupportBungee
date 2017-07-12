@@ -71,11 +71,6 @@ public class PluginMessagePacket extends PluginMessage implements TransformedPac
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xFA;
 	}

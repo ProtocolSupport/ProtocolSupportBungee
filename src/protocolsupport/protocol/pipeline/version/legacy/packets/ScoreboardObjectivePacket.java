@@ -75,11 +75,6 @@ public class ScoreboardObjectivePacket extends ScoreboardObjective implements Tr
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xCE;
 	}

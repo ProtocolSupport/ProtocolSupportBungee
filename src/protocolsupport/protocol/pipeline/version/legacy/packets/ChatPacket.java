@@ -49,9 +49,4 @@ public class ChatPacket extends Chat implements TransformedPacket {
 		return 0x03;
 	}
 
-	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
 }

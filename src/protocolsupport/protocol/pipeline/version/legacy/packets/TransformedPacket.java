@@ -4,13 +4,10 @@ import io.netty.buffer.ByteBuf;
 
 public interface TransformedPacket {
 
+	public void read(ByteBuf buf);
+
 	public void write(ByteBuf buf);
 
-	public boolean shouldWrite();
-
 	public int getId();
-
-	@Override
-	public String toString();
 
 }

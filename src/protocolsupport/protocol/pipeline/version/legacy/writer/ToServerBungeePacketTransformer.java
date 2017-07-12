@@ -7,6 +7,7 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.pipeline.version.legacy.packets.ChatPacket;
+import protocolsupport.protocol.pipeline.version.legacy.packets.ClientStatusPacket;
 import protocolsupport.protocol.pipeline.version.legacy.packets.HandshakePacket;
 import protocolsupport.protocol.pipeline.version.legacy.packets.KeepAlivePacket;
 import protocolsupport.protocol.pipeline.version.legacy.packets.LoginRequestPacket;
@@ -38,6 +39,13 @@ public class ToServerBungeePacketTransformer implements BungeePacketTransformer 
 	public TransformedPacket[] transformTransformedPacket(ProtocolVersion version, TransformedPacket packet) {
 		if (packet instanceof LoginRequestPacket) {
 			return new TransformedPacket[] { new HandshakePacket(version.getId(), ((LoginRequestPacket) packet).getData(), cachedHandshake.getHost(), cachedHandshake.getPort()) };
+		}
+		if (packet instanceof ClientStatusPacket) {
+			if (((ClientStatusPacket) packet).getPayload() == 1) {
+				return new TransformedPacket[] { packet };
+			} else {
+				return EMPTY;
+			}
 		}
 		return new TransformedPacket[] { packet };
 	}

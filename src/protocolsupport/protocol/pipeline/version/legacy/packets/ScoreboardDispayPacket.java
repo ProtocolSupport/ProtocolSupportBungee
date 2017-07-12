@@ -50,11 +50,6 @@ public class ScoreboardDispayPacket extends ScoreboardDisplay implements Transfo
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xD0;
 	}

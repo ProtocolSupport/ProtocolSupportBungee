@@ -140,11 +140,6 @@ public class TeamPacket extends Team implements TransformedPacket {
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xD1;
 	}

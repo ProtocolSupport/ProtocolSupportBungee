@@ -44,11 +44,6 @@ public class EncryptionResponsePacket extends EncryptionResponse implements Tran
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xFC;
 	}

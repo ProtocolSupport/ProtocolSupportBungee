@@ -35,13 +35,11 @@ public class PacketEncoder extends MinecraftEncoder {
 			packets = transformer.transformBungeePacket(version, packet);
 		}
 		for (TransformedPacket tpacket : packets) {
-			if (tpacket.shouldWrite()) {
-				if (LoggerUtil.isEnabled()) {
-					LoggerUtil.debug((toclient ? "[To Client] " : "[To Server] ") + "Sent packet(id: " + tpacket.getId() + ", defined data: " + Utils.toStringAllFields(tpacket) + ")");
-				}
-				buf.writeByte(tpacket.getId());
-				tpacket.write(buf);
+			if (LoggerUtil.isEnabled()) {
+				LoggerUtil.debug((toclient ? "[To Client] " : "[To Server] ") + "Sent packet(id: " + tpacket.getId() + ", defined data: " + Utils.toStringAllFields(tpacket) + ")");
 			}
+			buf.writeByte(tpacket.getId());
+			tpacket.write(buf);
 		}
 	}
 

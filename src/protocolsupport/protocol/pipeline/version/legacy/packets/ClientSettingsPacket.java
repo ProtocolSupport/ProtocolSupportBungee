@@ -83,11 +83,6 @@ public class ClientSettingsPacket extends ClientSettings implements TransformedP
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xCC;
 	}

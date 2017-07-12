@@ -25,9 +25,4 @@ public class LoginRequestPacket extends LoginRequest implements TransformedPacke
 		return -1;
 	}
 
-	@Override
-	public boolean shouldWrite() {
-		return false;
-	}
-
 }

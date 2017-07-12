@@ -64,11 +64,6 @@ public class EncryptionRequestPacket extends EncryptionRequest implements Transf
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xFD;
 	}

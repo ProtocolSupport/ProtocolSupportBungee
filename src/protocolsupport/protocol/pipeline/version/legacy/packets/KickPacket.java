@@ -39,11 +39,6 @@ public class KickPacket extends Kick implements TransformedPacket {
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xFF;
 	}

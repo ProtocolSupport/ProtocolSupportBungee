@@ -88,10 +88,4 @@ public class HandshakePacket extends Handshake implements TransformedPacket {
 		return 0x02;
 	}
 
-	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-
 }

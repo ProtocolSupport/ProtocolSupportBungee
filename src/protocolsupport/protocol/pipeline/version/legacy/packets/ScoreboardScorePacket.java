@@ -82,11 +82,6 @@ public class ScoreboardScorePacket extends ScoreboardScore implements Transforme
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0xCF;
 	}

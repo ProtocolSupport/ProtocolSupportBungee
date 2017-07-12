@@ -83,11 +83,6 @@ public class LoginPacket extends Login implements TransformedPacket {
 	}
 
 	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
-	@Override
 	public int getId() {
 		return 0x01;
 	}

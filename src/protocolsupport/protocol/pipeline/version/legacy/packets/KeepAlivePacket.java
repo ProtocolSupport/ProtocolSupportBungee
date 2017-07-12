@@ -39,9 +39,4 @@ public class KeepAlivePacket extends KeepAlive implements TransformedPacket {
 		return 0x00;
 	}
 
-	@Override
-	public boolean shouldWrite() {
-		return true;
-	}
-
 }

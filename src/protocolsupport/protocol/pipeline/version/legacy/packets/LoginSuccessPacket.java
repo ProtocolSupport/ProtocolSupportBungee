@@ -5,11 +5,6 @@ import net.md_5.bungee.protocol.packet.LoginSuccess;
 public class LoginSuccessPacket extends LoginSuccess implements TransformedPacket {
 
 	@Override
-	public boolean shouldWrite() {
-		return false;
-	}
-
-	@Override
 	public int getId() {
 		return -1;
 	}
