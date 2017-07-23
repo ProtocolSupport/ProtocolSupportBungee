@@ -14,6 +14,7 @@ import protocolsupport.protocol.pipeline.common.NoOpFrameDecoder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameEncoder;
 import protocolsupport.protocol.pipeline.version.legacy.handler.EntityRewriteDownstreamBridge;
 import protocolsupport.protocol.pipeline.version.legacy.handler.EntityRewriteUpstreamBridge;
+import protocolsupport.protocol.storage.SharedStorage;
 import protocolsupport.utils.ReflectionUtils;
 
 public class PipeLineBuilder extends IPipeLineBuilder {
@@ -24,7 +25,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new NoOpFrameDecoder());
 		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new NoOpFrameEncoder());
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new PacketDecoder(true, connection.getVersion()));
-		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, true, connection.getVersion()));
+		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, true, connection, new SharedStorage()));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
 				return (listener instanceof UpstreamBridge) ? new EntityRewriteUpstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
@@ -40,7 +41,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new NoOpFrameDecoder());
 		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new NoOpFrameEncoder());
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new PacketDecoder(false, connection.getVersion()));
-		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, false, connection.getVersion()));
+		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, false, connection, new SharedStorage()));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
 				return (listener instanceof DownstreamBridge) ? new EntityRewriteDownstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;

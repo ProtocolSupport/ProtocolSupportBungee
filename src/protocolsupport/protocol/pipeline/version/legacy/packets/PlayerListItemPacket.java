@@ -11,6 +11,7 @@ import net.md_5.bungee.protocol.packet.PlayerListItem;
 import protocolsupport.protocol.serializer.LegacySerializer;
 import protocolsupport.utils.Utils;
 
+//TODO: some cache to make it work with not real players
 public class PlayerListItemPacket extends PlayerListItem implements TransformedPacket {
 
 	private Action action;
