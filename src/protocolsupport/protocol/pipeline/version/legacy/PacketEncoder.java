@@ -6,6 +6,9 @@ import java.util.Collections;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.EncoderException;
+import io.netty.util.ReferenceCountUtil;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.MinecraftEncoder;
 import net.md_5.bungee.protocol.Protocol;
@@ -101,10 +104,7 @@ public class PacketEncoder extends MinecraftEncoder {
 		toClientTransformers.register(Chat.class, (connection, storage, packet) -> {
 			Chat chat = (Chat) packet;
 			String message = Utils.toLegacyText(chat.getMessage());
-			return Collections.singletonList(
-				connection.getVersion().isBetween(ProtocolVersion.MINECRAFT_1_6_1, ProtocolVersion.MINECRAFT_1_6_4) ?
-				new ChatPacket("{\"text\":\"" + message + "\"}") : new ChatPacket(message)
-			);
+			return Collections.singletonList(connection.getVersion().isBetween(ProtocolVersion.MINECRAFT_1_6_1, ProtocolVersion.MINECRAFT_1_6_4) ? new ChatPacket("{\"text\":\"" + message + "\"}") : new ChatPacket(message));
 		});
 		toClientTransformers.register(PlayerListItem.class, (connection, storage, packet) -> {
 			PlayerListItem listitem = (PlayerListItem) packet;
@@ -127,9 +127,7 @@ public class PacketEncoder extends MinecraftEncoder {
 
 	private static final ClassMap<PacketTransformer> toServerTransformers = new ClassMap<>();
 	static {
-		toServerTransformers.register(LoginRequestPacket.class, (connection, storage, packet) -> Collections.singletonList(
-			new HandshakePacket(connection.getVersion().getId(), ((LoginRequestPacket) packet).getData(), storage.cachedHandshake.getHost(), storage.cachedHandshake.getPort())
-		));
+		toServerTransformers.register(LoginRequestPacket.class, (connection, storage, packet) -> Collections.singletonList(new HandshakePacket(connection.getVersion().getId(), ((LoginRequestPacket) packet).getData(), storage.cachedHandshake.getHost(), storage.cachedHandshake.getPort())));
 		toServerTransformers.register(ClientStatusPacket.class, (connection, storage, packet) -> {
 			ClientStatusPacket status = ((ClientStatusPacket) packet);
 			if (status.getPayload() == 1) {
@@ -165,13 +163,35 @@ public class PacketEncoder extends MinecraftEncoder {
 	}
 
 	@Override
+	public void write(final ChannelHandlerContext ctx, final Object msgObject, final ChannelPromise promise) throws Exception {
+		try {
+			if (acceptOutboundMessage(msgObject)) {
+				DefinedPacket msg = (DefinedPacket) msgObject;
+				try {
+					encode(ctx, msg, null);
+				} finally {
+					ReferenceCountUtil.release(msg);
+				}
+			} else {
+				ctx.write(msgObject, promise);
+			}
+		} catch (EncoderException e) {
+			throw e;
+		} catch (Throwable e2) {
+			throw new EncoderException(e2);
+		}
+	}
+
+	@Override
 	protected void encode(ChannelHandlerContext ctx, DefinedPacket packet, ByteBuf buf) throws Exception {
 		for (TransformedPacket tpacket : transformers.get(packet.getClass()).transform(connection, storage, packet)) {
 			if (LoggerUtil.isEnabled()) {
 				LoggerUtil.debug((toclient ? "[To Client] " : "[To Server] ") + "Sent packet(id: " + tpacket.getId() + ", defined data: " + Utils.toStringAllFields(tpacket) + ")");
 			}
-			buf.writeByte(tpacket.getId());
-			tpacket.write(buf);
+			ByteBuf senddata = ctx.alloc().buffer();
+			senddata.writeByte(tpacket.getId());
+			tpacket.write(senddata);
+			ctx.writeAndFlush(senddata);
 		}
 	}
 

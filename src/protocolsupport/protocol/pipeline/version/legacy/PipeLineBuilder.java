@@ -1,6 +1,8 @@
 package protocolsupport.protocol.pipeline.version.legacy;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
@@ -9,12 +11,13 @@ import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
 import protocolsupport.injector.NettyInjector.CustomHandlerBoss;
+import protocolsupport.protocol.packet.handler.EntityRewriteDownstreamBridge;
+import protocolsupport.protocol.packet.handler.EntityRewriteUpstreamBridge;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameDecoder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameEncoder;
-import protocolsupport.protocol.pipeline.version.legacy.handler.EntityRewriteDownstreamBridge;
-import protocolsupport.protocol.pipeline.version.legacy.handler.EntityRewriteUpstreamBridge;
 import protocolsupport.protocol.storage.SharedStorage;
+import protocolsupport.protocol.utils.EncapsulatedProtocolUtils;
 import protocolsupport.utils.ReflectionUtils;
 
 public class PipeLineBuilder extends IPipeLineBuilder {
@@ -38,8 +41,13 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 	@Override
 	public void buildBungeeServer(Channel channel, Connection connection) {
 		ChannelPipeline pipeline = channel.pipeline();
-		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new NoOpFrameDecoder());
-		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new NoOpFrameEncoder());
+		pipeline.addFirst(new ChannelInboundHandlerAdapter() {
+			@Override
+			public void channelActive(ChannelHandlerContext ctx) throws Exception {
+				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(false, 0, connection.getVersion().getId()));
+				super.channelActive(ctx);
+			}
+		});
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new PacketDecoder(false, connection.getVersion()));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new PacketEncoder(Protocol.HANDSHAKE, false, connection, new SharedStorage()));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {

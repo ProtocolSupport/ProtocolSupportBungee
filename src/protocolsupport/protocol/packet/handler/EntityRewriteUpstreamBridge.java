@@ -1,4 +1,4 @@
-package protocolsupport.protocol.pipeline.version.legacy.handler;
+package protocolsupport.protocol.packet.handler;
 
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
