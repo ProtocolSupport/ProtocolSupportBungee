@@ -13,6 +13,21 @@ import net.md_5.bungee.chat.ComponentSerializer;
 
 public class Utils {
 
+	public static class LazyNewInstance<T> {
+		private final Class<? extends T> clazz;
+		public LazyNewInstance(Class<? extends T> clazz) {
+			this.clazz = clazz;
+		}
+
+		private T instance;
+		public T getInstance() throws InstantiationException, IllegalAccessException {
+			if (instance == null) {
+				instance = clazz.newInstance();
+			}
+			return instance;
+		}
+	}
+
 	public static String toStringAllFields(Object obj) {
 		StringJoiner joiner = new StringJoiner(", ");
 		Class<?> clazz = obj.getClass();
@@ -38,10 +53,6 @@ public class Utils {
 
 	public static String clampString(String string, int limit) {
 		return string.substring(0, string.length() > limit ? limit : string.length());
-	}
-
-	public static void rewriteBytes(ByteBuf from, ByteBuf to, int length) {
-		to.writeBytes(from.readBytes(length));
 	}
 
 	public static byte[] readBytes(ByteBuf from, int length) {

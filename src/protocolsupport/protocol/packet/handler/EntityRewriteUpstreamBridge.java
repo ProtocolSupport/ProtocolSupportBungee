@@ -4,7 +4,7 @@ import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.protocol.PacketWrapper;
-import protocolsupport.protocol.pipeline.version.legacy.LegacyEntityMap;
+import protocolsupport.protocol.entitymap.LegacyEntityMap;
 
 public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 
