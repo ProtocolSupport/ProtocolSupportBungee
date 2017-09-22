@@ -12,7 +12,7 @@ public class KeepAlivePacket extends SingleWriteablePacket<KeepAlive> {
 
 	@Override
 	protected void write(ByteBuf data, KeepAlive packet) {
-		data.writeInt(packet.getRandomId());
+		data.writeInt((int) packet.getRandomId());
 	}
 
 }
