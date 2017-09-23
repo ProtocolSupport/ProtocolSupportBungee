@@ -9,7 +9,6 @@ public class ProtocolSupport extends Plugin {
 	@Override
 	public void onLoad() {
 		try {
-			LoggerUtil.init(getLogger());
 			getProxy().getPluginManager().registerCommand(this, new CommandHandler());
 			NettyInjector.inject();
 		} catch (Throwable t) {

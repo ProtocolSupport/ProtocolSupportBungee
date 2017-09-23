@@ -21,15 +21,7 @@ public class CommandHandler extends Command {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		if ((args.length == 1) || (args.length == 2)) {
-			if (args[0].equals("debug")) {
-				if (LoggerUtil.isEnabled()) {
-					sender.sendMessage(new TextComponent("Disabled logger"));
-					LoggerUtil.setEnabled(false);
-				} else {
-					LoggerUtil.setEnabled(true);
-					sender.sendMessage(new TextComponent("Enabled logger"));
-				}
-			} else if (args[0].equalsIgnoreCase("list")) {
+			if (args[0].equalsIgnoreCase("list")) {
 				sender.sendMessage(new TextComponent(ChatColor.GREEN + "ProtocolSupport Players:"));
 				for (ProtocolVersion version : ProtocolVersion.getAllSupported()) {
 					List<String> players = ProxyServer.getInstance().getPlayers().stream()
