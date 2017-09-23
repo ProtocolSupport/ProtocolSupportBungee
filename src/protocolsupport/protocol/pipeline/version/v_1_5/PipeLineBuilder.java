@@ -1,4 +1,4 @@
-package protocolsupport.protocol.pipeline.version.v_1_6;
+package protocolsupport.protocol.pipeline.version.v_1_5;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
