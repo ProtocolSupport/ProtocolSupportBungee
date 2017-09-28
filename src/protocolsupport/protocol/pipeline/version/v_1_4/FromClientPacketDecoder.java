@@ -5,6 +5,7 @@ import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.LoginHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.EncryptionResponsePacket;
+import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.LoginClientCommandPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5.EntityActionPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5.PlayerAbilitiesPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.AnimationPacket;
@@ -38,6 +39,7 @@ public class FromClientPacketDecoder extends AbstractFromClientPacketDecoder {
 		registry.register(Protocol.HANDSHAKE, LoginHandshakePacket.PACKET_ID, LoginHandshakePacket.class);
 		registry.register(Protocol.HANDSHAKE, PingHandshakePacket.PACKET_ID, PingHandshakePacket.class);
 		registry.register(Protocol.LOGIN, EncryptionResponsePacket.PACKET_ID, EncryptionResponsePacket.class);
+		registry.register(Protocol.LOGIN, LoginClientCommandPacket.PACKET_ID, LoginClientCommandPacket.class);
 		registry.register(Protocol.GAME, KeepAlivePacket.PACKET_ID, KeepAlivePacket.class);
 		registry.register(Protocol.GAME, FromClientChatPacket.PACKET_ID, FromClientChatPacket.class);
 		registry.register(Protocol.GAME, UseEntityPacket.PACKET_ID, UseEntityPacket.class);
