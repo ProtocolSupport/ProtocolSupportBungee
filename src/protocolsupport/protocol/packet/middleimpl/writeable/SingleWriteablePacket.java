@@ -18,10 +18,12 @@ public abstract class SingleWriteablePacket<T extends DefinedPacket> extends Wri
 	@Override
 	public Collection<ByteBuf> toData(T packet) {
 		ByteBuf data = Allocator.allocateBuffer();
-		data.writeByte(packetId);
+		writePacketId(data);
 		write(data, packet);
 		return Collections.singletonList(data);
 	}
+
+	protected abstract void writePacketId(ByteBuf data);
 
 	protected abstract void write(ByteBuf data, T packet);
 

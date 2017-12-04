@@ -8,7 +8,7 @@ import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Action;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Item;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.utils.netty.Allocator;
 
 public class PlayerListItemPacket extends WriteableMiddlePacket<PlayerListItem> {
@@ -20,7 +20,7 @@ public class PlayerListItemPacket extends WriteableMiddlePacket<PlayerListItem> 
 		for (Item item : packet.getItems()) {
 			ByteBuf data = Allocator.allocateBuffer();
 			data.writeByte(0xC9);
-            LegacySerializer.writeString(data, item.getDisplayName());
+            StringSerializer.writeShortUTF16BEString(data, item.getDisplayName());
             data.writeBoolean(packet.getAction() != Action.REMOVE_PLAYER);
             data.writeShort(item.getPing());
             packets.add(data);

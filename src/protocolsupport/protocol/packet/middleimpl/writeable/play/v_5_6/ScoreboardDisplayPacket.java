@@ -2,10 +2,10 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_5_6;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
-import protocolsupport.protocol.packet.middleimpl.writeable.SingleWriteablePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class ScoreboardDisplayPacket extends SingleWriteablePacket<ScoreboardDisplay> {
+public class ScoreboardDisplayPacket extends LegacySingleWriteablePacket<ScoreboardDisplay> {
 
 	public ScoreboardDisplayPacket() {
 		super(0xD1);
@@ -14,7 +14,7 @@ public class ScoreboardDisplayPacket extends SingleWriteablePacket<ScoreboardDis
 	@Override
 	protected void write(ByteBuf data, ScoreboardDisplay packet) {
 		data.writeByte(packet.getPosition());
-		LegacySerializer.writeString(data, packet.getName());
+		StringSerializer.writeShortUTF16BEString(data, packet.getName());
 	}
 
 }

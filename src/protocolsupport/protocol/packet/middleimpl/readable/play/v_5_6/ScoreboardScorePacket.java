@@ -7,10 +7,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.ScoreboardScore;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class ScoreboardScorePacket extends DefinedReadableMiddlePacket {
+public class ScoreboardScorePacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xCF;
 
@@ -25,10 +25,10 @@ public class ScoreboardScorePacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		itemName = LegacySerializer.readString(from);
+		itemName = StringSerializer.readShortUTF16BEString(from);
 		action = from.readByte();
 		if (action != 1) {
-			scoreName = LegacySerializer.readString(from);
+			scoreName = StringSerializer.readShortUTF16BEString(from);
 			value = from.readInt();
 		}
 	}

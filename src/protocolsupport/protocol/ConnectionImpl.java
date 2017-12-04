@@ -11,7 +11,7 @@ import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.netty.PacketHandler;
 import protocolsupport.api.Connection;
 import protocolsupport.api.ProtocolVersion;
-import protocolsupport.injector.NettyInjector.CustomHandlerBoss;
+import protocolsupport.injector.BungeeNettyChannelInjector.CustomHandlerBoss;
 import protocolsupport.utils.ReflectionUtils;
 
 public class ConnectionImpl extends Connection {

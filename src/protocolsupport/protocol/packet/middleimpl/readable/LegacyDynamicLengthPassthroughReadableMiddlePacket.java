@@ -7,24 +7,31 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
+import protocolsupport.protocol.serializer.MiscSerializer;
+import protocolsupport.utils.netty.Allocator;
 
-public abstract class FixedLengthPassthroughReadableMiddlePacket extends ReadableMiddlePacket {
+public abstract class LegacyDynamicLengthPassthroughReadableMiddlePacket extends ReadableMiddlePacket {
 
 	protected final int packetId;
-	protected final int length;
-	public FixedLengthPassthroughReadableMiddlePacket(int packetId, int length) {
+	public LegacyDynamicLengthPassthroughReadableMiddlePacket(int packetId) {
 		this.packetId = packetId;
-		this.length = length;
 	}
 
 	protected byte[] bytes;
 
 	@Override
 	public void read(ByteBuf data) {
-		bytes = new byte[length + 1];
-		bytes[0] = (byte) packetId;
-		data.readBytes(bytes, 1, length);
+		ByteBuf buffer = Allocator.allocateBuffer();
+		try {
+			buffer.writeByte(packetId);
+			readTo(data, buffer);
+			bytes = MiscSerializer.readAllBytes(buffer);
+		} finally {
+			buffer.release();
+		}
 	}
+
+	protected abstract void readTo(ByteBuf data, ByteBuf to);
 
 	@Override
 	public Collection<PacketWrapper> toNative() {

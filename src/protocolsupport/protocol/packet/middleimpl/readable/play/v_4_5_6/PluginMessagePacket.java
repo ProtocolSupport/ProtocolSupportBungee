@@ -7,10 +7,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.PluginMessage;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.ArraySerializer;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class PluginMessagePacket extends DefinedReadableMiddlePacket {
+public class PluginMessagePacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xFA;
 
@@ -23,8 +24,8 @@ public class PluginMessagePacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		tag = LegacySerializer.readString(from);
-		data = LegacySerializer.readArray(from);
+		tag = StringSerializer.readShortUTF16BEString(from);
+		data = ArraySerializer.readShortLengthByteArray(from);
 	}
 
 	@Override

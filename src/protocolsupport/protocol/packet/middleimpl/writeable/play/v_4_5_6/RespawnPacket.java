@@ -2,10 +2,10 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Respawn;
-import protocolsupport.protocol.packet.middleimpl.writeable.SingleWriteablePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class RespawnPacket extends SingleWriteablePacket<Respawn> {
+public class RespawnPacket extends LegacySingleWriteablePacket<Respawn> {
 
 	public RespawnPacket() {
 		super(0x09);
@@ -17,7 +17,7 @@ public class RespawnPacket extends SingleWriteablePacket<Respawn> {
 		data.writeByte(packet.getDifficulty());
 		data.writeByte(packet.getGameMode());
 		data.writeShort(256);
-		LegacySerializer.writeString(data, packet.getLevelType());
+		StringSerializer.writeShortUTF16BEString(data, packet.getLevelType());
 	}
 
 }

@@ -1,10 +1,10 @@
 package protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
-import protocolsupport.protocol.packet.middleimpl.readable.DynamicLengthPassthroughReadableMiddlePacket;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDynamicLengthPassthroughReadableMiddlePacket;
 import protocolsupport.protocol.serializer.TypeCopier;
 
-public class UpdateSignPacket extends DynamicLengthPassthroughReadableMiddlePacket {
+public class UpdateSignPacket extends LegacyDynamicLengthPassthroughReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0x82;
 
@@ -15,10 +15,10 @@ public class UpdateSignPacket extends DynamicLengthPassthroughReadableMiddlePack
 	@Override
 	protected void readTo(ByteBuf data, ByteBuf to) {
 		TypeCopier.copyBytes(data, to, Integer.BYTES + Short.BYTES + Integer.BYTES);
-		TypeCopier.copyString(data, to);
-		TypeCopier.copyString(data, to);
-		TypeCopier.copyString(data, to);
-		TypeCopier.copyString(data, to);
+		TypeCopier.copyShortUTF16BEString(data, to);
+		TypeCopier.copyShortUTF16BEString(data, to);
+		TypeCopier.copyShortUTF16BEString(data, to);
+		TypeCopier.copyShortUTF16BEString(data, to);
 	}
 
 }

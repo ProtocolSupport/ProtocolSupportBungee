@@ -7,10 +7,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Team;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class ScoreboardTeamPacket extends DefinedReadableMiddlePacket {
+public class ScoreboardTeamPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xD1;
 
@@ -28,19 +28,19 @@ public class ScoreboardTeamPacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		this.name = LegacySerializer.readString(from);
+		this.name = StringSerializer.readShortUTF16BEString(from);
 		this.mode = from.readByte();
 		if ((this.mode == 0) || (this.mode == 2)) {
-			this.displayName = LegacySerializer.readString(from);
-			this.prefix = LegacySerializer.readString(from);
-			this.suffix = LegacySerializer.readString(from);
+			this.displayName = StringSerializer.readShortUTF16BEString(from);
+			this.prefix = StringSerializer.readShortUTF16BEString(from);
+			this.suffix = StringSerializer.readShortUTF16BEString(from);
 			this.friendlyFire = from.readByte();
 		}
 		if ((this.mode == 0) || (this.mode == 3) || (this.mode == 4)) {
 			int len = from.readShort();
 			this.players = new String[len];
 			for (int i = 0; i < len; ++i) {
-				this.players[i] = LegacySerializer.readString(from);
+				this.players[i] = StringSerializer.readShortUTF16BEString(from);
 			}
 		}
 	}

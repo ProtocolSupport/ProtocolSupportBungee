@@ -2,6 +2,8 @@ package protocolsupport.protocol.packet.middleimpl.readable;
 
 import io.netty.buffer.ByteBuf;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
+import protocolsupport.protocol.serializer.MiscSerializer;
+import protocolsupport.utils.netty.Allocator;
 
 public abstract class DefinedReadableMiddlePacket extends ReadableMiddlePacket {
 
@@ -16,10 +18,19 @@ public abstract class DefinedReadableMiddlePacket extends ReadableMiddlePacket {
 	public void read(ByteBuf data) {
 		int readerIndex = data.readerIndex();
 		read0(data);
-		readbytes = new byte[(data.readerIndex() - readerIndex) + 1];
-		readbytes[0] = (byte) packetId;
-		data.getBytes(readerIndex, readbytes, 1, readbytes.length - 1);
+		ByteBuf buffer = Allocator.allocateBuffer();
+		try {
+			writePacketId(buffer);
+			int readBytes = data.readerIndex() - readerIndex;
+			data.readerIndex(readerIndex);
+			buffer.writeBytes(data, readBytes);
+			readbytes = MiscSerializer.readAllBytes(buffer);
+		} finally {
+			buffer.release();
+		}
 	}
+
+	protected abstract void writePacketId(ByteBuf to);
 
 	protected abstract void read0(ByteBuf from);
 

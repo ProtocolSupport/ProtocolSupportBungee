@@ -10,10 +10,10 @@ import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.EncryptionResponse;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.ArraySerializer;
 
-public class EncryptionResponsePacket extends DefinedReadableMiddlePacket {
+public class EncryptionResponsePacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xFC;
 
@@ -26,8 +26,8 @@ public class EncryptionResponsePacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		sharedSecret = LegacySerializer.readArray(from);
-		verifyToken = LegacySerializer.readArray(from);
+		sharedSecret = ArraySerializer.readShortLengthByteArray(from);
+		verifyToken = ArraySerializer.readShortLengthByteArray(from);
 	}
 
 	@Override

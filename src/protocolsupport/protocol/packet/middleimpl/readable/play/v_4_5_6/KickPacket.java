@@ -9,10 +9,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Kick;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class KickPacket extends DefinedReadableMiddlePacket {
+public class KickPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xFF;
 
@@ -24,7 +24,7 @@ public class KickPacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		message = ComponentSerializer.toString(new TextComponent(LegacySerializer.readString(from)));
+		message = ComponentSerializer.toString(new TextComponent(StringSerializer.readShortUTF16BEString(from)));
 	}
 
 	@Override

@@ -26,13 +26,13 @@ import protocolsupport.utils.ReflectionUtils;
 import protocolsupport.utils.netty.ChannelInitializer;
 
 //yep, thats our entry point, a single static field
-public class NettyInjector extends Varint21LengthFieldPrepender {
+public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 
-	private NettyInjector() {
+	private BungeeNettyChannelInjector() {
 	}
 
 	public static void inject() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		ReflectionUtils.setStaticFinalField(PipelineUtils.class.getDeclaredField("framePrepender"), new NettyInjector());
+		ReflectionUtils.setStaticFinalField(PipelineUtils.class.getDeclaredField("framePrepender"), new BungeeNettyChannelInjector());
 	}
 
 	@Override

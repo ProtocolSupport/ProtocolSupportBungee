@@ -7,10 +7,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.TabCompleteRequest;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class TabCompleteRequestPacket extends DefinedReadableMiddlePacket {
+public class TabCompleteRequestPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xCB;
 
@@ -22,7 +22,7 @@ public class TabCompleteRequestPacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		string = LegacySerializer.readString(from);
+		string = StringSerializer.readShortUTF16BEString(from);
 	}
 
 	@Override

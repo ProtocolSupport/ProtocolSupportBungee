@@ -8,10 +8,10 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class LoginPacket extends DefinedReadableMiddlePacket {
+public class LoginPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0x01;
 
@@ -29,7 +29,7 @@ public class LoginPacket extends DefinedReadableMiddlePacket {
 	@Override
 	protected void read0(ByteBuf from) {
 		entityId = from.readInt();
-		levelType = LegacySerializer.readString(from);
+		levelType = StringSerializer.readShortUTF16BEString(from);
 		gamemode = from.readByte();
 		dimension = from.readByte();
 		difficulty = from.readByte();

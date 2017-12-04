@@ -31,10 +31,10 @@ import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.TabCompl
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.UpdateSignPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.UseEntityPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_6.SteerVehiclePacket;
-import protocolsupport.protocol.pipeline.version.AbstractFromClientPacketDecoder;
+import protocolsupport.protocol.pipeline.version.LegacyAbstractFromClientPacketDecoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 
-public class FromClientPacketDecoder extends AbstractFromClientPacketDecoder {
+public class FromClientPacketDecoder extends LegacyAbstractFromClientPacketDecoder {
 
 	{
 		registry.register(Protocol.HANDSHAKE, LoginHandshakePacket.PACKET_ID, LoginHandshakePacket.class);

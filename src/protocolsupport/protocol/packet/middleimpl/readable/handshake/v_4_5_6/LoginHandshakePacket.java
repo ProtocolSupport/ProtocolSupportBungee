@@ -9,10 +9,10 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
 import protocolsupport.api.ProtocolVersion;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class LoginHandshakePacket extends DefinedReadableMiddlePacket {
+public class LoginHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0x02;
 
@@ -27,8 +27,8 @@ public class LoginHandshakePacket extends DefinedReadableMiddlePacket {
 	@Override
 	protected void read0(ByteBuf from) {
 		from.readByte();
-		username = LegacySerializer.readString(from);
-		host = LegacySerializer.readString(from);
+		username = StringSerializer.readShortUTF16BEString(from);
+		host = StringSerializer.readShortUTF16BEString(from);
 		port = from.readInt();
 	}
 

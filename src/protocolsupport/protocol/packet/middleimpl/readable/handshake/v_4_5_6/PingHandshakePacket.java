@@ -9,10 +9,10 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.StatusRequest;
 import protocolsupport.api.ProtocolVersion;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class PingHandshakePacket extends DefinedReadableMiddlePacket {
+public class PingHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xFE;
 
@@ -27,10 +27,10 @@ public class PingHandshakePacket extends DefinedReadableMiddlePacket {
 	protected void read0(ByteBuf from) {
 		from.readUnsignedByte();
 		from.readUnsignedByte();
-		LegacySerializer.readString(from);
+		StringSerializer.readShortUTF16BEString(from);
 		from.readUnsignedShort();
 		from.readUnsignedByte();
-		host = LegacySerializer.readString(from);
+		host = StringSerializer.readShortUTF16BEString(from);
 		port = from.readInt();
 	}
 

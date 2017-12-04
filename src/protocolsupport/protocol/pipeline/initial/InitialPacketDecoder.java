@@ -6,17 +6,25 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
+import net.md_5.bungee.netty.PipelineUtils;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.pipeline.ChannelHandlers;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.pipeline.common.PacketCompressor;
+import protocolsupport.protocol.pipeline.common.PacketDecompressor;
+import protocolsupport.protocol.pipeline.common.VarIntFrameDecoder;
+import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.protocol.utils.EncapsulatedProtocolInfo;
+import protocolsupport.protocol.utils.EncapsulatedProtocolUtils;
 import protocolsupport.utils.Utils;
 import protocolsupport.utils.netty.ReplayingDecoderBuffer;
 import protocolsupport.utils.netty.ReplayingDecoderBuffer.EOFSignal;
+
 
 public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
@@ -66,8 +74,11 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 		Channel channel = ctx.channel();
 		int firstbyte = replayingBuffer.readUnsignedByte();
 		try {
-			ProtocolVersion handshakeversion = null;
 			switch (firstbyte) {
+				case 0x00: { // encapsulated protocol handsake
+					setEncapsulatedProtocol(channel, EncapsulatedProtocolUtils.readInfo(replayingBuffer));
+					break;
+				}
 				case 0xFE: { //old ping or a part of varint length
 					if (replayingBuffer.readableBytes() == 0) {
 						//no more data received, it may be old protocol, or we just not received all data yet, so delay assuming as really old protocol for some time
@@ -79,54 +90,68 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 							scheduleTask(ctx, new SetProtocolTask(this, channel, ProtocolVersion.MINECRAFT_1_5_2), ping152delay, TimeUnit.MILLISECONDS);
 						} else if (
 							(replayingBuffer.readUnsignedByte() == 0xFA) &&
-							"MC|PingHost".equals(LegacySerializer.readString(replayingBuffer))
+							"MC|PingHost".equals(StringSerializer.readShortUTF16BEString(replayingBuffer))
 						) {
 							//definitely 1.6
 							replayingBuffer.readUnsignedShort();
-							handshakeversion = ProtocolUtils.get16PingVersion(replayingBuffer.readUnsignedByte());
+							setNativeProtocol(channel, ProtocolUtils.get16PingVersion(replayingBuffer.readUnsignedByte()));
 						} else {
 							//it was 1.7+ handshake after all
 							//hope that there won't be any handshake packet with id 0xFA in future because it will be more difficult to support it
-							handshakeversion = attemptDecodeNettyHandshake(replayingBuffer);
+							setNativeProtocol(channel, attemptDecodeNewHandshake(replayingBuffer));
 						}
 					} else {
 						//1.7+ handshake
-						handshakeversion = attemptDecodeNettyHandshake(replayingBuffer);
+						setNativeProtocol(channel, attemptDecodeNewHandshake(replayingBuffer));
 					}
 					break;
 				}
 				case 0x02: { // <= 1.6.4 handshake
-					handshakeversion = ProtocolUtils.readOldHandshake(replayingBuffer);
+					setNativeProtocol(channel, ProtocolUtils.readOldHandshake(replayingBuffer));
 					break;
 				}
 				default: { // >= 1.7 handshake
-					handshakeversion = attemptDecodeNettyHandshake(replayingBuffer);
+					setNativeProtocol(channel, attemptDecodeNewHandshake(replayingBuffer));
 					break;
 				}
-			}
-			//if we detected the protocol than we save it and process data
-			if (handshakeversion != null) {
-				setProtocol(channel, handshakeversion);
 			}
 		} catch (EOFSignal ex) {
 		}
 	}
 
-	protected void setProtocol(final Channel channel, ProtocolVersion version) {
-		ConnectionImpl connection = ConnectionImpl.getFromChannel(channel);
-		connection.setVersion(version);
-		channel.pipeline().remove(ChannelHandlers.INITIAL_DECODER);
+	private void setEncapsulatedProtocol(Channel channel, EncapsulatedProtocolInfo info) {
+		ConnectionImpl connection = prepare(channel, info.getVersion());
+		IPipeLineBuilder.BUILDERS.get(info.getVersion()).buildBungeeClientCodec(channel, connection);
+		ChannelPipeline pipeline = channel.pipeline();
+		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new VarIntFrameDecoder());
+		if (info.hasCompression()) {
+			pipeline.addAfter(PipelineUtils.FRAME_DECODER, "decompress", new PacketDecompressor());
+			pipeline.addAfter(PipelineUtils.FRAME_PREPENDER, "compress", new PacketCompressor(256));
+		}
+		channel.pipeline().firstContext().fireChannelRead(receivedData);
+	}
+
+	protected void setNativeProtocol(Channel channel, ProtocolVersion version) {
+		ConnectionImpl connection = prepare(channel, version);
 		IPipeLineBuilder builder = IPipeLineBuilder.BUILDERS.get(version);
 		if (builder != null) {
-			builder.buildBungeeClient(channel, connection);
+			builder.buildBungeeClientCodec(channel, connection);
+			builder.buildBungeeClientPipeLine(channel, connection);
 		}
 		receivedData.readerIndex(0);
 		channel.pipeline().firstContext().fireChannelRead(receivedData);
 	}
 
-	private static ProtocolVersion attemptDecodeNettyHandshake(ByteBuf bytebuf) {
+	protected ConnectionImpl prepare(Channel channel, ProtocolVersion version) {
+		channel.pipeline().remove(ChannelHandlers.INITIAL_DECODER);
+		ConnectionImpl connection = ConnectionImpl.getFromChannel(channel);
+		connection.setVersion(version);
+		return connection;
+	}
+
+	private static ProtocolVersion attemptDecodeNewHandshake(ByteBuf bytebuf) {
 		bytebuf.readerIndex(0);
-		return ProtocolUtils.readNettyHandshake(bytebuf.readSlice(VarNumberSerializer.readVarInt(bytebuf)));
+		return ProtocolUtils.readNewHandshake(bytebuf.readSlice(VarNumberSerializer.readVarInt(bytebuf)));
 	}
 
 }

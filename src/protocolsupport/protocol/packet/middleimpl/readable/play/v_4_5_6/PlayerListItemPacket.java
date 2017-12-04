@@ -9,10 +9,10 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Action;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Item;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class PlayerListItemPacket extends DefinedReadableMiddlePacket {
+public class PlayerListItemPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xC9;
 
@@ -25,7 +25,7 @@ public class PlayerListItemPacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		String username = LegacySerializer.readString(from);
+		String username = StringSerializer.readShortUTF16BEString(from);
 		boolean add = from.readBoolean();
 		int ping = from.readShort();
 		action = add ? Action.ADD_PLAYER : Action.REMOVE_PLAYER;

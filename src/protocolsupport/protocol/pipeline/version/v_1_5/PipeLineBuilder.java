@@ -9,9 +9,9 @@ import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.netty.PipelineUtils;
 import protocolsupport.api.Connection;
-import protocolsupport.injector.NettyInjector.CustomHandlerBoss;
-import protocolsupport.protocol.packet.handler.EntityRewriteDownstreamBridge;
-import protocolsupport.protocol.packet.handler.EntityRewriteUpstreamBridge;
+import protocolsupport.injector.BungeeNettyChannelInjector.CustomHandlerBoss;
+import protocolsupport.protocol.packet.handler.LegacyEntityRewriteDownstreamBridge;
+import protocolsupport.protocol.packet.handler.LegacyEntityRewriteUpstreamBridge;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameDecoder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameEncoder;
@@ -22,20 +22,25 @@ import protocolsupport.utils.ReflectionUtils;
 public class PipeLineBuilder extends IPipeLineBuilder {
 
 	@Override
-	public void buildBungeeClient(Channel channel, Connection connection) {
+	public void buildBungeeClientCodec(Channel channel, Connection connection) {
 		ChannelPipeline pipeline = channel.pipeline();
-		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new NoOpFrameDecoder());
-		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new NoOpFrameEncoder());
 		NetworkDataCache cache = new NetworkDataCache();
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new FromClientPacketDecoder(connection, cache));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToClientPacketEncoder(connection, cache));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
-				return (listener instanceof UpstreamBridge) ? new EntityRewriteUpstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
+				return (listener instanceof UpstreamBridge) ? new LegacyEntityRewriteUpstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 		});
+	}
+
+	@Override
+	public void buildBungeeClientPipeLine(Channel channel, Connection connection) {
+		ChannelPipeline pipeline = channel.pipeline();
+		pipeline.replace(PipelineUtils.FRAME_DECODER, PipelineUtils.FRAME_DECODER, new NoOpFrameDecoder());
+		pipeline.replace(PipelineUtils.FRAME_PREPENDER, PipelineUtils.FRAME_PREPENDER, new NoOpFrameEncoder());
 	}
 
 	@Override
@@ -44,7 +49,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.addFirst(new ChannelInboundHandlerAdapter() {
 			@Override
 			public void channelActive(ChannelHandlerContext ctx) throws Exception {
-				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(false, 0, connection.getVersion().getId()));
+				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(null, false, connection.getVersion()));
 				super.channelActive(ctx);
 			}
 		});
@@ -53,7 +58,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToServerPacketEncoder(connection, cache));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
-				return (listener instanceof DownstreamBridge) ? new EntityRewriteDownstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
+				return (listener instanceof DownstreamBridge) ? new LegacyEntityRewriteDownstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

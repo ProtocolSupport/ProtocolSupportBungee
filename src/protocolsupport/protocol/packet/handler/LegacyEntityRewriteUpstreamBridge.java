@@ -6,10 +6,10 @@ import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.protocol.PacketWrapper;
 import protocolsupport.protocol.entitymap.LegacyEntityMap;
 
-public class EntityRewriteUpstreamBridge extends UpstreamBridge {
+public class LegacyEntityRewriteUpstreamBridge extends UpstreamBridge {
 
 	private final UserConnection con;
-	public EntityRewriteUpstreamBridge(ProxyServer bungee, UserConnection con) {
+	public LegacyEntityRewriteUpstreamBridge(ProxyServer bungee, UserConnection con) {
 		super(bungee, con);
 		this.con = con;
 	}

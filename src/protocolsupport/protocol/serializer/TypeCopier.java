@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 public class TypeCopier {
 
-	public static void copyItemStack(ByteBuf from, ByteBuf to) {
+	public static void copyLegacyItemStack(ByteBuf from, ByteBuf to) {
 		int itemId = from.readShort();
 		to.writeShort(itemId);
 		if (itemId != -1) {
@@ -18,7 +18,7 @@ public class TypeCopier {
 		}
 	}
 
-	public static void copyString(ByteBuf from, ByteBuf to) {
+	public static void copyShortUTF16BEString(ByteBuf from, ByteBuf to) {
 		int length = from.readUnsignedShort();
 		to.writeShort(length);
 		copyBytes(from, to, length * 2);

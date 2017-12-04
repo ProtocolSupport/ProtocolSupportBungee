@@ -14,10 +14,10 @@ import protocolsupport.protocol.packet.middleimpl.readable.play.v_5_6.Scoreboard
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_5_6.ScoreboardObjectivePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_5_6.ScoreboardScorePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_5_6.ScoreboardTeamPacket;
-import protocolsupport.protocol.pipeline.version.AbstractFromServerPacketDecoder;
+import protocolsupport.protocol.pipeline.version.LegacyAbstractFromServerPacketDecoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 
-public class FromServerPacketDecoder extends AbstractFromServerPacketDecoder {
+public class FromServerPacketDecoder extends LegacyAbstractFromServerPacketDecoder {
 
 	{
 		registry.register(Protocol.GAME, KeepAlivePacket.PACKET_ID, KeepAlivePacket.class);

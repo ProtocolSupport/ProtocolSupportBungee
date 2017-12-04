@@ -15,7 +15,7 @@ import protocolsupport.protocol.utils.registry.PacketIdMiddleTransformerRegistry
 import protocolsupport.utils.netty.ReplayingDecoderBuffer;
 import protocolsupport.utils.netty.ReplayingDecoderBuffer.EOFSignal;
 
-public abstract class AbstractFromClientPacketDecoder extends MinecraftDecoder {
+public abstract class LegacyAbstractFromClientPacketDecoder extends MinecraftDecoder {
 
 	protected final PacketIdMiddleTransformerRegistry<ReadableMiddlePacket> registry = new PacketIdMiddleTransformerRegistry<>();
 
@@ -24,7 +24,7 @@ public abstract class AbstractFromClientPacketDecoder extends MinecraftDecoder {
 
 	protected Protocol protocol = Protocol.HANDSHAKE;
 
-	public AbstractFromClientPacketDecoder(Connection connection, NetworkDataCache cache) {
+	public LegacyAbstractFromClientPacketDecoder(Connection connection, NetworkDataCache cache) {
 		super(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_7_10.getId());
 		this.connection = connection;
 		this.cache = cache;

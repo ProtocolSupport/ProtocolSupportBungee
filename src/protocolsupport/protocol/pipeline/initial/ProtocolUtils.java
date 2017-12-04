@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 
 public class ProtocolUtils {
 
@@ -24,18 +25,14 @@ public class ProtocolUtils {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	protected static ProtocolVersion readOldHandshake(ByteBuf data) {
-		ProtocolVersion version = ProtocolVersion.fromId(data.readUnsignedByte());
-		return version != ProtocolVersion.UNKNOWN ? version : ProtocolVersion.MINECRAFT_LEGACY;
+		return ProtocolVersionsHelper.getOldProtocolVersion(data.readUnsignedByte());
 	}
 
-	@SuppressWarnings("deprecation")
-	protected static ProtocolVersion readNettyHandshake(ByteBuf data) {
+	protected static ProtocolVersion readNewHandshake(ByteBuf data) {
 		int packetId = VarNumberSerializer.readVarInt(data);
 		if (packetId == 0x00) {
-			ProtocolVersion version = ProtocolVersion.fromId(VarNumberSerializer.readVarInt(data));
-			return version != ProtocolVersion.UNKNOWN ? version : ProtocolVersion.MINECRAFT_FUTURE;
+			return ProtocolVersionsHelper.getNewProtocolVersion(VarNumberSerializer.readVarInt(data));
 		} else {
 			throw new DecoderException(packetId + " is not a valid packet id");
 		}

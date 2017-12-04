@@ -10,10 +10,10 @@ import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.PlayerLi
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.PluginMessagePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.RespawnPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.TabCompleteResponsePacket;
-import protocolsupport.protocol.pipeline.version.AbstractFromServerPacketDecoder;
+import protocolsupport.protocol.pipeline.version.LegacyAbstractFromServerPacketDecoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 
-public class FromServerPacketDecoder extends AbstractFromServerPacketDecoder {
+public class FromServerPacketDecoder extends LegacyAbstractFromServerPacketDecoder {
 
 	{
 		registry.register(Protocol.GAME, KeepAlivePacket.PACKET_ID, KeepAlivePacket.class);

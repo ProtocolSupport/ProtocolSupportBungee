@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.packet.Kick;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.utils.netty.Allocator;
 
 public class KickPacket extends WriteableMiddlePacket<Kick> {
@@ -20,7 +20,7 @@ public class KickPacket extends WriteableMiddlePacket<Kick> {
 	public static ByteBuf create(String message) {
 		ByteBuf data = Allocator.allocateBuffer();
 		data.writeByte(0xFF);
-		LegacySerializer.writeString(data, message);
+		StringSerializer.writeShortUTF16BEString(data, message);
 		return data;
 	}
 

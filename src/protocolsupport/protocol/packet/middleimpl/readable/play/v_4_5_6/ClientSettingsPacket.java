@@ -7,10 +7,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.ClientSettings;
-import protocolsupport.protocol.packet.middleimpl.readable.DefinedReadableMiddlePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class ClientSettingsPacket extends DefinedReadableMiddlePacket {
+public class ClientSettingsPacket extends LegacyDefinedReadableMiddlePacket {
 
 	public static final int PACKET_ID = 0xCC;
 
@@ -26,7 +26,7 @@ public class ClientSettingsPacket extends DefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		locale = LegacySerializer.readString(from);
+		locale = StringSerializer.readShortUTF16BEString(from);
 		viewDistance = from.readByte();
 		byte chatState = from.readByte();
 		chatFlags = (byte) (chatState & 7);

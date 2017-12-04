@@ -7,11 +7,15 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
+import com.google.gson.Gson;
+
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 public class Utils {
+
+	public static final Gson GSON = new Gson();
 
 	public static class LazyNewInstance<T> {
 		private final Class<? extends T> clazz;

@@ -2,10 +2,10 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
-import protocolsupport.protocol.packet.middleimpl.writeable.SingleWriteablePacket;
-import protocolsupport.protocol.serializer.LegacySerializer;
+import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
+import protocolsupport.protocol.serializer.StringSerializer;
 
-public class TabCompleteResponsePacket extends SingleWriteablePacket<TabCompleteResponse> {
+public class TabCompleteResponsePacket extends LegacySingleWriteablePacket<TabCompleteResponse> {
 
 	public TabCompleteResponsePacket() {
 		super(0xCB);
@@ -13,7 +13,7 @@ public class TabCompleteResponsePacket extends SingleWriteablePacket<TabComplete
 
 	@Override
 	protected void write(ByteBuf data, TabCompleteResponse packet) {
-		LegacySerializer.writeString(data, String.join("\u0000", packet.getCommands()));
+		StringSerializer.writeShortUTF16BEString(data, String.join("\u0000", packet.getCommands()));
 	}
 
 }

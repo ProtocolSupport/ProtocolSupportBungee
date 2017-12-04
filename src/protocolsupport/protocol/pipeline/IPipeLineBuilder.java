@@ -19,9 +19,12 @@ public abstract class IPipeLineBuilder {
 		BUILDERS.put(ProtocolVersion.MINECRAFT_1_5_2, v5builder);
 		BUILDERS.put(ProtocolVersion.MINECRAFT_1_5_1, v5builder);
 		BUILDERS.put(ProtocolVersion.MINECRAFT_1_5_2, new protocolsupport.protocol.pipeline.version.v_1_4.PipeLineBuilder());
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE, new protocolsupport.protocol.pipeline.version.v_pe.PipeLineBuilder());
 	}
 
-	public abstract void buildBungeeClient(Channel channel, Connection connection);
+	public abstract void buildBungeeClientCodec(Channel channel, Connection connection);
+
+	public abstract void buildBungeeClientPipeLine(Channel channel, Connection connection);
 
 	public abstract void buildBungeeServer(Channel channel, Connection connection);
 
