@@ -6,8 +6,6 @@ import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.Log
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.EncryptionResponsePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.LoginClientCommandPacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5.EntityActionPacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5.PlayerAbilitiesPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.AnimationPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.BlockDigPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.BlockPlacePacket;
@@ -30,6 +28,8 @@ import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.PluginMe
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.TabCompleteRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.UpdateSignPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.UseEntityPacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_6.EntityActionPacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_6.PlayerAbilitiesPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_6.SteerVehiclePacket;
 import protocolsupport.protocol.pipeline.version.LegacyAbstractFromClientPacketDecoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
