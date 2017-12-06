@@ -12,6 +12,7 @@ import protocolsupport.api.Connection;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CommandRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientChatPacket;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -23,6 +24,7 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 	{
 		registry.register(Protocol.HANDSHAKE, LoginHandshakePacket.PACKET_ID, LoginHandshakePacket.class);
 		registry.register(Protocol.GAME, FromClientChatPacket.PACKET_ID, FromClientChatPacket.class);
+		registry.register(Protocol.GAME, CommandRequestPacket.PACKET_ID, CommandRequestPacket.class);
 	}
 
 	protected final Connection connection;
