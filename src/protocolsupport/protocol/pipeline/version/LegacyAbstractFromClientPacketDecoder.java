@@ -40,26 +40,25 @@ public abstract class LegacyAbstractFromClientPacketDecoder extends MinecraftDec
 		this.protocol = protocol;
 	}
 
-	private final ByteBuf internal = Unpooled.buffer();
-	private final ReplayingDecoderBuffer replay = new ReplayingDecoderBuffer(internal);
+	private final ReplayingDecoderBuffer buffer = new ReplayingDecoderBuffer(Unpooled.buffer());
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> packets) throws Exception {
 		if (!buf.isReadable()) {
 			return;
 		}
-		internal.writeBytes(buf);
-		replay.markReaderIndex();
+		buffer.writeBytes(buf);
+		buffer.markReaderIndex();
 		try {
-			while (replay.isReadable()) {
-				replay.markReaderIndex();
-				ReadableMiddlePacket transformer = registry.getTransformer(protocol, replay.readUnsignedByte(), true);
-				transformer.read(replay);
+			while (buffer.isReadable()) {
+				buffer.markReaderIndex();
+				ReadableMiddlePacket transformer = registry.getTransformer(protocol, buffer.readUnsignedByte(), true);
+				transformer.read(buffer);
 				packets.addAll(transformer.toNative());
-				internal.discardSomeReadBytes();
+				buffer.discardReadBytes();
 			}
 		} catch (EOFSignal e) {
-			replay.resetReaderIndex();
+			buffer.resetReaderIndex();
 		}
 	}
 

@@ -1,4 +1,4 @@
-package protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe;
+package protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -26,8 +26,8 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 
 	@Override
 	protected void write(ByteBuf data, LoginRequest packet) {
-		//TODO: actually write a proper version id and jwt
-		data.writeInt(-1);
+		//TODO: actually write a proper and jwt
+		data.writeInt(connection.getVersion().getId());
 		ByteBuf jwtdata = Unpooled.buffer();
 		byte[] identitydata = createIdentityData(packet.getData()).getBytes(StandardCharsets.UTF_8);
 		jwtdata.writeIntLE(identitydata.length);

@@ -1,4 +1,4 @@
-package protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6;
+package protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.LoginRequest;

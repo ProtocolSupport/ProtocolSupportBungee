@@ -7,12 +7,12 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.LoginRequest;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.Connection;
+import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6.LoginRequestServerHandshakePacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe.HandshakeCachePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ClientCommandPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KeepAlivePacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.LoginRequestServerHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.PluginMessagePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ToServerChatPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6_pe.HandshakeCachePacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 

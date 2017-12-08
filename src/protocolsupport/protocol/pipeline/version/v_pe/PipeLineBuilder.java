@@ -9,7 +9,6 @@ import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.netty.PipelineUtils;
 import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.injector.BungeeNettyChannelInjector.CustomHandlerBoss;
 import protocolsupport.protocol.packet.handler.PEEntityRewriteDownstreamBridge;
 import protocolsupport.protocol.packet.handler.PEEntityRewriteUpstreamBridge;
@@ -48,7 +47,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.addFirst(new ChannelInboundHandlerAdapter() {
 			@Override
 			public void channelActive(ChannelHandlerContext ctx) throws Exception {
-				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(null, true, ProtocolVersion.MINECRAFT_PE));
+				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(null, true));
 				super.channelActive(ctx);
 			}
 		});

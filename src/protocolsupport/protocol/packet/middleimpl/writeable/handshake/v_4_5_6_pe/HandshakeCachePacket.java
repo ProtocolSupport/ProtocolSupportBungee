@@ -1,4 +1,4 @@
-package protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6_pe;
+package protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -17,7 +17,6 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.protocol.Varint21LengthFieldPrepender;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.pipeline.common.PacketCompressor;
 import protocolsupport.protocol.pipeline.common.PacketDecompressor;
 import protocolsupport.protocol.pipeline.common.VarIntFrameDecoder;
@@ -64,7 +63,7 @@ public class PEProxyNetworkManager extends SimpleChannelInboundHandler<ByteBuf> 
 					@Override
 					public void channelActive(ChannelHandlerContext ctx) throws Exception {
 						channel.pipeline().remove(this);
-						ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(remote, true, ProtocolVersion.MINECRAFT_PE)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+						ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(remote, true)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 						super.channelActive(ctx);
 					}
 				})

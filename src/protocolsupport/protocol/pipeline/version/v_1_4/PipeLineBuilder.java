@@ -49,7 +49,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.addFirst(new ChannelInboundHandlerAdapter() {
 			@Override
 			public void channelActive(ChannelHandlerContext ctx) throws Exception {
-				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(null, false, connection.getVersion()));
+				ctx.writeAndFlush(EncapsulatedProtocolUtils.createHandshake(null, false));
 				super.channelActive(ctx);
 			}
 		});

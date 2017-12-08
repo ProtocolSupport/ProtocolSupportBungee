@@ -11,8 +11,10 @@ import io.netty.util.Recycler.Handle;
 
 public class Decompressor {
 
+	private static final int maxPacketLength = 2 << 21;
+
 	private final Inflater inflater = new Inflater();
-	private final byte[] buffer = new byte[2 << 21]; //the maximum size of a pc message (21 bits)
+	private final byte[] buffer = new byte[maxPacketLength];
 	private final Handle<Decompressor> handle;
 	protected Decompressor(Handle<Decompressor> handle) {
 		this.handle = handle;
@@ -34,7 +36,7 @@ public class Decompressor {
 		try {
 			int length = inflater.inflate(buffer);
 			if (!inflater.finished()) {
-				throw new DecoderException(MessageFormat.format("Badly compressed packet - size is larger than protocol maximum of {0}", (int) Math.pow(2, 7 * 3)));
+				throw new DecoderException(MessageFormat.format("Badly compressed packet - size is larger than protocol maximum of {0}", maxPacketLength));
 			}
 			return Arrays.copyOf(buffer, length);
 		} catch (DataFormatException e) {
