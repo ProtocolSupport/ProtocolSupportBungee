@@ -21,8 +21,8 @@ public class FromClientChatPacket extends PEDefinedReadableMiddlePacket {
 
 	protected String message;
 
-	public FromClientChatPacket(int packetId) {
-		super(packetId);
+	public FromClientChatPacket() {
+		super(PACKET_ID);
 	}
 
 	@Override
