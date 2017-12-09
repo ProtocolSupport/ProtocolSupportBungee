@@ -1,6 +1,7 @@
 package protocolsupport.injector.pe;
 
 import io.netty.channel.Channel;
+import protocolsupport.api.ProtocolVersion;
 import raknetserver.pipeline.raknet.RakNetPacketConnectionEstablishHandler.PingHandler;
 
 public class PENetServerConstants {
@@ -12,7 +13,7 @@ public class PENetServerConstants {
 			return String.join(";",
 				"MCPE",
 				"ProtocolSupportBungeePE",
-				String.valueOf(CURRENT_PROTOCOL), POCKET_VERSION,
+				String.valueOf(ProtocolVersion.MINECRAFT_PE.getId()), POCKET_VERSION,
 				"0", "1"
 			);
 		}
@@ -23,8 +24,6 @@ public class PENetServerConstants {
 	};
 
 	public static final int USER_PACKET_ID = 0xFE;
-	public static final int TEST_PORT = 2222;
-	public static final int CURRENT_PROTOCOL = 141;
-	public static final String POCKET_VERSION = "1.2.5.15";
+	public static final String POCKET_VERSION = "1.2.6";
 
 }
