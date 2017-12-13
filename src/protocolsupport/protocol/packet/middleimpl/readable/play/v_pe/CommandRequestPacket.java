@@ -1,5 +1,8 @@
 package protocolsupport.protocol.packet.middleimpl.readable.play.v_pe;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
@@ -8,9 +11,6 @@ import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMidd
 import protocolsupport.protocol.serializer.MiscSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class CommandRequestPacket extends PEDefinedReadableMiddlePacket {
 
@@ -41,7 +41,7 @@ public class CommandRequestPacket extends PEDefinedReadableMiddlePacket {
 		int type = VarNumberSerializer.readVarInt(from); // type
 		MiscSerializer.readUUIDLE(from); // UUID
 		StringSerializer.readVarIntUTF8String(from); // request ID
-		if (type == ORIGIN_DEV_CONSOLE || type == ORIGIN_TEST) {
+		if ((type == ORIGIN_DEV_CONSOLE) || (type == ORIGIN_TEST)) {
 			VarNumberSerializer.readSVarLong(from); // ???
 		}
 		from.readBoolean(); // isInternal
