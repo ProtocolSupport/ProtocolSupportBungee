@@ -1,4 +1,4 @@
-package protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe;
+package protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_pe;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

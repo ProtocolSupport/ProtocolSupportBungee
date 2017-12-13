@@ -1,24 +1,12 @@
 package protocolsupport.utils.netty;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
-import io.netty.handler.codec.DecoderException;
 import io.netty.util.Recycler;
 import io.netty.util.Recycler.Handle;
 
 public class Decompressor {
-
-	private static final int maxPacketLength = 2 << 21;
-
-	private final Inflater inflater = new Inflater();
-	private final byte[] buffer = new byte[maxPacketLength];
-	private final Handle<Decompressor> handle;
-	protected Decompressor(Handle<Decompressor> handle) {
-		this.handle = handle;
-	}
 
 	private static final Recycler<Decompressor> recycler = new Recycler<Decompressor>() {
 		@Override
@@ -31,29 +19,31 @@ public class Decompressor {
 		return recycler.get();
 	}
 
-	public byte[] decompress(byte[] input) {
-		inflater.setInput(input);
+	private final Inflater inflater = new Inflater();
+	private final Handle<Decompressor> handle;
+	protected Decompressor(Handle<Decompressor> handle) {
+		this.handle = handle;
+	}
+
+	public byte[] decompress(byte[] input, int uncompressedlength) throws DataFormatException {
+		byte[] uncompressed = new byte[uncompressedlength];
 		try {
-			int length = inflater.inflate(buffer);
-			if (!inflater.finished()) {
-				throw new DecoderException(MessageFormat.format("Badly compressed packet - size is larger than protocol maximum of {0}", maxPacketLength));
-			}
-			return Arrays.copyOf(buffer, length);
-		} catch (DataFormatException e) {
-			throw new RuntimeException(e);
+			inflater.setInput(input);
+			inflater.inflate(uncompressed);
 		} finally {
 			inflater.reset();
 		}
+		return uncompressed;
 	}
 
 	public void recycle() {
 		handle.recycle(this);
 	}
 
-	public static byte[] decompressStatic(byte[] input) {
+	public static byte[] decompressStatic(byte[] input, int uncompressedlength) throws DataFormatException {
 		Decompressor decompressor = create();
 		try {
-			return decompressor.decompress(input);
+			return decompressor.decompress(input, uncompressedlength);
 		} finally {
 			decompressor.recycle();
 		}

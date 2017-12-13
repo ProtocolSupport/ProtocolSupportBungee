@@ -9,7 +9,7 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe.HandshakeCachePacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe.LoginRequestServerHandshakePacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_pe.LoginRequestServerHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.ToServerChatPacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;

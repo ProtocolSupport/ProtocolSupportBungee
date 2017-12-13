@@ -3,7 +3,6 @@ package protocolsupport.protocol.pipeline.common;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,17 +11,18 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
 import protocolsupport.protocol.serializer.MiscSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.utils.netty.Decompressor;
 
 public class PacketDecompressor extends ByteToMessageDecoder {
 
-	private static final int maxPacketLength = (int) Math.pow(2, 7 * 3);
+	private static final int maxPacketLength = 2 << 21;
 
-	private final Inflater inflater = new Inflater();
+	private final Decompressor decompressor = Decompressor.create();
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
-		inflater.end();
+		decompressor.recycle();
 	}
 
 	@Override
@@ -37,11 +37,7 @@ public class PacketDecompressor extends ByteToMessageDecoder {
 			if (uncompressedlength > maxPacketLength) {
 				throw new DecoderException(MessageFormat.format("Badly compressed packet - size of {0} is larger than protocol maximum of {1}", uncompressedlength, maxPacketLength));
 			}
-			inflater.setInput(MiscSerializer.readAllBytes(from));
-			byte[] uncompressed = new byte[uncompressedlength];
-			inflater.inflate(uncompressed);
-			list.add(Unpooled.wrappedBuffer(uncompressed));
-			inflater.reset();
+			list.add(Unpooled.wrappedBuffer(decompressor.decompress(MiscSerializer.readAllBytes(from), uncompressedlength)));
 		}
 	}
 
