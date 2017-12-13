@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
@@ -14,6 +15,7 @@ import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
@@ -42,6 +44,7 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 			new InputStreamReader(new ByteBufInputStream(logindata, logindata.readIntLE())),
 			new TypeToken<Map<String, List<String>>>() {}.getType()
 		);
+		UUID clientUUID = null;
 		for (String c : map.get("chain")) {
 			JsonObject chainMap = decodeToken(c);
 			if ((chainMap != null) && chainMap.has("extraData")) {
@@ -49,8 +52,15 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 				if (extra.has("displayName")) {
 					username = extra.get("displayName").getAsString();
 				}
+				if (extra.has("identity")) {
+					clientUUID = UUID.fromString(extra.get("identity").getAsString());
+				}
 			}
 		}
+		if (clientUUID == null) {
+			throw new DecoderException("Client uuid (identity) is missing");
+		}
+		cache.peClientUUID = clientUUID;
 		//skip skin data
 		logindata.skipBytes(logindata.readIntLE());
 	}

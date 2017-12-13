@@ -31,6 +31,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 	public void buildBungeeClientCodec(Channel channel, Connection connection) {
 		ChannelPipeline pipeline = channel.pipeline();
 		NetworkDataCache cache = new NetworkDataCache();
+		cache.storeIn(connection);
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new FromClientPacketDecoder(connection, cache));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToClientPacketEncoder(connection, cache));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
@@ -57,7 +58,6 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 				super.channelActive(ctx);
 			}
 		});
-		NetworkDataCache cache = new NetworkDataCache();
 		pipeline.addFirst("idlestatehandler", new IdleStateHandler(0, 5, 0));
 		pipeline.addAfter("idlestatehandler", "keepalive", new ChannelInboundHandlerAdapter() {
 			@Override
@@ -71,6 +71,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 				}
 			}
 		});
+		NetworkDataCache cache = NetworkDataCache.getFrom(connection);
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new FromServerPacketDecoder(connection, cache));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToServerPacketEncoder(connection, cache));
 		pipeline.addAfter(PipelineUtils.FRAME_PREPENDER, "compress", new PacketCompressor(256));

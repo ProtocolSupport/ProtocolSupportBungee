@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
@@ -44,7 +43,7 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 		JsonObject datachain = new JsonObject();
 		JsonObject extradata = new JsonObject();
 		extradata.addProperty("displayName", username);
-		extradata.addProperty("identity", UUID.randomUUID().toString());
+		extradata.addProperty("identity", cache.peClientUUID.toString());
 		datachain.add("extraData", extradata);
 		chainmap.put("chain", Collections.singletonList(encodeToken(datachain)));
 		return Utils.GSON.toJson(chainmap, new TypeToken<Map<String, List<String>>>() {}.getType());
