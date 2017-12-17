@@ -35,6 +35,13 @@ public abstract class Connection {
 	public abstract InetSocketAddress getAddress();
 
 	/**
+	 * Changes remote address <br>
+	 * This address will be available as parameter for ProtocolSupportAPI until connection close
+	 * @param newRemote new remote address
+	 */
+	public abstract void changeAddress(InetSocketAddress newRemote);
+
+	/**
 	 * Returns {@link ProxiedPlayer} object if possible
 	 * @return {@link ProxiedPlayer} object or null
 	 */
