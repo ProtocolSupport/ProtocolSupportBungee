@@ -22,6 +22,7 @@ import net.md_5.bungee.protocol.packet.LoginRequest;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.ArraySerializer;
+import protocolsupport.protocol.serializer.MiscSerializer;
 import protocolsupport.utils.Utils;
 
 public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
@@ -29,6 +30,8 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 	public static final int PACKET_ID = 1;
 
 	private String username;
+	protected String host;
+	protected int port;
 
 	public LoginHandshakePacket() {
 		super(PACKET_ID);
@@ -61,14 +64,26 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 			throw new DecoderException("Client uuid (identity) is missing");
 		}
 		cache.peClientUUID = clientUUID;
-		//skip skin data
-		logindata.skipBytes(logindata.readIntLE());
+		String[] additionaldata = new String(MiscSerializer.readBytes(logindata, logindata.readIntLE())).split("[.]");
+		if (additionaldata.length >= 2) {
+			@SuppressWarnings("serial")
+			Map<String, String> clientinfo = Utils.GSON.fromJson(
+				new InputStreamReader(new ByteArrayInputStream(Base64.getDecoder().decode(additionaldata[1]))),
+				new TypeToken<Map<String, String>>() {}.getType()
+			);
+			String rserveraddress = clientinfo.get("ServerAddress");
+			if (rserveraddress != null) {
+				String[] rserveraddresssplit = rserveraddress.split("[:]");
+				host = rserveraddresssplit[0];
+				port = Integer.parseInt(rserveraddresssplit[1]);
+			}
+		}
 	}
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
 		return Arrays.asList(
-			new PacketWrapper(new Handshake(ProtocolVersion.MINECRAFT_1_7_10.getId(), "", 1, 2), Unpooled.wrappedBuffer(readbytes)),
+			new PacketWrapper(new Handshake(ProtocolVersion.MINECRAFT_1_7_10.getId(), host, port, 2), Unpooled.wrappedBuffer(readbytes)),
 			new PacketWrapper(new LoginRequest(username), Unpooled.EMPTY_BUFFER)
 		);
 	}

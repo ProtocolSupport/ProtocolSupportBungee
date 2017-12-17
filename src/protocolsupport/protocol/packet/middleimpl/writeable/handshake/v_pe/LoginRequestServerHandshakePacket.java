@@ -25,7 +25,7 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 
 	@Override
 	protected void write(ByteBuf data, LoginRequest packet) {
-		//TODO: actually write a proper and jwt
+		//TODO: actually write a proper jwt
 		data.writeInt(connection.getVersion().getId());
 		ByteBuf jwtdata = Unpooled.buffer();
 		byte[] identitydata = createIdentityData(packet.getData()).getBytes(StandardCharsets.UTF_8);
@@ -50,7 +50,9 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 	}
 
 	private String createAuxData() {
-		return "{}";
+		JsonObject clientinfo = new JsonObject();
+		clientinfo.addProperty("ServerAddress", cache.serverHandshake.getHost() + ":" + cache.serverHandshake.getPort());
+		return encodeToken(clientinfo);
 	}
 
 	private String encodeToken(JsonObject token) {
