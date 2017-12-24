@@ -83,6 +83,9 @@ shadowJar {
 	exclude 'META-INF/**'
 	relocate 'org.apache', 'protocolsupport.libs.org.apache'
 	relocate 'com.nimbusds', 'protocolsupport.libs.com.nimbusds'
+	relocate 'org.objectweb', 'protocolsupport.libs.org.objectweb'
+	relocate 'net.minidev', 'protocolsupport.libs.net.minidev'
+	relocate 'net.jcip', 'protocolsupport.libs.net.jcip'
 	relocate 'raknetserver', 'protocolsupport.libs.raknetserver'
 	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
 }
