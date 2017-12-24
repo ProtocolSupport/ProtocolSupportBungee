@@ -15,8 +15,8 @@ public class LoginRequestServerHandshakePacket extends LegacySingleWriteablePack
 	protected void write(ByteBuf data, LoginRequest packet) {
 		data.writeByte(connection.getVersion().getId());
 		StringSerializer.writeShortUTF16BEString(data, packet.getData());
-		StringSerializer.writeShortUTF16BEString(data, cache.serverHandshake.getHost());
-		data.writeInt(cache.serverHandshake.getPort());
+		StringSerializer.writeShortUTF16BEString(data, cache.getServerHandshake().getHost());
+		data.writeInt(cache.getServerHandshake().getPort());
 	}
 
 }

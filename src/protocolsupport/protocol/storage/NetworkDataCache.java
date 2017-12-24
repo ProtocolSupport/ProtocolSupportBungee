@@ -19,7 +19,15 @@ public class NetworkDataCache {
 		connection.addMetadata(METADATA_KEY, this);
 	}
 
-	public Handshake serverHandshake;
+	private Handshake serverHandshake;
+
+	public void setServerHandshake(Handshake serverHandshake) {
+		this.serverHandshake = serverHandshake;
+	}
+
+	public Handshake getServerHandshake() {
+		return serverHandshake;
+	}
 
 	protected String locale = "en_us";
 

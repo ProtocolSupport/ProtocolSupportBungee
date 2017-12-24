@@ -11,7 +11,7 @@ public class HandshakeCachePacket extends WriteableMiddlePacket<Handshake> {
 
 	@Override
 	public Collection<ByteBuf> toData(Handshake packet) {
-		cache.serverHandshake = packet;
+		cache.setServerHandshake(packet);
 		return Collections.emptyList();
 	}
 
