@@ -64,6 +64,7 @@ dependencies {
 	shadow files(new File(dllibs, 'BungeeCord.jar'))
 	compile files(new File(dllibs, 'RakNetServer.jar'))
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
 }
 
 shadowJar {
@@ -81,6 +82,7 @@ shadowJar {
 
 	exclude 'META-INF/**'
 	relocate 'org.apache', 'protocolsupport.libs.org.apache'
+	relocate 'com.nimbusds', 'protocolsupport.libs.com.nimbusds'
 	relocate 'raknetserver', 'protocolsupport.libs.raknetserver'
 	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
 }

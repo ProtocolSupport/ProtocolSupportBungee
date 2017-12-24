@@ -43,7 +43,7 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 		JsonObject datachain = new JsonObject();
 		JsonObject extradata = new JsonObject();
 		extradata.addProperty("displayName", username);
-		extradata.addProperty("identity", cache.peClientUUID.toString());
+		extradata.addProperty("identity", cache.getPEClientUUID().toString());
 		datachain.add("extraData", extradata);
 		chainmap.put("chain", Collections.singletonList(encodeToken(datachain)));
 		return Utils.GSON.toJson(chainmap, new TypeToken<Map<String, List<String>>>() {}.getType());
