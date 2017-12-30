@@ -5,9 +5,6 @@ import java.util.Collections;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.protocol.AbstractPacketHandler;
-import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.EncryptionResponse;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
@@ -32,34 +29,7 @@ public class EncryptionResponsePacket extends LegacyDefinedReadableMiddlePacket 
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
-		return Collections.singletonList(new PacketWrapper(
-			new EncryptionResponse(sharedSecret, verifyToken) {
-				@Override
-				public void handle(AbstractPacketHandler handler) throws Exception {
-					((InitialHandler) handler).unsafe().sendPacket(new FakeToClientEncrpytionResponse());
-					handler.handle(this);
-				}
-			},
-			Unpooled.wrappedBuffer(readbytes)
-		));
-	}
-
-	public static class FakeToClientEncrpytionResponse extends DefinedPacket {
-		@Override
-		public String toString() {
-			return getClass().getSimpleName()+"()";
-		}
-		@Override
-		public void handle(AbstractPacketHandler handler) throws Exception {
-		}
-		@Override
-		public int hashCode() {
-			return 0;
-		}
-		@Override
-		public boolean equals(Object other) {
-			return other instanceof FakeToClientEncrpytionResponse;
-		}
+		return Collections.singletonList(new PacketWrapper(new EncryptionResponse(sharedSecret, verifyToken), Unpooled.wrappedBuffer(readbytes)));
 	}
 
 }

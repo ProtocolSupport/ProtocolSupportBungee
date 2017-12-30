@@ -16,10 +16,8 @@ import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import net.md_5.bungee.protocol.packet.Team;
 import protocolsupport.api.Connection;
-import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.EncryptionResponsePacket.FakeToClientEncrpytionResponse;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.EncryptionRequestPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.FakeToClientEncryptionReponsePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KeepAlivePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KickPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.LoginPacket;
@@ -40,7 +38,6 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 
 	{
 		registry.register(EncryptionRequest.class, EncryptionRequestPacket.class);
-		registry.register(FakeToClientEncrpytionResponse.class, FakeToClientEncryptionReponsePacket.class);
 		registry.register(LoginSuccess.class, NoopWriteablePacket.class);
 		registry.register(Login.class, LoginPacket.class);
 		registry.register(StatusResponse.class, StatusResponsePacket.class);
