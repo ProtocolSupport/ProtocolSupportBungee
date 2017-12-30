@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.connection.InitialHandler;
@@ -17,6 +18,7 @@ import net.md_5.bungee.protocol.Varint21LengthFieldPrepender;
 import protocolsupport.api.Connection;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.protocol.ConnectionImpl;
+import protocolsupport.protocol.packet.handler.PSInitialHandler;
 import protocolsupport.protocol.pipeline.ChannelHandlers;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
 import protocolsupport.protocol.pipeline.common.LogicHandler;
@@ -62,6 +64,9 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection));
 				pipeline.remove(PipelineUtils.LEGACY_DECODER);
 				pipeline.remove(PipelineUtils.LEGACY_KICKER);
+				PSInitialHandler initialhandler = new PSInitialHandler(BungeeCord.getInstance(), channel.attr(PipelineUtils.LISTENER).get(), connection);
+				boss.setHandler(initialhandler);
+				connection.setInitialHandler(initialhandler);
 			} else if (handler instanceof ServerConnector) {//bungee to server connection
 				UserConnection userconn = ReflectionUtils.getFieldValue(handler, "user");
 				Connection connection = ProtocolSupportAPI.getConnection(userconn);
