@@ -72,7 +72,7 @@ public class PSInitialHandler extends InitialHandler {
 	protected UUID uuid;
 
 	@Override
-	public void setUniqueId(final UUID uuid) {
+	public void setUniqueId(UUID uuid) {
 		Preconditions.checkState((state == LoginState.HELLO) || (state == LoginState.ONLINEMODERESOLVE), "Can only set uuid while state is username");
 		Preconditions.checkState(!isOnlineMode(), "Can only set uuid when online mode is false");
 		this.uuid = uuid;
@@ -85,7 +85,7 @@ public class PSInitialHandler extends InitialHandler {
 
 	@Override
 	public String getUUID() {
-		return this.uuid.toString().replaceAll("-", "");
+		return uuid.toString().replaceAll("-", "");
 	}
 
 	protected String username;
@@ -102,26 +102,26 @@ public class PSInitialHandler extends InitialHandler {
 		Preconditions.checkState(state == LoginState.HELLO, "Not expecting USERNAME");
 		state = LoginState.ONLINEMODERESOLVE;
 		username = loginRequest.getData();
-		if (this.getName().contains(".")) {
-			this.disconnect(BungeeCord.getInstance().getTranslation("name_invalid"));
+		if (getName().contains(".")) {
+			disconnect(BungeeCord.getInstance().getTranslation("name_invalid"));
 			return;
 		}
-		if (this.getName().length() > 16) {
-			this.disconnect(BungeeCord.getInstance().getTranslation("name_too_long"));
+		if (getName().length() > 16) {
+			disconnect(BungeeCord.getInstance().getTranslation("name_too_long"));
 			return;
 		}
-		final int limit = BungeeCord.getInstance().config.getPlayerLimit();
+		int limit = BungeeCord.getInstance().config.getPlayerLimit();
 		if ((limit > 0) && (BungeeCord.getInstance().getOnlineCount() > limit)) {
-			this.disconnect(BungeeCord.getInstance().getTranslation("proxy_full"));
+			disconnect(BungeeCord.getInstance().getTranslation("proxy_full"));
 			return;
 		}
-		if (!this.isOnlineMode() && (BungeeCord.getInstance().getPlayer(this.getUniqueId()) != null)) {
-			this.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
+		if (!isOnlineMode() && (BungeeCord.getInstance().getPlayer(getUniqueId()) != null)) {
+			disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 			return;
 		}
 		BungeeCord.getInstance().getPluginManager().callEvent(new PreLoginEvent(this, new Callback<PreLoginEvent>() {
 			@Override
-			public void done(final PreLoginEvent result, final Throwable error) {
+			public void done(PreLoginEvent result, Throwable error) {
 				if (result.isCancelled()) {
 					disconnect(result.getCancelReasonComponents());
 					return;
@@ -183,7 +183,7 @@ public class PSInitialHandler extends InitialHandler {
 	}
 
 	@Override
-	public void handle(final EncryptionResponse encryptResponse) throws Exception {
+	public void handle(EncryptionResponse encryptResponse) throws Exception {
 		Preconditions.checkState(state == LoginState.KEY, "Not expecting ENCRYPT");
 		state = LoginState.AUTHENTICATING;
 		SecretKey sharedKey = EncryptionUtil.getSecret(encryptResponse, request);
@@ -193,19 +193,19 @@ public class PSInitialHandler extends InitialHandler {
 			BungeeCipher encrypt = EncryptionUtil.getCipher(true, sharedKey);
 			channel.addBefore(PipelineUtils.FRAME_PREPENDER, PipelineUtils.ENCRYPT_HANDLER, new CipherEncoder(encrypt));
 		}
-		String encName = URLEncoder.encode(this.getName(), "UTF-8");
+		String encName = URLEncoder.encode(getName(), "UTF-8");
 		MessageDigest sha = MessageDigest.getInstance("SHA-1");
-		for (final byte[] bit : new byte[][] { this.request.getServerId().getBytes("ISO_8859_1"), sharedKey.getEncoded(), EncryptionUtil.keys.getPublic().getEncoded() }) {
+		for (byte[] bit : new byte[][] { request.getServerId().getBytes("ISO_8859_1"), sharedKey.getEncoded(), EncryptionUtil.keys.getPublic().getEncoded() }) {
 			sha.update(bit);
 		}
 		String encodedHash = URLEncoder.encode(new BigInteger(sha.digest()).toString(16), "UTF-8");
-		String preventProxy = BungeeCord.getInstance().config.isPreventProxyConnections() ? ("&ip=" + URLEncoder.encode(this.getAddress().getAddress().getHostAddress(), "UTF-8")) : "";
+		String preventProxy = BungeeCord.getInstance().config.isPreventProxyConnections() ? ("&ip=" + URLEncoder.encode(getAddress().getAddress().getHostAddress(), "UTF-8")) : "";
 		String authURL = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" + encName + "&serverId=" + encodedHash + preventProxy;
 		Callback<String> handler = new Callback<String>() {
 			@Override
-			public void done(final String result, final Throwable error) {
+			public void done(String result, Throwable error) {
 				if (error == null) {
-					final LoginResult obj = BungeeCord.getInstance().gson.fromJson(result, LoginResult.class);
+					LoginResult obj = BungeeCord.getInstance().gson.fromJson(result, LoginResult.class);
 					if ((obj != null) && (obj.getId() != null)) {
 						loginProfile = obj;
 						username = obj.getName();
@@ -248,7 +248,7 @@ public class PSInitialHandler extends InitialHandler {
 
 	@SuppressWarnings("deprecation")
 	protected void finishLogin() {
-		offlineuuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.getName()).getBytes(StandardCharsets.UTF_8));
+		offlineuuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + getName()).getBytes(StandardCharsets.UTF_8));
 		if ((isOnlineMode() && !useOnlineModeUUID) || (uuid == null)) {
 			uuid = offlineuuid;
 		}
@@ -256,24 +256,24 @@ public class PSInitialHandler extends InitialHandler {
 			uuid = forcedUUID;
 		}
 		if (isOnlineMode()) {
-			final ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(this.getName());
+			ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
 			if (oldName != null) {
 				oldName.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 			}
-			final ProxiedPlayer oldID = BungeeCord.getInstance().getPlayer(this.getUniqueId());
+			ProxiedPlayer oldID = BungeeCord.getInstance().getPlayer(getUniqueId());
 			if (oldID != null) {
 				oldID.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 			}
 		} else {
-			final ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(this.getName());
+			ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
 			if (oldName != null) {
-				this.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
+				disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 				return;
 			}
 		}
-		final Callback<LoginEvent> complete = new Callback<LoginEvent>() {
+		Callback<LoginEvent> complete = new Callback<LoginEvent>() {
 			@Override
-			public void done(final LoginEvent result, final Throwable error) {
+			public void done(LoginEvent result, Throwable error) {
 				if (result.isCancelled()) {
 					disconnect(result.getCancelReasonComponents());
 					return;
