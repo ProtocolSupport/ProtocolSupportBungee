@@ -10,8 +10,8 @@ import net.md_5.bungee.connection.UpstreamBridge;
 import net.md_5.bungee.netty.PipelineUtils;
 import protocolsupport.api.Connection;
 import protocolsupport.injector.BungeeNettyChannelInjector.CustomHandlerBoss;
-import protocolsupport.protocol.packet.handler.LegacyEntityRewriteDownstreamBridge;
-import protocolsupport.protocol.packet.handler.LegacyEntityRewriteUpstreamBridge;
+import protocolsupport.protocol.packet.handler.EntityRewriteDownstreamBridge;
+import protocolsupport.protocol.packet.handler.EntityRewriteUpstreamBridge;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameDecoder;
 import protocolsupport.protocol.pipeline.common.NoOpFrameEncoder;
@@ -30,7 +30,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToClientPacketEncoder(connection, cache));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
-				return (listener instanceof UpstreamBridge) ? new LegacyEntityRewriteUpstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
+				return (listener instanceof UpstreamBridge) ? new EntityRewriteUpstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
@@ -59,7 +59,7 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToServerPacketEncoder(connection, cache));
 		pipeline.get(CustomHandlerBoss.class).setPacketHandlerChangeListener(listener -> {
 			try {
-				return (listener instanceof DownstreamBridge) ? new LegacyEntityRewriteDownstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
+				return (listener instanceof DownstreamBridge) ? new EntityRewriteDownstreamBridge(ProxyServer.getInstance(), ReflectionUtils.getFieldValue(listener, "con")) : listener;
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

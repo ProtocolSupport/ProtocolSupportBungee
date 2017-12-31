@@ -58,15 +58,14 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 				} else {
 					pipeline.addFirst(ChannelHandlers.INITIAL_DECODER, new InitialPacketDecoder());
 				}
-				ConnectionImpl connection = new ConnectionImpl(boss);
+				PSInitialHandler initialhandler = new PSInitialHandler(BungeeCord.getInstance(), channel.attr(PipelineUtils.LISTENER).get());
+				ConnectionImpl connection = new ConnectionImpl(boss, initialhandler);
 				connection.storeInChannel(channel);
 				ProtocolStorage.addConnection(channel.remoteAddress(), connection);
 				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection));
 				pipeline.remove(PipelineUtils.LEGACY_DECODER);
 				pipeline.remove(PipelineUtils.LEGACY_KICKER);
-				PSInitialHandler initialhandler = new PSInitialHandler(BungeeCord.getInstance(), channel.attr(PipelineUtils.LISTENER).get(), connection);
 				boss.setHandler(initialhandler);
-				connection.setInitialHandler(initialhandler);
 			} else if (handler instanceof ServerConnector) {//bungee to server connection
 				UserConnection userconn = ReflectionUtils.getFieldValue(handler, "user");
 				Connection connection = ProtocolSupportAPI.getConnection(userconn);

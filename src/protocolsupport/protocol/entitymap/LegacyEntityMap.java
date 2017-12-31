@@ -3,7 +3,7 @@ package protocolsupport.protocol.entitymap;
 import io.netty.buffer.ByteBuf;
 
 //TODO: rewrite this as soon as i can actually remember how it works
-public class LegacyEntityMap {
+public class LegacyEntityMap extends EntityMap {
 
 	private static boolean[] rewriteBasic = new boolean[256];
 
@@ -33,7 +33,8 @@ public class LegacyEntityMap {
 		rewriteBasic[0x47] = true; // SpawnGlobalEntity
 	}
 
-	public static void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
+	@Override
+	public void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
 		int packetId = buf.readByte() & 0xFF;
 		if (rewriteBasic[packetId]) {
@@ -98,7 +99,8 @@ public class LegacyEntityMap {
 		buf.readerIndex(readerIndex);
 	}
 
-	public static void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
+	@Override
+	public void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
 		int packetId = buf.readByte() & 0xFF;
 		switch (packetId) {
@@ -112,15 +114,6 @@ public class LegacyEntityMap {
 			}
 		}
 		buf.readerIndex(readerIndex);
-	}
-
-	protected static void rewriteInt(final ByteBuf packet, final int oldId, final int newId, final int offset) {
-		final int readId = packet.getInt(offset);
-		if (readId == oldId) {
-			packet.setInt(offset, newId);
-		} else if (readId == newId) {
-			packet.setInt(offset, oldId);
-		}
 	}
 
 }

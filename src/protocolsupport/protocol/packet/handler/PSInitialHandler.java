@@ -45,22 +45,23 @@ import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.api.events.PlayerLoginFinishEvent;
 import protocolsupport.api.events.PlayerLoginStartEvent;
+import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 
 public class PSInitialHandler extends InitialHandler {
 
-	private final Connection connection;
-	public PSInitialHandler(BungeeCord bungee, ListenerInfo listener, Connection connection) {
+	public PSInitialHandler(BungeeCord bungee, ListenerInfo listener) {
 		super(bungee, listener);
-		this.connection = connection;
 	}
 
 	protected ChannelWrapper channel;
+	protected Connection connection;
 
 	@Override
 	public void connected(ChannelWrapper channel) throws Exception {
 		super.connected(channel);
 		this.channel = channel;
+		this.connection = ConnectionImpl.getFromChannel(channel.getHandle());
 	}
 
 	public ChannelWrapper getChannelWrapper() {

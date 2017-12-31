@@ -20,13 +20,9 @@ public class ConnectionImpl extends Connection {
 	protected static final AttributeKey<ConnectionImpl> key = AttributeKey.valueOf("PSConnectionImpl");
 
 	protected final CustomHandlerBoss boss;
-	public ConnectionImpl(CustomHandlerBoss boss) {
+	protected final PSInitialHandler initial;
+	public ConnectionImpl(CustomHandlerBoss boss, PSInitialHandler initial) {
 		this.boss = boss;
-	}
-
-	private PSInitialHandler initial;
-
-	public void setInitialHandler(PSInitialHandler initial) {
 		this.initial = initial;
 	}
 
