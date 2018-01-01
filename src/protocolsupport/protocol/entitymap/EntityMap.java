@@ -23,13 +23,16 @@ public abstract class EntityMap {
 		throw new IllegalArgumentException("Doesn't have entity map for version " + version);
 	}
 
-	protected static void rewriteInt(final ByteBuf packet, final int oldId, final int newId, final int offset) {
+	protected static int rewriteInt(final ByteBuf packet, final int oldId, final int newId, final int offset) {
 		final int readId = packet.getInt(offset);
 		if (readId == oldId) {
 			packet.setInt(offset, newId);
+			return newId;
 		} else if (readId == newId) {
 			packet.setInt(offset, oldId);
+			return oldId;
 		}
+		return -1;
 	}
 
 }

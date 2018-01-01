@@ -1,98 +1,85 @@
 package protocolsupport.protocol.entitymap;
 
-import io.netty.buffer.ByteBuf;
+import java.util.BitSet;
 
-//TODO: rewrite this as soon as i can actually remember how it works
+import io.netty.buffer.ByteBuf;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
+
 public class LegacyEntityMap extends EntityMap {
 
-	private static boolean[] rewriteBasic = new boolean[256];
+	private static BitSet packetsWithEntityId = new BitSet(256);
 
 	static {
-		rewriteBasic[0x05] = true; // EntityEquipment
-		rewriteBasic[0x11] = true; // UseBed
-		rewriteBasic[0x12] = true; // Animation
-		rewriteBasic[0x14] = true; // SpawnNamedEntity
-		rewriteBasic[0x16] = true; // CollectItem
-		rewriteBasic[0x17] = true; // SpawnObject
-		rewriteBasic[0x18] = true; // SpawnMob
-		rewriteBasic[0x19] = true; // SpawnPainting
-		rewriteBasic[0x1A] = true; // SpawnEXPOrb
-		rewriteBasic[0x1C] = true; // EntityVelocity
-		rewriteBasic[0x1E] = true; // Entity
-		rewriteBasic[0x1F] = true; // EntityRelMove
-		rewriteBasic[0x20] = true; // EntityLook
-		rewriteBasic[0x21] = true; // EntityRelMoveLook
-		rewriteBasic[0x22] = true; // EntityTeleport
-		rewriteBasic[0x23] = true; // EntityHeadLook
-		rewriteBasic[0x26] = true; // EntityStatus
-		rewriteBasic[0x27] = true; // AttachEntity
-		rewriteBasic[0x28] = true; // EntityMetadata
-		rewriteBasic[0x29] = true; // EntityEffect
-		rewriteBasic[0x2A] = true; // RemoveEntityEffect
-		rewriteBasic[0x37] = true; // BlockBreakAnimation
-		rewriteBasic[0x47] = true; // SpawnGlobalEntity
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_EQUIPMENT);
+		packetsWithEntityId.set(LegacyPacketId.USE_BED);
+		packetsWithEntityId.set(LegacyPacketId.ANIMATION);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_NAMED_ENTITY);
+		packetsWithEntityId.set(LegacyPacketId.COLLECT_ENTITY);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_OBJECT);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_MOB);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_PAINTING);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_EXP_ORB);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_VELOCITY);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_REL_MOVE);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_LOOK);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_REL_MOVE_LOOK);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_TELEPORT);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_HEAD_ROTATION);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_STATUS);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_ATTACH);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_METADATA);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_EFFECT_ADD);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_EFFECT_REMOVE);
+		packetsWithEntityId.set(LegacyPacketId.BLOCK_BREAK_ANIMATION);
+		packetsWithEntityId.set(LegacyPacketId.SPAWN_GLOBALENTITY);
+		packetsWithEntityId.set(LegacyPacketId.USE_ENTITY);
+		packetsWithEntityId.set(LegacyPacketId.ENTITY_ACTION);
 	}
 
 	@Override
 	public void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
-		int packetId = buf.readByte() & 0xFF;
-		if (rewriteBasic[packetId]) {
-			rewriteInt(buf, oldId, newId, 1);
+		int packetId = buf.readUnsignedByte();
+		if (packetsWithEntityId.get(packetId)) {
+			rewriteInt(buf, oldId, newId, Byte.BYTES);
 		}
 		switch (packetId) {
-			case 0x16: { // CollectItem
-				rewriteInt(buf, oldId, newId, 5);
+			case LegacyPacketId.COLLECT_ENTITY:
+			case LegacyPacketId.ENTITY_ATTACH: {
+				rewriteInt(buf, oldId, newId, Byte.BYTES + Integer.BYTES);
 				break;
 			}
-			case 0x17: { // SpawnObject
+			case LegacyPacketId.ENTITY_DESTROY: {
+				final int count = buf.readByte();
+				for (int i = 0; i < count; ++i) {
+					rewriteInt(buf, oldId, newId, Byte.BYTES * 2 + count * Integer.BYTES);
+				}
+				break;
+			}
+			case LegacyPacketId.SPAWN_OBJECT: {
 				final int type = buf.readUnsignedByte();
-				if ((type == 60) || (type == 90)) {
-					buf.skipBytes(14);
-					int position = buf.readerIndex();
-					int readId = buf.readInt();
-					int changedId = -1;
-					if (readId == oldId) {
-						buf.setInt(position, newId);
-						changedId = newId;
-					} else if (readId == newId) {
-						buf.setInt(position, oldId);
-						changedId = oldId;
-					}
-					if (changedId != -1) {
-						if ((changedId == 0) && (readId != 0)) {
+				if (
+					(type == 60) || //arrow
+					(type == 90) || //finishing hook
+					(type == 63) || //fire ball
+					(type == 64) || //fire charge
+					(type == 66)    //wither skull
+				) {
+					buf.skipBytes(Integer.BYTES * 3 + Byte.BYTES * 2);
+					int oldObjData = buf.readInt();
+					int newObjData = rewriteInt(buf, oldId, newId, buf.readerIndex() - Integer.BYTES);
+					if (newObjData != -1) {
+						if ((newObjData == 0) && (oldObjData != 0)) {
 							buf.readerIndex(readerIndex);
-							buf.writerIndex(buf.readableBytes() - 6);
-						} else if ((changedId != 0) && (readId == 0)) {
+							buf.writerIndex(buf.readableBytes() - Short.BYTES * 3);
+						} else if ((newObjData != 0) && (oldObjData == 0)) {
 							buf.readerIndex(readerIndex);
-							buf.capacity(buf.readableBytes() + 6);
-							buf.writerIndex(buf.readableBytes() + 6);
+							buf.capacity(buf.readableBytes() + Short.BYTES * 3);
+							buf.writerIndex(buf.readableBytes() + Short.BYTES * 3);
 						}
 					}
 				}
-				break;
-			}
-			case 0x1D: { // DestroyEntities
-				final int count = buf.readByte();
-				final int[] ids = new int[count];
-				for (int i = 0; i < count; ++i) {
-					ids[i] = buf.readInt();
-				}
-				buf.readerIndex(readerIndex + 1);
-				buf.writerIndex(readerIndex + 1);
-				buf.writeByte(count);
-				for (int id : ids) {
-					if (id == oldId) {
-						id = newId;
-					} else if (id == newId) {
-						id = oldId;
-					}
-					buf.writeInt(id);
-				}
-				break;
-			}
-			case 0x27: { // AttachEntity
-				rewriteInt(buf, oldId, newId, 5);
 				break;
 			}
 		}
@@ -102,16 +89,9 @@ public class LegacyEntityMap extends EntityMap {
 	@Override
 	public void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
 		int readerIndex = buf.readerIndex();
-		int packetId = buf.readByte() & 0xFF;
-		switch (packetId) {
-			case 0x07: { // UseEntity
-				rewriteInt(buf, oldId, newId, 1);
-				break;
-			}
-			case 0x13: { // EntityAction
-				rewriteInt(buf, oldId, newId, 1);
-				break;
-			}
+		int packetId = buf.readUnsignedByte();
+		if (packetsWithEntityId.get(packetId)) {
+			rewriteInt(buf, oldId, newId, Byte.BYTES);
 		}
 		buf.readerIndex(readerIndex);
 	}
