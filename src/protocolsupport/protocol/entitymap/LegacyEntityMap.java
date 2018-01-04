@@ -39,7 +39,7 @@ public class LegacyEntityMap extends EntityMap {
 
 	@Override
 	public void rewriteClientbound(ByteBuf buf, int oldId, int newId) {
-		int readerIndex = buf.readerIndex();
+		buf.markReaderIndex();
 		int packetId = buf.readUnsignedByte();
 		if (packetsWithEntityId.get(packetId)) {
 			rewriteInt(buf, oldId, newId, Byte.BYTES);
@@ -71,29 +71,27 @@ public class LegacyEntityMap extends EntityMap {
 					int newObjData = rewriteInt(buf, oldId, newId, buf.readerIndex() - Integer.BYTES);
 					if (newObjData != -1) {
 						if ((newObjData == 0) && (oldObjData != 0)) {
-							buf.readerIndex(readerIndex);
-							buf.writerIndex(buf.readableBytes() - Short.BYTES * 3);
+							buf.writerIndex(buf.readerIndex());
 						} else if ((newObjData != 0) && (oldObjData == 0)) {
-							buf.readerIndex(readerIndex);
-							buf.capacity(buf.readableBytes() + Short.BYTES * 3);
-							buf.writerIndex(buf.readableBytes() + Short.BYTES * 3);
+							buf.capacity(buf.readerIndex() + Short.BYTES * 3);
+							buf.writerIndex(buf.readerIndex() + Short.BYTES * 3);
 						}
 					}
 				}
 				break;
 			}
 		}
-		buf.readerIndex(readerIndex);
+		buf.resetReaderIndex();
 	}
 
 	@Override
 	public void rewriteServerbound(ByteBuf buf, int oldId, int newId) {
-		int readerIndex = buf.readerIndex();
+		buf.markReaderIndex();
 		int packetId = buf.readUnsignedByte();
 		if (packetsWithEntityId.get(packetId)) {
 			rewriteInt(buf, oldId, newId, Byte.BYTES);
 		}
-		buf.readerIndex(readerIndex);
+		buf.resetReaderIndex();
 	}
 
 }
