@@ -5,8 +5,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -45,6 +48,8 @@ import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.api.events.PlayerLoginFinishEvent;
 import protocolsupport.api.events.PlayerLoginStartEvent;
+import protocolsupport.api.events.PlayerPropertiesResolveEvent;
+import protocolsupport.api.events.PlayerPropertiesResolveEvent.ProfileProperty;
 import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 
@@ -256,6 +261,23 @@ public class PSInitialHandler extends InitialHandler {
 		if (forcedUUID != null) {
 			uuid = forcedUUID;
 		}
+
+		PlayerPropertiesResolveEvent propResolveEvent = new PlayerPropertiesResolveEvent(
+			connection, username,
+			loginProfile != null ?
+			Arrays.stream(loginProfile.getProperties())
+			.map(bprop -> new ProfileProperty(bprop.getName(), bprop.getValue(), bprop.getSignature()))
+			.collect(Collectors.toList())
+			: Collections.emptyList()
+		);
+		BungeeCord.getInstance().getPluginManager().callEvent(propResolveEvent);
+		loginProfile = new LoginResult(
+			getName(), getUUID(),
+			propResolveEvent.getProperties().values().stream()
+			.map(psprop -> new LoginResult.Property(psprop.getName(), psprop.getValue(), psprop.getSignature()))
+			.collect(Collectors.toList()).toArray(new LoginResult.Property[0])
+		);
+
 		if (isOnlineMode()) {
 			ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
 			if (oldName != null) {
@@ -297,10 +319,10 @@ public class PSInitialHandler extends InitialHandler {
 			unsafe().sendPacket(new LoginSuccess(getUniqueId().toString(), getName()));
 			channel.setProtocol(Protocol.GAME);
 
-			PlayerLoginFinishEvent event = new PlayerLoginFinishEvent(connection, getName(), getUniqueId(), isOnlineMode());
-			BungeeCord.getInstance().getPluginManager().callEvent(event);
-			if (event.isLoginDenied()) {
-				disconnect(event.getDenyLoginMessage());
+			PlayerLoginFinishEvent loginFinishEvent = new PlayerLoginFinishEvent(connection, getName(), getUniqueId(), isOnlineMode());
+			BungeeCord.getInstance().getPluginManager().callEvent(loginFinishEvent);
+			if (loginFinishEvent.isLoginDenied()) {
+				disconnect(loginFinishEvent.getDenyLoginMessage());
 				return;
 			}
 
