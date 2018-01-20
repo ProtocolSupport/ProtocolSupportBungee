@@ -6,12 +6,13 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import protocolsupport.protocol.serializer.MiscSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 
 public class EncapsulatedProtocolUtils {
+
+	public static final int FIRST_BYTE = 0;
 
 	private static final int CURRENT_VERSION = 1;
 
@@ -49,13 +50,6 @@ public class EncapsulatedProtocolUtils {
 			to.writeBoolean(false);
 		}
 		to.writeBoolean(info.hasCompression());
-	}
-
-	public static ByteBuf createHandshake(InetSocketAddress remote, boolean hasCompression) {
-		ByteBuf data = Unpooled.buffer();
-		data.writeByte(0);
-		EncapsulatedProtocolUtils.writeInfo(data, new EncapsulatedProtocolInfo(remote, hasCompression));
-		return data;
 	}
 
 }

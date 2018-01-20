@@ -14,7 +14,7 @@ public abstract class EntityMap {
 	private static final PEEntityMap peentitymap = new PEEntityMap();
 
 	public static EntityMap get(ProtocolVersion version) {
-		if (version.getProtocolType() == ProtocolType.PC && version.isBefore(ProtocolVersion.MINECRAFT_1_7_5)) {
+		if ((version.getProtocolType() == ProtocolType.PC) && version.isBefore(ProtocolVersion.MINECRAFT_1_7_5)) {
 			return legacyentitymap;
 		}
 		if (version.getProtocolType() == ProtocolType.PE) {

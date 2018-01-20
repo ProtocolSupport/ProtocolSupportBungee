@@ -53,7 +53,7 @@ public class LegacyEntityMap extends EntityMap {
 			case LegacyPacketId.ENTITY_DESTROY: {
 				final int count = buf.readByte();
 				for (int i = 0; i < count; ++i) {
-					rewriteInt(buf, oldId, newId, Byte.BYTES * 2 + count * Integer.BYTES);
+					rewriteInt(buf, oldId, newId, (Byte.BYTES * 2) + (count * Integer.BYTES));
 				}
 				break;
 			}
@@ -66,15 +66,15 @@ public class LegacyEntityMap extends EntityMap {
 					(type == 64) || //fire charge
 					(type == 66)    //wither skull
 				) {
-					buf.skipBytes(Integer.BYTES * 3 + Byte.BYTES * 2);
+					buf.skipBytes((Integer.BYTES * 3) + (Byte.BYTES * 2));
 					int oldObjData = buf.readInt();
 					int newObjData = rewriteInt(buf, oldId, newId, buf.readerIndex() - Integer.BYTES);
 					if (newObjData != -1) {
 						if ((newObjData == 0) && (oldObjData != 0)) {
 							buf.writerIndex(buf.readerIndex());
 						} else if ((newObjData != 0) && (oldObjData == 0)) {
-							buf.capacity(buf.readerIndex() + Short.BYTES * 3);
-							buf.writerIndex(buf.readerIndex() + Short.BYTES * 3);
+							buf.capacity(buf.readerIndex() + (Short.BYTES * 3));
+							buf.writerIndex(buf.readerIndex() + (Short.BYTES * 3));
 						}
 					}
 				}
