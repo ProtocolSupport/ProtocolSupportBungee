@@ -1,6 +1,7 @@
 package protocolsupport.protocol.pipeline.version.v_1_4;
 
 import net.md_5.bungee.protocol.packet.Chat;
+import net.md_5.bungee.protocol.packet.ClientSettings;
 import net.md_5.bungee.protocol.packet.ClientStatus;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.KeepAlive;
@@ -10,6 +11,7 @@ import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6.LoginRequestServerHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe.HandshakeCachePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ClientCommandPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ClientSettingsPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KeepAlivePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.PluginMessagePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ToServerChatPacket;
@@ -25,6 +27,7 @@ public class ToServerPacketEncoder extends AbstractPacketEncoder {
 		registry.register(Chat.class, ToServerChatPacket.class);
 		registry.register(PluginMessage.class, PluginMessagePacket.class);
 		registry.register(ClientStatus.class, ClientCommandPacket.class);
+		registry.register(ClientSettings.class, ClientSettingsPacket.class);
 	}
 
 	public ToServerPacketEncoder(Connection connection, NetworkDataCache cache) {
