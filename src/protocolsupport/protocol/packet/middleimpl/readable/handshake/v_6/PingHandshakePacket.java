@@ -1,4 +1,4 @@
-package protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6;
+package protocolsupport.protocol.packet.middleimpl.readable.handshake.v_6;
 
 import java.util.Arrays;
 import java.util.Collection;
