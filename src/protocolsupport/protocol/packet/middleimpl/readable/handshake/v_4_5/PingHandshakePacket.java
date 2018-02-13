@@ -23,7 +23,6 @@ public class PingHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		System.out.println("Reading 1.5/1.4 ping!");
 		from.readUnsignedByte();
 	}
 
