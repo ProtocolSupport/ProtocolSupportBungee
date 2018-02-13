@@ -22,6 +22,10 @@ tasks.withType(AbstractCompile) {
 	classpath += configurations.shadow
 }
 
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
 group 'protocolsupport'
 version '1.4.dev'
 
