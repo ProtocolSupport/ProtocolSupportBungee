@@ -57,9 +57,11 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //needs texture pack
 		VarNumberSerializer.readVarInt(from); //game rules //TODO: actually implement gamerules reading in case pspe will actually send them one day
 		from.readBoolean(); //bonus chest enabled
+		from.readBoolean(); //player map enabled
 		from.readBoolean(); //trust players
 		VarNumberSerializer.readSVarInt(from); //permission level
 		VarNumberSerializer.readSVarInt(from); //game publish setting
+		from.readIntLE(); //chunk tick radius
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id

@@ -79,9 +79,11 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //needs texture pack
 		VarNumberSerializer.writeVarInt(startgame, 0); //game rules
 		startgame.writeBoolean(false); //bonus chest enabled
+		startgame.writeBoolean(false); //player map enabled
 		startgame.writeBoolean(false); //trust players
 		VarNumberSerializer.writeSVarInt(startgame, 1); //permission level
 		VarNumberSerializer.writeSVarInt(startgame, 4); //game publish setting
+		startgame.writeIntLE(4); //chunk tick radius
 		StringSerializer.writeVarIntUTF8String(startgame, levelId);
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //level name (will packet.getLevelType() work?)
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //template pack id
