@@ -2,8 +2,8 @@ package protocolsupport.protocol.pipeline.version.v_1_5;
 
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
+import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.LoginHandshakePacket;
-import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.EncryptionResponsePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.LoginClientCommandPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5.EntityActionPacket;

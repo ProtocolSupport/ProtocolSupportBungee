@@ -29,7 +29,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 
 	@Override
 	protected void read0(ByteBuf from) {
-		VarNumberSerializer.readVarLong(from); //entity id (but it's actually signed varlong, so we use the field below, which is unsigned)
+		VarNumberSerializer.readSVarLong(from); //entity id (but it's actually signed varlong, so we use the field below, which is unsigned)
 		entityId = (int) VarNumberSerializer.readVarLong(from);
 		gamemode = (byte) VarNumberSerializer.readSVarInt(from);
 		MiscSerializer.readLFloat(from); //x
@@ -66,7 +66,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id
 		from.readBoolean(); //is trial
-		from.readLong(); //level time
+		from.readLongLE(); //level time
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
 	}
 
