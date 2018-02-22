@@ -13,7 +13,7 @@ import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CommandRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientChatPacket;
-import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
 import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.protocol.utils.registry.PacketIdMiddleTransformerRegistry;
@@ -54,7 +54,7 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 			return;
 		}
 		buf.markReaderIndex();
-		ReadableMiddlePacket transformer = registry.getTransformer(protocol, readPacketId(buf), false);
+		ReadableMiddlePacket transformer = registry.getTransformer(protocol, PEPacketIdSerializer.readPacketId(buf), false);
 		if (transformer == null) {
 			buf.resetReaderIndex();
 			packets.add(new PacketWrapper(null, buf.copy()));
@@ -65,13 +65,6 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 			}
 			packets.addAll(transformer.toNative());
 		}
-	}
-
-	protected int readPacketId(ByteBuf from) {
-		int id = VarNumberSerializer.readVarInt(from);
-		from.readByte();
-		from.readByte();
-		return id;
 	}
 
 }

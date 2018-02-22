@@ -2,7 +2,7 @@ package protocolsupport.protocol.packet.middleimpl.writeable;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.DefinedPacket;
-import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 
 public abstract class PESingleWriteablePacket<T extends DefinedPacket> extends SingleWriteablePacket<T> {
 
@@ -12,13 +12,7 @@ public abstract class PESingleWriteablePacket<T extends DefinedPacket> extends S
 
 	@Override
 	protected void writePacketId(ByteBuf data) {
-		writePacketId(data, packetId);
-	}
-
-	public static void writePacketId(ByteBuf data, int packetId) {
-		VarNumberSerializer.writeVarInt(data, packetId);
-		data.writeByte(0);
-		data.writeByte(0);
+		PEPacketIdSerializer.writePacketId(data, packetId);
 	}
 
 }

@@ -18,8 +18,11 @@ public class PipeLineBuilder extends IPipeLineBuilder {
 		ChannelPipeline pipeline = channel.pipeline();
 		NetworkDataCache cache = new NetworkDataCache();
 		cache.storeIn(connection);
+		pipeline.addAfter(PipelineUtils.FRAME_PREPENDER, "ps-toclient-entity-rewrite", new ToClientEntityRewriteHandler(connection, cache));
+		pipeline.addAfter(PipelineUtils.FRAME_DECODER, "ps-fromclient-entity-rewrite", new FromClientEntityRewriteHandler(connection, cache));
 		pipeline.replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, new FromClientPacketDecoder(connection, cache));
 		pipeline.replace(PipelineUtils.PACKET_ENCODER, PipelineUtils.PACKET_ENCODER, new ToClientPacketEncoder(connection, cache));
+		System.err.println(pipeline.toMap());
 	}
 
 	@Override

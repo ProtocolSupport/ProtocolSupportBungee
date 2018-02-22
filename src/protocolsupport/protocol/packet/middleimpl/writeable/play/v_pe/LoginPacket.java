@@ -8,7 +8,7 @@ import java.util.UUID;
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.PESingleWriteablePacket;
+import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.utils.netty.Allocator;
@@ -21,23 +21,25 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 
 	@Override
 	public Collection<ByteBuf> toData(Login packet) {
-		ArrayList<ByteBuf> packets = new ArrayList<>();
+		cache.setServerEntityId(packet.getEntityId());
 		if (!loggedIn) {
 			loggedIn = true;
+			cache.setClientEntityId(packet.getEntityId());
+			ArrayList<ByteBuf> packets = new ArrayList<>();
 			ByteBuf resourcepack = Allocator.allocateBuffer();
-			PESingleWriteablePacket.writePacketId(resourcepack, 6);
+			PEPacketIdSerializer.writePacketId(resourcepack, 6);
 			resourcepack.writeBoolean(false); // required
 			resourcepack.writeShortLE(0); //beh packs count
 			resourcepack.writeShortLE(0); //res packs count
 			packets.add(resourcepack);
 			ByteBuf resourcestack = Allocator.allocateBuffer();
-			PESingleWriteablePacket.writePacketId(resourcestack, 7);
+			PEPacketIdSerializer.writePacketId(resourcestack, 7);
 			resourcestack.writeBoolean(false); // required
 			VarNumberSerializer.writeVarInt(resourcestack, 0); //beh packs count
 			VarNumberSerializer.writeVarInt(resourcestack, 0); //res packs count
 			packets.add(resourcestack);
 			ByteBuf startgame = Allocator.allocateBuffer();
-			PESingleWriteablePacket.writePacketId(startgame, 11);
+			PEPacketIdSerializer.writePacketId(startgame, 11);
 			VarNumberSerializer.writeSVarLong(startgame, packet.getEntityId());
 			VarNumberSerializer.writeVarLong(startgame, packet.getEntityId());
 			VarNumberSerializer.writeSVarInt(startgame, packet.getGameMode());
@@ -81,7 +83,7 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 			return packets;
 		} else {
 			ByteBuf respawn = Allocator.allocateBuffer();
-			PESingleWriteablePacket.writePacketId(respawn, 61);
+			PEPacketIdSerializer.writePacketId(respawn, 61);
 			VarNumberSerializer.writeSVarInt(respawn, RespawnPacket.getPeDimensionId(packet.getDimension()));
 			respawn.writeFloatLE(0); //x
 			respawn.writeFloatLE(0); //y
