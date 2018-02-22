@@ -20,6 +20,7 @@ import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_pe.LoginSuccessPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.KickPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.LoginPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.RespawnPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.ToClientChatPacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -34,7 +35,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(Kick.class, KickPacket.class);
 		registry.register(KeepAlive.class, NoopWriteablePacket.class);
 		registry.register(PluginMessage.class, NoopWriteablePacket.class);
-		registry.register(Respawn.class, NoopWriteablePacket.class); //TODO: properly implement packet delay system and use it
+		registry.register(Respawn.class, RespawnPacket.class);
 		registry.register(Chat.class, ToClientChatPacket.class);
 		registry.register(ScoreboardDisplay.class, NoopWriteablePacket.class);
 		registry.register(ScoreboardObjective.class, NoopWriteablePacket.class);

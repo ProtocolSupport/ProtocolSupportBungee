@@ -12,6 +12,10 @@ public abstract class PESingleWriteablePacket<T extends DefinedPacket> extends S
 
 	@Override
 	protected void writePacketId(ByteBuf data) {
+		writePacketId(data, packetId);
+	}
+
+	public static void writePacketId(ByteBuf data, int packetId) {
 		VarNumberSerializer.writeVarInt(data, packetId);
 		data.writeByte(0);
 		data.writeByte(0);

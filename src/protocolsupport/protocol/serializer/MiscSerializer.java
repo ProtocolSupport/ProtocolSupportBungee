@@ -26,14 +26,6 @@ public class MiscSerializer {
 		to.writeLongLE(uuid.getLeastSignificantBits());
 	}
 
-	public static void writeLFloat(ByteBuf to, float f) {
-		to.writeIntLE(Float.floatToIntBits(f));
-	}
-
-	public static float readLFloat(ByteBuf from) {
-		return Float.intBitsToFloat(from.readIntLE());
-	}
-
 	public static byte[] readAllBytes(ByteBuf buf) {
 		return MiscSerializer.readBytes(buf, buf.readableBytes());
 	}
