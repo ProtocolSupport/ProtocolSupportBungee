@@ -104,24 +104,12 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 
 		@Override
 		public void setHandler(PacketHandler handler) {
-			handler = packetHandlerChangeListener.change(handler);
 			super.setHandler(handler);
 			this.handler = handler;
 		}
 
 		public PacketHandler getHandler() {
 			return this.handler;
-		}
-
-		private PacketHandlerChangeListener packetHandlerChangeListener = (listener) -> listener;
-
-		public void setPacketHandlerChangeListener(PacketHandlerChangeListener listener) {
-			this.packetHandlerChangeListener = listener;
-		}
-
-		@FunctionalInterface
-		public static interface PacketHandlerChangeListener {
-			public PacketHandler change(PacketHandler handler);
 		}
 
 	}

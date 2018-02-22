@@ -34,7 +34,7 @@ public class RespawnPacket extends PESingleWriteablePacket<Respawn> {
 				return 0;
 			}
 			default: {
-				throw new IllegalArgumentException(MessageFormat.format("Uknown dim id {0}", dimId));
+				throw new IllegalArgumentException(MessageFormat.format("Unknown dim id {0}", dimId));
 			}
 		}
 	}

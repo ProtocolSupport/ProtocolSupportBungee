@@ -13,19 +13,26 @@ import protocolsupport.utils.netty.Allocator;
 
 public class PlayerListItemPacket extends WriteableMiddlePacket<PlayerListItem> {
 
-	//TODO:advanced handle of display name change
 	@Override
 	public Collection<ByteBuf> toData(PlayerListItem packet) {
 		ArrayList<ByteBuf> packets = new ArrayList<ByteBuf>();
 		for (Item item : packet.getItems()) {
 			ByteBuf data = Allocator.allocateBuffer();
 			data.writeByte(0xC9);
-            StringSerializer.writeShortUTF16BEString(data, item.getDisplayName());
+            StringSerializer.writeShortUTF16BEString(data, getDisplayName(item));
             data.writeBoolean(packet.getAction() != Action.REMOVE_PLAYER);
             data.writeShort(item.getPing());
             packets.add(data);
 		}
 		return packets;
+	}
+
+	private static String getDisplayName(Item item) {
+		String name = item.getDisplayName();
+		if (name == null) {
+			name = "Unknown";
+		}
+		return name;
 	}
 
 }
