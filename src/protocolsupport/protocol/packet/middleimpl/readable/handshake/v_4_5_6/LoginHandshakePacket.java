@@ -8,9 +8,9 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 
 public class LoginHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
@@ -35,7 +35,7 @@ public class LoginHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 	@Override
 	public Collection<PacketWrapper> toNative() {
 		return Arrays.asList(
-			new PacketWrapper(new Handshake(ProtocolVersion.MINECRAFT_1_7_10.getId(), host, port, 2), Unpooled.wrappedBuffer(readbytes)),
+			new PacketWrapper(new Handshake(ProtocolVersionsHelper.LATEST_PC.getId(), host, port, 2), Unpooled.wrappedBuffer(readbytes)),
 			new PacketWrapper(new LoginRequest(username), Unpooled.EMPTY_BUFFER)
 		);
 	}

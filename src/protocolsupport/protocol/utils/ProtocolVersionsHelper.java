@@ -3,6 +3,7 @@ package protocolsupport.protocol.utils;
 import java.util.Arrays;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 
 public class ProtocolVersionsHelper {
@@ -23,5 +24,7 @@ public class ProtocolVersionsHelper {
 		ProtocolVersion version = byNewProtocolId.get(protocolid);
 		return version != null ? version : ProtocolVersion.MINECRAFT_FUTURE;
 	}
+
+	public static final ProtocolVersion LATEST_PC = ProtocolVersion.getLatest(ProtocolType.PC);
 
 }

@@ -314,7 +314,9 @@ public class PSInitialHandler extends InitialHandler {
 	protected void processLoginFinish() {
 		if (!channel.isClosing()) {
 			UserConnection userCon = new UserConnection(BungeeCord.getInstance(), channel, getName(), PSInitialHandler.this);
-			userCon.setCompressionThreshold(BungeeCord.getInstance().config.getCompressionThreshold());
+			if (hasCompression(connection.getVersion())) {
+				userCon.setCompressionThreshold(BungeeCord.getInstance().config.getCompressionThreshold());
+			}
 			userCon.init();
 			unsafe().sendPacket(new LoginSuccess(getUniqueId().toString(), getName()));
 			channel.setProtocol(Protocol.GAME);
@@ -344,6 +346,10 @@ public class PSInitialHandler extends InitialHandler {
 
 	public enum LoginState {
 		HELLO, ONLINEMODERESOLVE, KEY, AUTHENTICATING;
+	}
+
+	protected static boolean hasCompression(ProtocolVersion version) {
+		return (version.getProtocolType() == ProtocolType.PC) && version.isAfterOrEq(ProtocolVersion.MINECRAFT_1_8);
 	}
 
 	protected static boolean isFullEncryption(ProtocolVersion version) {

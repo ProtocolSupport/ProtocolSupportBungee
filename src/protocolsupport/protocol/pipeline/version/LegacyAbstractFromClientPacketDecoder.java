@@ -8,9 +8,9 @@ import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.storage.NetworkDataCache;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.protocol.utils.registry.PacketIdMiddleTransformerRegistry;
 import protocolsupport.utils.netty.ReplayingDecoderBuffer;
 import protocolsupport.utils.netty.ReplayingDecoderBuffer.EOFSignal;
@@ -25,7 +25,7 @@ public abstract class LegacyAbstractFromClientPacketDecoder extends MinecraftDec
 	protected Protocol protocol = Protocol.HANDSHAKE;
 
 	public LegacyAbstractFromClientPacketDecoder(Connection connection, NetworkDataCache cache) {
-		super(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_7_10.getId());
+		super(Protocol.HANDSHAKE, true, ProtocolVersionsHelper.LATEST_PC.getId());
 		this.connection = connection;
 		this.cache = cache;
 		registry.setCallBack(transformer -> {

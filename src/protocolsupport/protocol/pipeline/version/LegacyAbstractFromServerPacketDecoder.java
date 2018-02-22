@@ -9,9 +9,9 @@ import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.storage.NetworkDataCache;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.protocol.utils.registry.PacketIdMiddleTransformerRegistry;
 
 public abstract class LegacyAbstractFromServerPacketDecoder extends MinecraftDecoder {
@@ -22,7 +22,7 @@ public abstract class LegacyAbstractFromServerPacketDecoder extends MinecraftDec
 	protected final NetworkDataCache cache;
 
 	public LegacyAbstractFromServerPacketDecoder(Connection connection, NetworkDataCache cache) {
-		super(Protocol.GAME, false, ProtocolVersion.MINECRAFT_1_7_10.getId());
+		super(Protocol.GAME, false, ProtocolVersionsHelper.LATEST_PC.getId());
 		this.connection = connection;
 		this.cache = cache;
 		registry.setCallBack(transformer -> {

@@ -28,11 +28,11 @@ import io.netty.handler.codec.DecoderException;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.api.utils.Any;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.ArraySerializer;
 import protocolsupport.protocol.serializer.MiscSerializer;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.utils.JsonUtils;
 import protocolsupport.utils.Utils;
 
@@ -53,7 +53,7 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 	@Override
 	public Collection<PacketWrapper> toNative() {
 		return Arrays.asList(
-			new PacketWrapper(new Handshake(ProtocolVersion.MINECRAFT_1_7_10.getId(), host, port, 2), Unpooled.wrappedBuffer(readbytes)),
+			new PacketWrapper(new Handshake(ProtocolVersionsHelper.LATEST_PC.getId(), host, port, 2), Unpooled.wrappedBuffer(readbytes)),
 			new PacketWrapper(new LoginRequest(username), Unpooled.EMPTY_BUFFER)
 		);
 	}

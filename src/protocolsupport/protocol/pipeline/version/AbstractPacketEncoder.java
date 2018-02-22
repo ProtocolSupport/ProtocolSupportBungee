@@ -9,9 +9,9 @@ import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.MinecraftEncoder;
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.protocol.storage.NetworkDataCache;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.protocol.utils.registry.ClassMapMiddleTransformerRegistry;
 
 public abstract class AbstractPacketEncoder extends MinecraftEncoder {
@@ -22,7 +22,7 @@ public abstract class AbstractPacketEncoder extends MinecraftEncoder {
 	protected final NetworkDataCache cache;
 
 	public AbstractPacketEncoder(Connection connection, NetworkDataCache cache) {
-		super(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_7_10.getId());
+		super(Protocol.HANDSHAKE, true, ProtocolVersionsHelper.LATEST_PC.getId());
 		this.connection = connection;
 		this.cache = cache;
 		registry.setCallBack(transformer -> {

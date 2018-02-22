@@ -9,13 +9,13 @@ import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CommandRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientChatPacket;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.protocol.utils.registry.PacketIdMiddleTransformerRegistry;
 
 public class FromClientPacketDecoder extends MinecraftDecoder {
@@ -33,7 +33,7 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 	protected Protocol protocol = Protocol.HANDSHAKE;
 
 	public FromClientPacketDecoder(Connection connection, NetworkDataCache cache) {
-		super(Protocol.HANDSHAKE, true, ProtocolVersion.MINECRAFT_1_7_10.getId());
+		super(Protocol.HANDSHAKE, true, ProtocolVersionsHelper.LATEST_PC.getId());
 		this.connection = connection;
 		this.cache = cache;
 		registry.setCallBack(transformer -> {

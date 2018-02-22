@@ -1,5 +1,6 @@
 package protocolsupport.protocol.pipeline.version.v_1_5;
 
+import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.KeepAlive;
@@ -15,6 +16,7 @@ import net.md_5.bungee.protocol.packet.ScoreboardScore;
 import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import net.md_5.bungee.protocol.packet.Team;
+import net.md_5.bungee.protocol.packet.Title;
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.EncryptionRequestPacket;
@@ -52,6 +54,8 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(Team.class, ScoreboardTeamPacket.class);
 		registry.register(PlayerListItem.class, PlayerListItemPacket.class);
 		registry.register(TabCompleteResponse.class, TabCompleteResponsePacket.class);
+		registry.register(BossBar.class, NoopWriteablePacket.class);
+		registry.register(Title.class, NoopWriteablePacket.class);
 	}
 
 	public ToClientPacketEncoder(Connection connection, NetworkDataCache cache) {
