@@ -67,7 +67,6 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 			startgame.writeBoolean(true); //commands enabled
 			startgame.writeBoolean(false); //needs texture pack
 			VarNumberSerializer.writeVarInt(startgame, 0); //game rules
-			startgame.writeBoolean(false); //bonus chest enabled
 			startgame.writeBoolean(false); //player map enabled
 			startgame.writeBoolean(false); //trust players
 			VarNumberSerializer.writeSVarInt(startgame, 1); //permission level
