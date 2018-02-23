@@ -54,7 +54,6 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //commands enabled
 		from.readBoolean(); //needs texture pack
 		VarNumberSerializer.readVarInt(from); //game rules //TODO: actually implement gamerules reading in case pspe will actually send them one day
-		from.readBoolean(); //bonus chest enabled
 		from.readBoolean(); //player map enabled
 		from.readBoolean(); //trust players
 		VarNumberSerializer.readSVarInt(from); //permission level
