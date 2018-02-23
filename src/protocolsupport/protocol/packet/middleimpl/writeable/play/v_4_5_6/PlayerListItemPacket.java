@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Action;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Item;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.utils.netty.Allocator;
@@ -18,7 +19,7 @@ public class PlayerListItemPacket extends WriteableMiddlePacket<PlayerListItem> 
 		ArrayList<ByteBuf> packets = new ArrayList<ByteBuf>();
 		for (Item item : packet.getItems()) {
 			ByteBuf data = Allocator.allocateBuffer();
-			data.writeByte(0xC9);
+			data.writeByte(LegacyPacketId.Clientbound.PLAY_PLAYER_LIST);
             StringSerializer.writeShortUTF16BEString(data, getDisplayName(item));
             data.writeBoolean(packet.getAction() != Action.REMOVE_PLAYER);
             data.writeShort(item.getPing());

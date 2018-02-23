@@ -7,16 +7,15 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.PluginMessage;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.ArraySerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class PluginMessagePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xFA;
-
 	public PluginMessagePacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_PLUGIN_MESSAGE);
 	}
 
 	protected String tag;

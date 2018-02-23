@@ -7,15 +7,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class ScoreboardDisplayPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xD0;
-
 	public ScoreboardDisplayPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Clientbound.PLAY_SCOREBOARD_DISPLAY_SLOT);
 	}
 
 	protected byte position;

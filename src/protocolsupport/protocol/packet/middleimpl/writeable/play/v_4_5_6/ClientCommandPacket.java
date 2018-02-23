@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.ClientStatus;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.utils.netty.Allocator;
 
@@ -14,7 +15,7 @@ public class ClientCommandPacket extends WriteableMiddlePacket<ClientStatus> {
 	public Collection<ByteBuf> toData(ClientStatus packet) {
 		if (packet.getPayload() == 1) {
 			ByteBuf data = Allocator.allocateBuffer();
-			data.writeByte(0xCD);
+			data.writeByte(LegacyPacketId.Serverbound.LOGIN_PLAY_CLIENT_COMMAND);
 			data.writeByte(packet.getPayload());
 			return Collections.singletonList(data);
 		} else {

@@ -1,15 +1,14 @@
 package protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDynamicLengthPassthroughReadableMiddlePacket;
 import protocolsupport.protocol.serializer.TypeCopier;
 
 public class InventoryClickPacket extends LegacyDynamicLengthPassthroughReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x66;
-
 	public InventoryClickPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Serverbound.PLAY_INVENTORY_CLICK);
 	}
 
 	@Override

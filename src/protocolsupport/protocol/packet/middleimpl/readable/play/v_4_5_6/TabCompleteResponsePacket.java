@@ -8,15 +8,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class TabCompleteResponsePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xCB;
-
 	public TabCompleteResponsePacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_TAB_COMPLETE);
 	}
 
 	protected String string;

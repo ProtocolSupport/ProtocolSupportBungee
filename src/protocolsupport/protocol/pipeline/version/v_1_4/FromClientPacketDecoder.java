@@ -2,6 +2,7 @@ package protocolsupport.protocol.pipeline.version.v_1_4;
 
 import net.md_5.bungee.protocol.Protocol;
 import protocolsupport.api.Connection;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_4_5_6.LoginHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.login.v_4_5_6.EncryptionResponsePacket;
@@ -13,12 +14,12 @@ import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.BlockDig
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.BlockPlacePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.ClientCommandPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.ClientSettingsPacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.CreativeSetSlotPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.FromClientChatPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.HeldSlotPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventoryClickPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventoryClosePacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventoryEnchant;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventoryCreativeSetSlotPacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventorySelectEnchant;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.InventoryTransactionPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.KeepAlivePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6.KickPacket;
@@ -36,34 +37,34 @@ import protocolsupport.protocol.storage.NetworkDataCache;
 public class FromClientPacketDecoder extends LegacyAbstractFromClientPacketDecoder {
 
 	{
-		registry.register(Protocol.HANDSHAKE, LoginHandshakePacket.PACKET_ID, LoginHandshakePacket.class);
-		registry.register(Protocol.HANDSHAKE, PingHandshakePacket.PACKET_ID, PingHandshakePacket.class);
-		registry.register(Protocol.LOGIN, EncryptionResponsePacket.PACKET_ID, EncryptionResponsePacket.class);
-		registry.register(Protocol.LOGIN, LoginClientCommandPacket.PACKET_ID, LoginClientCommandPacket.class);
-		registry.register(Protocol.GAME, KeepAlivePacket.PACKET_ID, KeepAlivePacket.class);
-		registry.register(Protocol.GAME, FromClientChatPacket.PACKET_ID, FromClientChatPacket.class);
-		registry.register(Protocol.GAME, UseEntityPacket.PACKET_ID, UseEntityPacket.class);
-		registry.register(Protocol.GAME, PlayerFlyingPacket.PACKET_ID, PlayerFlyingPacket.class);
-		registry.register(Protocol.GAME, PlayerPositionPacket.PACKET_ID, PlayerPositionPacket.class);
-		registry.register(Protocol.GAME, PlayerLookPacket.PACKET_ID, PlayerLookPacket.class);
-		registry.register(Protocol.GAME, PlayerPositionLookPacket.PACKET_ID, PlayerPositionLookPacket.class);
-		registry.register(Protocol.GAME, BlockDigPacket.PACKET_ID, BlockDigPacket.class);
-		registry.register(Protocol.GAME, BlockPlacePacket.PACKET_ID, BlockPlacePacket.class);
-		registry.register(Protocol.GAME, HeldSlotPacket.PACKET_ID, HeldSlotPacket.class);
-		registry.register(Protocol.GAME, AnimationPacket.PACKET_ID, AnimationPacket.class);
-		registry.register(Protocol.GAME, EntityActionPacket.PACKET_ID, EntityActionPacket.class);
-		registry.register(Protocol.GAME, InventoryClosePacket.PACKET_ID, InventoryClosePacket.class);
-		registry.register(Protocol.GAME, InventoryClickPacket.PACKET_ID, InventoryClickPacket.class);
-		registry.register(Protocol.GAME, InventoryTransactionPacket.PACKET_ID, InventoryTransactionPacket.class);
-		registry.register(Protocol.GAME, CreativeSetSlotPacket.PACKET_ID, CreativeSetSlotPacket.class);
-		registry.register(Protocol.GAME, InventoryEnchant.PACKET_ID, InventoryEnchant.class);
-		registry.register(Protocol.GAME, UpdateSignPacket.PACKET_ID, UpdateSignPacket.class);
-		registry.register(Protocol.GAME, TabCompleteRequestPacket.PACKET_ID, TabCompleteRequestPacket.class);
-		registry.register(Protocol.GAME, PlayerAbilitiesPacket.PACKET_ID, PlayerAbilitiesPacket.class);
-		registry.register(Protocol.GAME, ClientSettingsPacket.PACKET_ID, ClientSettingsPacket.class);
-		registry.register(Protocol.GAME, ClientCommandPacket.PACKET_ID, ClientCommandPacket.class);
-		registry.register(Protocol.GAME, PluginMessagePacket.PACKET_ID, PluginMessagePacket.class);
-		registry.register(Protocol.GAME, KickPacket.PACKET_ID, KickPacket.class);
+		registry.register(Protocol.HANDSHAKE, LegacyPacketId.Serverbound.HANDSHAKE_LOGIN, LoginHandshakePacket.class);
+		registry.register(Protocol.HANDSHAKE, LegacyPacketId.Serverbound.HANDSHAKE_PING, PingHandshakePacket.class);
+		registry.register(Protocol.LOGIN, LegacyPacketId.Serverbound.LOGIN_ENCRYPTION_RESPONSE, EncryptionResponsePacket.class);
+		registry.register(Protocol.LOGIN, LegacyPacketId.Serverbound.LOGIN_PLAY_CLIENT_COMMAND, LoginClientCommandPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_KEEP_ALIVE, KeepAlivePacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_CHAT, FromClientChatPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_USE_ENTITY, UseEntityPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_FLYING, PlayerFlyingPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_POSITION, PlayerPositionPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_LOOK, PlayerLookPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_POSITION_LOOK, PlayerPositionLookPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_BLOCK_DIG, BlockDigPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_BLOCK_PLACE, BlockPlacePacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_HELD_SLOT, HeldSlotPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_ANIMATION, AnimationPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_ENTITY_ACTION, EntityActionPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_CLOSE, InventoryClosePacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_CLICK, InventoryClickPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_INVENTORY_TRANSACTION, InventoryTransactionPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_CREATIVE_SET_SLOT, InventoryCreativeSetSlotPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_SELECT_ENCHANT, InventorySelectEnchant.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_UPDATE_SIGN, UpdateSignPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_TAB_COMPLETE, TabCompleteRequestPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_ABILITIES, PlayerAbilitiesPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_CLIENT_SETTINGS, ClientSettingsPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.LOGIN_PLAY_CLIENT_COMMAND, ClientCommandPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_PLUGIN_MESSAGE, PluginMessagePacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_KICK, KickPacket.class);
 	}
 
 	public FromClientPacketDecoder(Connection connection, NetworkDataCache cache) {

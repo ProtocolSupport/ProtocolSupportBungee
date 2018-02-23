@@ -8,15 +8,14 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.StatusRequest;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 
 public class PingHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xFE;
-
 	public PingHandshakePacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Serverbound.HANDSHAKE_PING);
 	}
 
 	@Override

@@ -9,15 +9,14 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Action;
 import net.md_5.bungee.protocol.packet.PlayerListItem.Item;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class PlayerListItemPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xC9;
-
 	public PlayerListItemPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Clientbound.PLAY_PLAYER_LIST);
 	}
 
 	protected Action action;

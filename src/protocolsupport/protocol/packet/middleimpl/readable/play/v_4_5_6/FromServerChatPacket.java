@@ -9,15 +9,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Chat;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class FromServerChatPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x03;
-
 	public FromServerChatPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_CHAT);
 	}
 
 	protected String message;

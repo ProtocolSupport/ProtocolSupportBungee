@@ -1,15 +1,14 @@
 package protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDynamicLengthPassthroughReadableMiddlePacket;
 import protocolsupport.protocol.serializer.TypeCopier;
 
-public class CreativeSetSlotPacket extends LegacyDynamicLengthPassthroughReadableMiddlePacket {
+public class InventoryCreativeSetSlotPacket extends LegacyDynamicLengthPassthroughReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x6B;
-
-	public CreativeSetSlotPacket() {
-		super(PACKET_ID);
+	public InventoryCreativeSetSlotPacket() {
+		super(LegacyPacketId.Serverbound.PLAY_INVENTORY_CREATIVE_SET_SLOT);
 	}
 
 	@Override

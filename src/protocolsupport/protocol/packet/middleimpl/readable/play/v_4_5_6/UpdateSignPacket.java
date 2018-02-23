@@ -1,15 +1,14 @@
 package protocolsupport.protocol.packet.middleimpl.readable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDynamicLengthPassthroughReadableMiddlePacket;
 import protocolsupport.protocol.serializer.TypeCopier;
 
 public class UpdateSignPacket extends LegacyDynamicLengthPassthroughReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x82;
-
 	public UpdateSignPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_UPDATE_SIGN);
 	}
 
 	@Override

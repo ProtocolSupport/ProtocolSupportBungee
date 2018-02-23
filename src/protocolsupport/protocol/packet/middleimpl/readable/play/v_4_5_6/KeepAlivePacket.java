@@ -7,14 +7,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.KeepAlive;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 
 public class KeepAlivePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x00;
-
 	public KeepAlivePacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_KEEP_ALIVE);
 	}
 
 	protected int keepaliveId;

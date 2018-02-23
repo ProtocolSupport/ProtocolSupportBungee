@@ -22,10 +22,10 @@ import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.EncryptionRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KeepAlivePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KickPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.LoginPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.PlayerListItemPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.PluginMessagePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.RespawnPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.StartGamePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.TabCompleteResponsePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.ToClientChatPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.status.v_4_5_6.StatusResponsePacket;
@@ -37,7 +37,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 	{
 		registry.register(EncryptionRequest.class, EncryptionRequestPacket.class);
 		registry.register(LoginSuccess.class, NoopWriteablePacket.class);
-		registry.register(Login.class, LoginPacket.class);
+		registry.register(Login.class, StartGamePacket.class);
 		registry.register(StatusResponse.class, StatusResponsePacket.class);
 		registry.register(Kick.class, KickPacket.class);
 		registry.register(KeepAlive.class, KeepAlivePacket.class);

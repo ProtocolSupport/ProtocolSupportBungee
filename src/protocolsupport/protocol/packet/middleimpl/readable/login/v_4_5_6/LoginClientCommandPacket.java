@@ -9,8 +9,6 @@ import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 
 public class LoginClientCommandPacket extends ReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xCD;
-
 	@Override
 	public void read(ByteBuf data) {
 		data.readByte();

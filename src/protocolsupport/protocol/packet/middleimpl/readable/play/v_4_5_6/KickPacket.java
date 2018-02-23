@@ -9,15 +9,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Kick;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class KickPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xFF;
-
 	public KickPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_KICK);
 	}
 
 	protected String message;

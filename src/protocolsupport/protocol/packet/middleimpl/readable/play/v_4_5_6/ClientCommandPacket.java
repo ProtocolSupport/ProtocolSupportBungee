@@ -7,14 +7,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.ClientStatus;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 
 public class ClientCommandPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0xCD;
-
 	public ClientCommandPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Serverbound.LOGIN_PLAY_CLIENT_COMMAND);
 	}
 
 	protected int status;

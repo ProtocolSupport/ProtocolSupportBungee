@@ -8,16 +8,15 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 
 public class LoginHandshakePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x02;
-
 	public LoginHandshakePacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Serverbound.HANDSHAKE_LOGIN);
 	}
 
 	protected String username;

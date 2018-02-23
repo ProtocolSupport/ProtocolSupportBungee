@@ -8,15 +8,14 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
-public class LoginPacket extends LegacyDefinedReadableMiddlePacket {
+public class StartGamePacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x01;
-
-	public LoginPacket() {
-		super(PACKET_ID);
+	public StartGamePacket() {
+		super(LegacyPacketId.Clientbound.PLAY_START_GAME);
 	}
 
 	protected int entityId;

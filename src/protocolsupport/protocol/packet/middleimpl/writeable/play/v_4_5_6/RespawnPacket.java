@@ -2,13 +2,14 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Respawn;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class RespawnPacket extends LegacySingleWriteablePacket<Respawn> {
 
 	public RespawnPacket() {
-		super(0x09);
+		super(LegacyPacketId.Clientbound.PLAY_RESPAWN);
 	}
 
 	@Override

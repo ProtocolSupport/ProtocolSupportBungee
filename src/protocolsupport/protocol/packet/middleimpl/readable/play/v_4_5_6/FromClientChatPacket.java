@@ -7,15 +7,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Chat;
+import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class FromClientChatPacket extends LegacyDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 0x03;
-
 	public FromClientChatPacket() {
-		super(PACKET_ID);
+		super(LegacyPacketId.Dualbound.PLAY_CHAT);
 	}
 
 	protected String message;
