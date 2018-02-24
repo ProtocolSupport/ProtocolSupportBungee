@@ -2,7 +2,6 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
@@ -22,11 +21,11 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 
 	@Override
 	public Collection<ByteBuf> toData(Login packet) {
+		ArrayList<ByteBuf> packets = new ArrayList<>();
 		cache.setServerEntityId(packet.getEntityId());
 		if (!loggedIn) {
 			loggedIn = true;
 			cache.setClientEntityId(packet.getEntityId());
-			ArrayList<ByteBuf> packets = new ArrayList<>();
 			ByteBuf resourcepack = Allocator.allocateBuffer();
 			PEPacketIdSerializer.writePacketId(resourcepack, PEPacketId.Clientbound.PLAY_RESOURCE_PACK);
 			resourcepack.writeBoolean(false); // required
@@ -80,8 +79,11 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 			startgame.writeLongLE(0); //level time
 			VarNumberSerializer.writeSVarInt(startgame, 0); //enchantment seed
 			packets.add(startgame);
-			return packets;
 		} else {
+			ByteBuf gametype = Allocator.allocateBuffer();
+			PEPacketIdSerializer.writePacketId(gametype, PEPacketId.Clientbound.PLAY_PLAYER_GAME_TYPE);
+			VarNumberSerializer.writeSVarInt(gametype, packet.getGameMode());
+			packets.add(gametype);
 			ByteBuf respawn = Allocator.allocateBuffer();
 			PEPacketIdSerializer.writePacketId(respawn, PEPacketId.Clientbound.PLAY_RESPAWN);
 			VarNumberSerializer.writeSVarInt(respawn, RespawnPacket.getPeDimensionId(packet.getDimension()));
@@ -89,8 +91,9 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 			respawn.writeFloatLE(0); //y
 			respawn.writeFloatLE(0); //z
 			respawn.writeBoolean(true); //respawn
-			return Collections.singletonList(respawn);
+			packets.add(respawn);
 		}
+		return packets;
 	}
 
 }

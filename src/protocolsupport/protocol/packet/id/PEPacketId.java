@@ -29,6 +29,7 @@ public class PEPacketId {
 		public static final int PLAY_ENTITY_PASSENGER = 0x29;
 		public static final int PLAY_ENTITY_ANIMATION = 0x2C;
 		public static final int PLAY_RESPAWN = 0x3D;
+		public static final int PLAY_PLAYER_GAME_TYPE = 0x3E;
 
 	}
 
