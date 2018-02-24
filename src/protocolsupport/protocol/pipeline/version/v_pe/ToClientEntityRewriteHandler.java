@@ -8,6 +8,8 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
+import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
 import protocolsupport.protocol.utils.EntityRewriteTools;
 
@@ -16,8 +18,84 @@ public class ToClientEntityRewriteHandler extends MessageToMessageEncoder<ByteBu
 
 	protected static final EntityRewriteTools rewrite = new EntityRewriteTools(256) {
 		{
-			registerEntityRewrite(
+			register(
 				PEPacketId.Dualbound.PLAY_PLAYER_MOVE_LOOK,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_ATTRIBUTES,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_EFFECT,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_TELEPORT,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_VELOCITY,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_STATUS,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_DESTROY,
+				EntityRewriteTools.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_COLLECT_EFFECT,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_PASSENGER,
+				EntityRewriteTools.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+			);
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_ANIMATION,
+				new NoEntityIdRewriteEntityRewriteCommand() {
+					@Override
+					protected void rewrite(ByteBuf from, ByteBuf to) {
+						VarNumberSerializer.writeSVarLong(to, VarNumberSerializer.readSVarLong(from));
+					}
+				},
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+			);
+			//TODO: meta content remap
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_METADATA,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			//TODO: meta content remap
+			register(
+				PEPacketId.Clientbound.PLAY_ENTITY_SPAWN,
+				EntityRewriteTools.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+			);
+			//TODO: meta content remap
+			register(
+				PEPacketId.Clientbound.PLAY_SPAWN_PLAYER,
+				new FixedLengthBytesCopyEntityRewriteCommand(Long.BYTES * 2),
+				new NoEntityIdRewriteEntityRewriteCommand() {
+					@Override
+					protected void rewrite(ByteBuf from, ByteBuf to) {
+						StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from));
+					}
+				},
+				EntityRewriteTools.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 				EntityRewriteTools.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 				EntityRewriteTools.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
 			);

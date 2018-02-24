@@ -14,7 +14,7 @@ public abstract class EntityRewriteTools {
 		rewritechains = new EntityRewriteCommand[size][];
 	}
 
-	public void registerEntityRewrite(int packetId, EntityRewriteCommand... chain) {
+	public void register(int packetId, EntityRewriteCommand... chain) {
 		rewritechains[packetId] = chain.clone();
 	}
 
