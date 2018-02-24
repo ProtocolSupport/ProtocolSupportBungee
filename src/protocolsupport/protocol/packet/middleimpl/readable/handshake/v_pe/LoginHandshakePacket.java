@@ -29,6 +29,7 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Handshake;
 import net.md_5.bungee.protocol.packet.LoginRequest;
 import protocolsupport.api.utils.Any;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.ArraySerializer;
 import protocolsupport.protocol.serializer.MiscSerializer;
@@ -40,14 +41,12 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 
 	public static final String XUID_METADATA_KEY = "___PS_PE_XUID";
 
-	public static final int PACKET_ID = 1;
-
 	private String username;
 	protected String host;
 	protected int port;
 
 	public LoginHandshakePacket() {
-		super(PACKET_ID);
+		super(PEPacketId.Serverbound.HANDSHAKE_LOGIN);
 	}
 
 	@Override

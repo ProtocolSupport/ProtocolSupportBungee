@@ -9,15 +9,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Chat;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class FromServerChatPacket extends PEDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 9;
-
 	public FromServerChatPacket() {
-		super(PACKET_ID);
+		super(PEPacketId.Dualbound.PLAY_CHAT);
 	}
 
 	protected byte type;

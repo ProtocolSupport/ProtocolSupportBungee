@@ -24,13 +24,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.EncoderException;
 import net.md_5.bungee.protocol.packet.LoginRequest;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.PESingleWriteablePacket;
 import protocolsupport.protocol.serializer.ArraySerializer;
 import protocolsupport.utils.Utils;
 
 public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<LoginRequest> {
 
-	private static KeyPair keypair = generateKeyPair();
+	private static final KeyPair keypair = generateKeyPair();
 	private static KeyPair generateKeyPair() {
 		try {
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
@@ -42,7 +43,7 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 	}
 
 	public LoginRequestServerHandshakePacket() {
-		super(1);
+		super(PEPacketId.Serverbound.HANDSHAKE_LOGIN);
 	}
 
 	@Override

@@ -10,19 +10,18 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Chat;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class FromClientChatPacket extends PEDefinedReadableMiddlePacket {
-
-	public static final int PACKET_ID = 9;
 
 	public static final int CLIENT_CHAT_TYPE = 1;
 
 	protected String message;
 
 	public FromClientChatPacket() {
-		super(PACKET_ID);
+		super(PEPacketId.Dualbound.PLAY_CHAT);
 	}
 
 	@Override

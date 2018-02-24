@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import protocolsupport.api.Connection;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -27,7 +28,7 @@ public class ToClientEntityRewriteHandler extends MessageToMessageEncoder<ByteBu
 		buf.markReaderIndex();
 		int packetId = PEPacketIdSerializer.readPacketId(buf);
 		switch (packetId) {
-			case 19: { //player move
+			case PEPacketId.Dualbound.PLAY_PLAYER_MOVE_LOOK: {
 				int entityId = (int) VarNumberSerializer.readVarLong(buf);
 				entityId = cache.replaceEntityId(entityId);
 				ByteBuf packet = Allocator.allocateBuffer();

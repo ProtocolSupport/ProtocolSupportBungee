@@ -4,13 +4,14 @@ import java.text.MessageFormat;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Respawn;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.PESingleWriteablePacket;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 
 public class RespawnPacket extends PESingleWriteablePacket<Respawn> {
 
 	public RespawnPacket() {
-		super(61);
+		super(PEPacketId.Clientbound.PLAY_RESPAWN);
 	}
 
 	@Override

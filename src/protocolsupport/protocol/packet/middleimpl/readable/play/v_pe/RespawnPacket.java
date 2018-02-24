@@ -8,15 +8,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Respawn;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 
 public class RespawnPacket extends PEDefinedReadableMiddlePacket {
 
-	public static final int PACKET_ID = 61;
-
 	public RespawnPacket() {
-		super(PACKET_ID);
+		super(PEPacketId.Clientbound.PLAY_RESPAWN);
 	}
 
 	protected int dimensionId;

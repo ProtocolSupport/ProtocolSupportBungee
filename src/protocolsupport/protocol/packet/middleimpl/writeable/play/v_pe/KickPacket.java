@@ -3,13 +3,14 @@ package protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe;
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.md_5.bungee.protocol.packet.Kick;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.PESingleWriteablePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
 
 public class KickPacket extends PESingleWriteablePacket<Kick> {
 
 	public KickPacket() {
-		super(5);
+		super(PEPacketId.Clientbound.PLAY_KICK);
 	}
 
 	@Override

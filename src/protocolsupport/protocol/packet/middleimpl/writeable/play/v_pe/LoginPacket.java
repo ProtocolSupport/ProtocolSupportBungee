@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
@@ -27,19 +28,19 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 			cache.setClientEntityId(packet.getEntityId());
 			ArrayList<ByteBuf> packets = new ArrayList<>();
 			ByteBuf resourcepack = Allocator.allocateBuffer();
-			PEPacketIdSerializer.writePacketId(resourcepack, 6);
+			PEPacketIdSerializer.writePacketId(resourcepack, PEPacketId.Clientbound.PLAY_RESOURCE_PACK);
 			resourcepack.writeBoolean(false); // required
 			resourcepack.writeShortLE(0); //beh packs count
 			resourcepack.writeShortLE(0); //res packs count
 			packets.add(resourcepack);
 			ByteBuf resourcestack = Allocator.allocateBuffer();
-			PEPacketIdSerializer.writePacketId(resourcestack, 7);
+			PEPacketIdSerializer.writePacketId(resourcestack, PEPacketId.Clientbound.PLAY_RESOURCE_STACK);
 			resourcestack.writeBoolean(false); // required
 			VarNumberSerializer.writeVarInt(resourcestack, 0); //beh packs count
 			VarNumberSerializer.writeVarInt(resourcestack, 0); //res packs count
 			packets.add(resourcestack);
 			ByteBuf startgame = Allocator.allocateBuffer();
-			PEPacketIdSerializer.writePacketId(startgame, 11);
+			PEPacketIdSerializer.writePacketId(startgame, PEPacketId.Clientbound.PLAY_START_GAME);
 			VarNumberSerializer.writeSVarLong(startgame, packet.getEntityId());
 			VarNumberSerializer.writeVarLong(startgame, packet.getEntityId());
 			VarNumberSerializer.writeSVarInt(startgame, packet.getGameMode());
@@ -76,13 +77,13 @@ public class LoginPacket extends WriteableMiddlePacket<Login> {
 			StringSerializer.writeVarIntUTF8String(startgame, ""); //level name (will packet.getLevelType() work?)
 			StringSerializer.writeVarIntUTF8String(startgame, ""); //template pack id
 			startgame.writeBoolean(false); //is trial
-			startgame.writeLong(0); //level time
+			startgame.writeLongLE(0); //level time
 			VarNumberSerializer.writeSVarInt(startgame, 0); //enchantment seed
 			packets.add(startgame);
 			return packets;
 		} else {
 			ByteBuf respawn = Allocator.allocateBuffer();
-			PEPacketIdSerializer.writePacketId(respawn, 61);
+			PEPacketIdSerializer.writePacketId(respawn, PEPacketId.Clientbound.PLAY_RESPAWN);
 			VarNumberSerializer.writeSVarInt(respawn, RespawnPacket.getPeDimensionId(packet.getDimension()));
 			respawn.writeFloatLE(0); //x
 			respawn.writeFloatLE(0); //y
