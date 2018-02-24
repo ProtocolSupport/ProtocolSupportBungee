@@ -21,8 +21,8 @@ import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_pe.LoginSuccessPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.KickPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.LoginPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.RespawnPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.StartGamePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.ToClientChatPacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -32,7 +32,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 	{
 		registry.register(EncryptionRequest.class, NoopWriteablePacket.class);
 		registry.register(LoginSuccess.class, LoginSuccessPacket.class);
-		registry.register(Login.class, LoginPacket.class);
+		registry.register(Login.class, StartGamePacket.class);
 		registry.register(StatusResponse.class, NoopWriteablePacket.class);
 		registry.register(Kick.class, KickPacket.class);
 		registry.register(KeepAlive.class, NoopWriteablePacket.class);

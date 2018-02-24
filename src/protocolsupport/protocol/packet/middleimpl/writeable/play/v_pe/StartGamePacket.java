@@ -14,7 +14,7 @@ import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 import protocolsupport.utils.netty.Allocator;
 
-public class LoginPacket extends WriteableMiddlePacket<Login> {
+public class StartGamePacket extends WriteableMiddlePacket<Login> {
 
 	private static final String levelId = UUID.randomUUID().toString();
 
