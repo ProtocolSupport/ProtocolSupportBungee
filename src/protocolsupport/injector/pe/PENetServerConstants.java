@@ -2,19 +2,21 @@ package protocolsupport.injector.pe;
 
 import io.netty.channel.Channel;
 import protocolsupport.api.ProtocolVersion;
+import protocolsupport.api.events.PocketServerInfoEvent;
 import raknetserver.pipeline.raknet.RakNetPacketConnectionEstablishHandler.PingHandler;
+
 
 public class PENetServerConstants {
 
 	public static final PingHandler PING_HANDLER = new PingHandler() {
 		@Override
 		public String getServerInfo(Channel channel) {
-			//TODO: fake pspe packets for ping passthrough
-			return String.join(";",
+            PocketServerInfoEvent event = PocketServerInfoEvent.call("ProtocolSupportBungee");
+            return String.join(";",
 				"MCPE",
-				"ProtocolSupportBungeePE",
+                event.getWelcomeMessage(),
 				String.valueOf(ProtocolVersion.MINECRAFT_PE.getId()), POCKET_VERSION,
-				"0", "1"
+				String.valueOf(event.getOnline()), String.valueOf(event.getServerSize())
 			);
 		}
 		@Override
