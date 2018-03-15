@@ -9,11 +9,13 @@
 		classpath 'org.vafer:jdependency:1.1'
 		classpath files('gradle/plugins/shadowPlugin.jar')
 	}
+	repositories {
+		mavenCentral()
+	}
 }
 
 plugins {
 	id 'java'
-	id 'de.undercouch.download' version '3.1.1'
 }
 
 apply plugin: com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
@@ -31,23 +33,42 @@ version '1.4.dev'
 
 sourceCompatibility = 1.8
 
-import de.undercouch.gradle.tasks.download.Download
 
-File dllibs = new File('dllibs')
-dllibs.mkdirs()
+import java.text.MessageFormat
 
-task updateLibs(type: Download) {
-	src([
+File dlDepsDir = new File('dllibs')
+dlDepsDir.mkdirs()
+
+def dlDeps = [
+	new Tuple(
 		'https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar',
-		'https://build.true-games.org/job/RakNetServer/lastSuccessfulBuild/artifact/target/RakNetServer.jar'
-	])
-	dest dllibs
-	onlyIfNewer true
-	overwrite true
-}
+		'bungeecord-1.jar'
+	),
+	new Tuple(
+		'https://build.true-games.org/job/RakNetServer/lastSuccessfulBuild/artifact/target/RakNetServer.jar',
+		'raknetserver-2.jar'
+	)
+]
 
-compileJava.dependsOn(clean)
-compileJava.dependsOn(updateLibs)
+task updateLibs(type: DefaultTask) {doLast{
+	def dlDepsNames = new HashSet<String>()
+	dlDeps.each({
+		String dlDepUrl = it[0]
+		File dlDepFile = new File(dlDepsDir, it[1])
+		dlDepsNames.add(dlDepFile.getName())
+		if (!dlDepFile.exists()) {
+			logger.lifecycle(MessageFormat.format("Downloading {0} from {1}", dlDepFile.getName(), dlDepUrl))
+			ant.get(src: dlDepUrl, dest: dlDepFile)
+		} else {
+			logger.lifecycle(MessageFormat.format("Skipping download of {0} because it already exists", dlDepFile.getName()))
+		}
+	})
+	dlDepsDir.listFiles().findAll({ !dlDepsNames.contains(it.getName()) }).each({
+		logger.lifecycle(MessageFormat.format("Deleting old dllib {0}", it.getName()))
+		it.delete()
+	})
+}}
+
 
 sourceSets {
 	main {
@@ -65,11 +86,12 @@ repositories {
 }
 
 dependencies {
-	shadow files(new File(dllibs, 'BungeeCord.jar'))
-	compile files(new File(dllibs, 'RakNetServer.jar'))
+	shadow fileTree(dir: dlDepsDir, include: '*.jar')
+	compile files(new File(dlDepsDir, 'raknetserver-1.jar'))
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
 }
+
 
 shadowJar {
 	doFirst {
@@ -94,5 +116,8 @@ shadowJar {
 	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
 }
 
+
+compileJava.dependsOn(clean)
+compileJava.dependsOn(updateLibs)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
