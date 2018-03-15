@@ -36,21 +36,31 @@ sourceCompatibility = 1.8
 
 import java.text.MessageFormat
 
-File dlDepsDir = new File('dllibs')
-dlDepsDir.mkdirs()
+File dlDepsDirC = new File('dllibsc')
+dlDepsDirC.mkdirs()
 
-def dlDeps = [
+File dlDepsDirS = new File('dllibss')
+dlDepsDirS.mkdirs()
+
+def dlDepsC = [
 	new Tuple(
-		'https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar',
+		'https://ci.md-5.net/job/BungeeCord/1305/artifact/bootstrap/target/BungeeCord.jar',
 		'bungeecord-1.jar'
-	),
-	new Tuple(
-		'https://build.true-games.org/job/RakNetServer/lastSuccessfulBuild/artifact/target/RakNetServer.jar',
-		'raknetserver-2.jar'
 	)
 ]
 
-task updateLibs(type: DefaultTask) {doLast{
+def dlDepsS = [
+	new Tuple(
+		'https://build.true-games.org/job/RakNetServer/24/artifact/target/RakNetServer.jar',
+		'raknetserver-4.jar'
+	),
+	new Tuple(
+		'https://build.true-games.org/job/UdpServerSocketChannel/11/artifact/target/UdpServerSocketChannel.jar',
+		'udpserver-2.jar'
+	),
+]
+
+void dlDeps(def dlDeps, File dlDepsDir) {
 	def dlDepsNames = new HashSet<String>()
 	dlDeps.each({
 		String dlDepUrl = it[0]
@@ -67,6 +77,11 @@ task updateLibs(type: DefaultTask) {doLast{
 		logger.lifecycle(MessageFormat.format("Deleting old dllib {0}", it.getName()))
 		it.delete()
 	})
+}
+
+task updateLibs(type: DefaultTask) {doLast{
+	dlDeps(dlDepsC, dlDepsDirC)
+	dlDeps(dlDepsS, dlDepsDirS)
 }}
 
 
@@ -86,8 +101,8 @@ repositories {
 }
 
 dependencies {
-	shadow fileTree(dir: dlDepsDir, include: '*.jar')
-	compile files(new File(dlDepsDir, 'raknetserver-1.jar'))
+	shadow fileTree(dir: dlDepsDirC, include: '*.jar')
+	compile fileTree(dir: dlDepsDirS, include: '*.jar')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
 }
