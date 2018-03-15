@@ -1,7 +1,11 @@
 package protocolsupport.protocol.storage;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+import io.netty.buffer.ByteBuf;
+import net.md_5.bungee.protocol.packet.PlayerListItem;
 import org.apache.commons.lang3.Validate;
 
 import net.md_5.bungee.protocol.packet.Handshake;
@@ -72,4 +76,9 @@ public class NetworkDataCache {
 		return entityId;
 	}
 
+	private Map<PlayerListItem, ByteBuf> tabList = new HashMap<>();
+
+	public Map<PlayerListItem, ByteBuf> tabList() {
+		return tabList;
+	}
 }
