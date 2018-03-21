@@ -9,6 +9,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class PEProxyNetworkManager extends SimpleChannelInboundHandler<ByteBuf> {
 
+	public static final String NAME = "peproxy-nm";
+
 	protected Channel serverconnection;
 
 	@Override

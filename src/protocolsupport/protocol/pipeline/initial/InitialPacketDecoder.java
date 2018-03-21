@@ -12,7 +12,9 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.util.concurrent.Future;
 import net.md_5.bungee.netty.PipelineUtils;
 import protocolsupport.api.ProtocolVersion;
+import protocolsupport.injector.pe.PEProxyServerInfoHandler;
 import protocolsupport.protocol.ConnectionImpl;
+import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.pipeline.ChannelHandlers;
 import protocolsupport.protocol.pipeline.IPipeLineBuilder;
 import protocolsupport.protocol.pipeline.common.PacketCompressor;
@@ -186,8 +188,12 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 				setProtocol(channel, ProtocolUtils.readNewHandshake(firstpacketdata));
 				break;
 			}
-			case 0x01: { // pe handshake
+			case PEPacketId.Serverbound.HANDSHAKE_LOGIN: {
 				setProtocol(channel, ProtocolUtils.readPEHandshake(firstpacketdata));
+				break;
+			}
+			case PEProxyServerInfoHandler.PACKET_ID: {
+				setProtocol(channel, ProtocolVersion.MINECRAFT_PE);
 				break;
 			}
 			default: {

@@ -10,16 +10,16 @@ public class PEProxyServer {
 
 	private final RakNetServer peserver = new RakNetServer(
 		BungeeCord.getInstance().getConfig().getListeners().iterator().next().getHost(),
-		PENetServerConstants.PING_HANDLER,
+		new PEProxyServerInfoHandler(),
 		new UserChannelInitializer() {
 			@Override
 			public void init(Channel channel) {
 				ChannelPipeline pipeline = channel.pipeline();
 				pipeline.addLast(new PECompressor());
 				pipeline.addLast(new PEDecompressor());
-				pipeline.addLast(new PEProxyNetworkManager());
+				pipeline.addLast(PEProxyNetworkManager.NAME, new PEProxyNetworkManager());
 			}
-		}, PENetServerConstants.USER_PACKET_ID
+		}, 0xFE
 	);
 
 	public void start() {

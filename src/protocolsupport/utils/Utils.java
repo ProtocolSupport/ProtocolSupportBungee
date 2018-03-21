@@ -10,8 +10,6 @@ import java.util.function.Function;
 import com.google.gson.Gson;
 
 import io.netty.buffer.ByteBuf;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 
 public class Utils {
 
@@ -71,24 +69,6 @@ public class Utils {
 		} else {
 			return null;
 		}
-	}
-
-	public static String toLegacyText(String json) {
-		if (json == null) {
-			return "";
-		}
-		return Utils.toLegacyText(ComponentSerializer.parse(json));
-	}
-
-	public static String toLegacyText(BaseComponent[] components) {
-		if (components == null) {
-			return "";
-		}
-		final StringBuilder out = new StringBuilder();
-		for (BaseComponent component : components) {
-			out.append(component.toLegacyText());
-		}
-		return out.toString();
 	}
 
 	public static <T> T getJavaPropertyValue(String property, T defaultValue, Function<String, T> converter) {
