@@ -63,6 +63,10 @@ public class Utils {
 		return data;
 	}
 
+	public static boolean isTrue(Boolean bool) {
+		return bool != null && bool.booleanValue();
+	}
+
 	public static <T> T getFromArrayOrNull(T[] array, int index) {
 		if ((index >= 0) && (index < array.length)) {
 			return array[index];
