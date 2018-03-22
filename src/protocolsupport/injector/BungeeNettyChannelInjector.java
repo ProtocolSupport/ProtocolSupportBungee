@@ -80,6 +80,7 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 	public static class CustomHandlerBoss extends HandlerBoss {
 
 		protected PacketHandler handler;
+		protected PacketHandlerChangeListener listener = (handler) -> handler;
 
 		public CustomHandlerBoss(PacketHandler handler) {
 			setHandler(handler);
@@ -87,12 +88,22 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 
 		@Override
 		public void setHandler(PacketHandler handler) {
+			handler = listener.onPacketHandlerChange(handler);
 			super.setHandler(handler);
 			this.handler = handler;
 		}
 
 		public PacketHandler getHandler() {
 			return this.handler;
+		}
+
+		public void setHandlerChangeListener(PacketHandlerChangeListener listener) {
+			this.listener = listener;
+		}
+
+		@FunctionalInterface
+		public static interface PacketHandlerChangeListener {
+			public PacketHandler onPacketHandlerChange(PacketHandler handler);
 		}
 
 	}

@@ -1,53 +1,14 @@
-package protocolsupport.protocol.utils;
+package protocolsupport.protocol.packet.entityrewrite;
 
 import java.util.function.IntUnaryOperator;
 
 import io.netty.buffer.ByteBuf;
 import protocolsupport.protocol.serializer.TypeCopier;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
-import protocolsupport.utils.netty.Allocator;
 
-public abstract class EntityRewriteTools {
+public abstract class EntityRewriteCommand {
 
-	protected final EntityRewriteCommand[][] rewritechains;
-	public EntityRewriteTools(int size) {
-		rewritechains = new EntityRewriteCommand[size][];
-	}
-
-	public void register(int packetId, EntityRewriteCommand... chain) {
-		rewritechains[packetId] = chain.clone();
-	}
-
-	public ByteBuf rewrite(ByteBuf from, IntUnaryOperator rewritefunc) {
-		from.markReaderIndex();
-		int packetId = readPacketId(from);
-		EntityRewriteCommand[] chain = rewritechains[packetId];
-		if (chain == null) {
-			from.resetReaderIndex();
-			return from.retain();
-		}
-		ByteBuf to = Allocator.allocateBuffer();
-		try {
-			writePacketId(to, packetId);
-			for (EntityRewriteCommand command : chain) {
-				command.rewrite(from, to, rewritefunc);
-			}
-			return to;
-		} catch (Exception e) {
-			to.release();
-			throw e;
-		}
-	}
-
-	protected abstract int readPacketId(ByteBuf from);
-
-	protected abstract void writePacketId(ByteBuf to, int packetId);
-
-	public static abstract class EntityRewriteCommand {
-
-		protected abstract void rewrite(ByteBuf from, ByteBuf to, IntUnaryOperator rewritefunc);
-
-	}
+	protected abstract void rewrite(ByteBuf from, ByteBuf to, IntUnaryOperator rewritefunc);
 
 	public static abstract class EntityIdEntityRewriteCommand extends EntityRewriteCommand {
 

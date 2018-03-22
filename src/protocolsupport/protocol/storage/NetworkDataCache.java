@@ -51,25 +51,4 @@ public class NetworkDataCache {
 		return peClientUUID;
 	}
 
-	private int clientEntityId;
-	private int serverEntityId;
-
-	public void setClientEntityId(int entityId) {
-		this.clientEntityId = entityId;
-	}
-
-	public void setServerEntityId(int entityId) {
-		this.serverEntityId = entityId;
-	}
-
-	public int replaceEntityId(int entityId) {
-		if (entityId == clientEntityId) {
-			return serverEntityId;
-		}
-		if (entityId == serverEntityId) {
-			return clientEntityId;
-		}
-		return entityId;
-	}
-
 }
