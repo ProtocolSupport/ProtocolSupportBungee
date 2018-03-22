@@ -9,14 +9,12 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.haproxy.HAProxyMessageDecoder;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PacketHandler;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.Varint21LengthFieldPrepender;
-import protocolsupport.api.Connection;
-import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.packet.handler.PSInitialHandler;
 import protocolsupport.protocol.pipeline.ChannelHandlers;
@@ -62,13 +60,14 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 				ConnectionImpl connection = new ConnectionImpl(boss, initialhandler);
 				connection.storeInChannel(channel);
 				ProtocolStorage.addConnection(channel.remoteAddress(), connection);
-				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection));
+				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection, true));
 				pipeline.remove(PipelineUtils.LEGACY_DECODER);
 				pipeline.remove(PipelineUtils.LEGACY_KICKER);
 				boss.setHandler(initialhandler);
 			} else if (handler instanceof ServerConnector) {//bungee to server connection
-				UserConnection userconn = ReflectionUtils.getFieldValue(handler, "user");
-				Connection connection = ProtocolSupportAPI.getConnection(userconn);
+				ConnectionImpl connection = ConnectionImpl.getFromChannel(((ChannelWrapper) ReflectionUtils.getFieldValue(ReflectionUtils.getFieldValue(handler, "user"), "ch")).getHandle());
+				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection, false));
+				connection.setServerConnectionChannel(channel);
 				IPipeLineBuilder builder = IPipeLineBuilder.BUILDERS.get(connection.getVersion());
 				if (builder != null) {
 					builder.buildBungeeServer(channel, connection);
@@ -80,23 +79,7 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 
 	public static class CustomHandlerBoss extends HandlerBoss {
 
-		private Channel channel;
-
-		@Override
-		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			super.channelActive(ctx);
-			channel = ctx.channel();
-		}
-
-		public boolean isConnected() {
-			return (channel != null) && channel.isActive();
-		}
-
-		public Channel getChannel() {
-			return channel;
-		}
-
-		private PacketHandler handler;
+		protected PacketHandler handler;
 
 		public CustomHandlerBoss(PacketHandler handler) {
 			setHandler(handler);

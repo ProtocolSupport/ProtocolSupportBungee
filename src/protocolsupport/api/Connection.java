@@ -2,6 +2,7 @@ package protocolsupport.api;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -54,6 +55,115 @@ public abstract class Connection {
 	 */
 	public ProtocolVersion getVersion() {
 		return version;
+	}
+
+	/**
+	 * Sends packet to client <br>
+	 * Packet sent by this method skips send packet listener
+	 * @param packet packet
+	 */
+	public abstract void sendPacketToClient(Object packet);
+
+	/**
+	 * Sends packet to server <br>
+	 * Packet sent by this method skips send packet listener
+	 * @param packet packet
+	 */
+	public abstract void sendPacketToServer(Object packet);
+
+	protected final CopyOnWriteArrayList<PacketListener> clientConnectionPacketListeners = new CopyOnWriteArrayList<>();
+
+	/**
+	 * Adds packet listener to server connection
+	 * @param listener packet listener
+	 */
+	public void addClientConnectionPacketListener(PacketListener listener) {
+		clientConnectionPacketListeners.add(listener);
+	}
+
+	/**
+	 * Removes packet listener from server connection
+	 * @param listener packet listener
+	 */
+	public void removeClientConnectionPacketListener(PacketListener listener) {
+		clientConnectionPacketListeners.remove(listener);
+	}
+
+	protected final CopyOnWriteArrayList<PacketListener> serverConnectionPacketListeners = new CopyOnWriteArrayList<>();
+
+	/**
+	 * Adds packet listener to server connection
+	 * @param listener packet listener
+	 */
+	public void addServerConnectionPacketListener(PacketListener listener) {
+		serverConnectionPacketListeners.add(listener);
+	}
+
+	/**
+	 * Removes packet listener from server connection
+	 * @param listener packet listener
+	 */
+	public void removeServerConnectionPacketListener(PacketListener listener) {
+		serverConnectionPacketListeners.remove(listener);
+	}
+
+	public abstract static class PacketListener {
+
+		/**
+		 * Override to handle native packet sending <br>
+		 * PacketEvent and it's data is only valid while handling the packet
+		 * @param event packet event
+		 */
+		public void onPacketSending(PacketEvent event) {
+		}
+
+		/**
+		 * Override to handle native packet receiving <br>
+		 * PacketEvent and it's data is only valid while handling the packet <br>
+		 * Based on client version this the received data might be a part of packet, not a full one
+		 * @param event packet event
+		 */
+		public void onPacketReceiving(PacketEvent event) {
+		}
+
+		public static class PacketEvent {
+
+			protected Object packet;
+			protected boolean cancelled;
+
+			/**
+			 * Returns packet
+			 * @return native packet instance
+			 */
+			public Object getPacket() {
+				return packet;
+			}
+
+			/**
+			 * Sets packet
+			 * @param packet native packet instance
+			 */
+			public void setPacket(Object packet) {
+				this.packet = packet;
+			}
+
+			/**
+			 * Returns if packet is cancelled
+			 * @return true if packet is cancelled, false otherwise
+			 */
+			public boolean isCancelled() {
+				return cancelled;
+			}
+
+			/**
+			 * Sets if packet is cancelled
+			 * @param cancelled true if packet is cancelled, false otherwise
+			 */
+			public void setCancelled(boolean cancelled) {
+				this.cancelled = cancelled;
+			}
+		}
+
 	}
 
 	protected final ConcurrentHashMap<String, Object> metadata = new ConcurrentHashMap<>();
