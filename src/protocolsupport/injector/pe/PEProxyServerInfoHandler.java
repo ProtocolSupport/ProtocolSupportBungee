@@ -33,9 +33,9 @@ public class PEProxyServerInfoHandler implements PingHandler {
 		r -> new Thread(r, "PEStatusProcessingThread")
 	);
 
-	protected static AttributeKey<Boolean> sentInfoKey = AttributeKey.valueOf("___PSPEServerInfoSentInfo");
-
 	public static final int PACKET_ID = 3;
+
+	protected static AttributeKey<Boolean> sentInfoKey = AttributeKey.valueOf("___PSPEServerInfoSentInfo");
 
 	@Override
 	public String getServerInfo(Channel channel) {

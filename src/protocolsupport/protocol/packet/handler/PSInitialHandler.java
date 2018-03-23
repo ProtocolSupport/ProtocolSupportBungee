@@ -101,13 +101,19 @@ public class PSInitialHandler extends InitialHandler {
 		return username;
 	}
 
-	protected EncryptionRequest request;
+	protected LoginRequest loginRequest;
+
+	@Override
+	public LoginRequest getLoginRequest() {
+		return loginRequest;
+	}
 
 	@Override
 	public void handle(LoginRequest loginRequest) throws Exception {
 		Preconditions.checkState(state == LoginState.HELLO, "Not expecting USERNAME");
 		state = LoginState.ONLINEMODERESOLVE;
-		username = loginRequest.getData();
+		this.loginRequest = loginRequest;
+		this.username = loginRequest.getData();
 		if (getName().contains(".")) {
 			disconnect(BungeeCord.getInstance().getTranslation("name_invalid"));
 			return;
@@ -139,6 +145,8 @@ public class PSInitialHandler extends InitialHandler {
 			}
 		}));
 	}
+
+	protected EncryptionRequest request;
 
 	protected void processLoginStart() {
 		PlayerLoginStartEvent event = new PlayerLoginStartEvent(connection, username, isOnlineMode(), getHandshake().getHost());
