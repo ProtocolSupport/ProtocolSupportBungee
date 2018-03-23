@@ -1,5 +1,6 @@
 package protocolsupport.protocol.packet.entityrewrite;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
@@ -13,6 +14,11 @@ public class EntityRewriteFactory {
 	static {
 		toClient.put(ProtocolVersion.MINECRAFT_PE, new PEToClientEntityRewrite());
 		fromClient.put(ProtocolVersion.MINECRAFT_PE, new PEFromClientEntityRewrite());
+		Arrays.stream(ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_4_7, ProtocolVersion.MINECRAFT_1_6_4))
+		.forEach(version -> {
+			toClient.put(version, new LegacyToClientEntityRewrite());
+			fromClient.put(version, new LegacyFromClientEntityRewrite());
+		});
 	}
 
 	public static EntityRewrite getToClientRewrite(ProtocolVersion version) {

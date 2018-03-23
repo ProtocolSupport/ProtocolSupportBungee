@@ -34,6 +34,17 @@ public abstract class EntityRewriteCommand {
 		}
 	};
 
+	public static final EntityIdEntityRewriteCommand INT_ENTITY_ID_ENTITY_REWRITE_COMMAND = new EntityIdEntityRewriteCommand() {
+		@Override
+		protected void writeEntityId(ByteBuf to, int entityId) {
+			to.writeInt(entityId);
+		}
+		@Override
+		protected int readEntityId(ByteBuf from) {
+			return from.readInt();
+		}
+	};
+
 	public static final EntityIdEntityRewriteCommand SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND = new EntityIdEntityRewriteCommand() {
 		@Override
 		protected int readEntityId(ByteBuf from) {

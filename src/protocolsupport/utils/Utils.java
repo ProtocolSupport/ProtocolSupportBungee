@@ -64,7 +64,7 @@ public class Utils {
 	}
 
 	public static boolean isTrue(Boolean bool) {
-		return bool != null && bool.booleanValue();
+		return (bool != null) && bool.booleanValue();
 	}
 
 	public static <T> T getFromArrayOrNull(T[] array, int index) {

@@ -6,7 +6,7 @@ import protocolsupport.protocol.packet.middleimpl.readable.LegacyFixedLengthPass
 public class EntityActionPacket extends LegacyFixedLengthPassthroughReadableMiddlePacket {
 
 	public EntityActionPacket() {
-		super(LegacyPacketId.Dualbound.PLAY_ENTITY_ACTION, Integer.BYTES + Byte.BYTES + Integer.BYTES);
+		super(LegacyPacketId.Serverbound.PLAY_ENTITY_ACTION, Integer.BYTES + Byte.BYTES + Integer.BYTES);
 	}
 
 }

@@ -52,7 +52,7 @@ public class FromClientPacketDecoder extends LegacyAbstractFromClientPacketDecod
 		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_BLOCK_PLACE, BlockPlacePacket.class);
 		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_HELD_SLOT, HeldSlotPacket.class);
 		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_ANIMATION, AnimationPacket.class);
-		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_ENTITY_ACTION, EntityActionPacket.class);
+		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_ENTITY_ACTION, EntityActionPacket.class);
 		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_CLOSE, InventoryClosePacket.class);
 		registry.register(Protocol.GAME, LegacyPacketId.Serverbound.PLAY_INVENTORY_CLICK, InventoryClickPacket.class);
 		registry.register(Protocol.GAME, LegacyPacketId.Dualbound.PLAY_INVENTORY_TRANSACTION, InventoryTransactionPacket.class);
