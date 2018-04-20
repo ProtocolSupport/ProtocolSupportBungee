@@ -28,6 +28,7 @@ public class FromServerChatPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //needs translation
 		message = ComponentSerializer.toString(new TextComponent(StringSerializer.readVarIntUTF8String(from)));
 		StringSerializer.readVarIntUTF8String(from); //Xbox user ID
+		StringSerializer.readVarIntUTF8String(from); //Platform Chat ID
 	}
 
 	@Override
