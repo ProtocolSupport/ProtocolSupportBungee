@@ -58,6 +58,9 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		VarNumberSerializer.readSVarInt(from); //permission level
 		VarNumberSerializer.readSVarInt(from); //game publish setting
 		from.readIntLE(); //chunk tick radius
+		from.readBoolean(); // platform broadcast
+		VarNumberSerializer.readSVarInt(from); // broadcast mode
+		from.readBoolean(); // broadcast intent
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id
