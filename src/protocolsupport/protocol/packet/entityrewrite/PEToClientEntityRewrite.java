@@ -9,11 +9,6 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 
 	{
 		register(
-			PEPacketId.Dualbound.PLAY_PLAYER_MOVE_LOOK,
-			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
-			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
-		);
-		register(
 			PEPacketId.Clientbound.PLAY_ENTITY_ATTRIBUTES,
 			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
@@ -60,6 +55,12 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 					VarNumberSerializer.writeSVarLong(to, VarNumberSerializer.readSVarLong(from));
 				}
 			},
+			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+		);
+		register(
+			PEPacketId.Dualbound.PLAY_PLAYER_MOVE_LOOK,
+			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+			new EntityRewriteCommand.FixedLengthBytesCopyEntityRewriteCommand((Float.BYTES * 6) + (Byte.BYTES * 2)),
 			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
 		);
 		//TODO: meta content remap
