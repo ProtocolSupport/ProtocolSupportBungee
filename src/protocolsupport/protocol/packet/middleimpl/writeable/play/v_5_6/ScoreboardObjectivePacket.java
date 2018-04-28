@@ -8,7 +8,7 @@ import protocolsupport.protocol.serializer.StringSerializer;
 
 public class ScoreboardObjectivePacket extends LegacySingleWriteablePacket<ScoreboardObjective> {
 
-	public ScoreboardObjectivePacket(int packetId) {
+	public ScoreboardObjectivePacket() {
 		super(LegacyPacketId.Clientbound.PLAY_SCOREBOARD_OBJECTIVE);
 	}
 
