@@ -53,6 +53,7 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //disable achievements
 		VarNumberSerializer.writeSVarInt(startgame, 0); //time
 		startgame.writeBoolean(false); //edu mode
+		startgame.writeBoolean(false); //edu mode
 		startgame.writeFloatLE(0); //rain level
 		startgame.writeFloatLE(0); //lighting level
 		startgame.writeBoolean(true); //is multiplayer
@@ -60,12 +61,19 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //broadcast to xbl
 		startgame.writeBoolean(true); //commands enabled
 		startgame.writeBoolean(false); //needs texture pack
-		VarNumberSerializer.writeVarInt(startgame, 0); //game rules
+		VarNumberSerializer.writeVarInt(startgame, 1); //game rules
+		StringSerializer.writeVarIntUTF8String(startgame, "dodaylightcycle");
+		VarNumberSerializer.writeVarInt(startgame, 1); //game rules bool
+		startgame.writeBoolean(false);
 		startgame.writeBoolean(false); //player map enabled
 		startgame.writeBoolean(false); //trust players
 		VarNumberSerializer.writeSVarInt(startgame, 1); //permission level
 		VarNumberSerializer.writeSVarInt(startgame, 4); //game publish setting
 		startgame.writeIntLE(4); //chunk tick radius
+		startgame.writeBoolean(false); //Broadcast intent
+		startgame.writeBoolean(false); //hasLockedRes pack
+		startgame.writeBoolean(false); //hasLockedBeh pack
+		startgame.writeBoolean(false); //hasLocked world template.
 		StringSerializer.writeVarIntUTF8String(startgame, levelId);
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //level name (will packet.getLevelType() work?)
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //template pack id
