@@ -45,6 +45,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //disable achievements
 		VarNumberSerializer.readSVarInt(from); //time
 		from.readBoolean(); //edu mode
+		from.readBoolean(); //edu features
 		from.readFloatLE(); //rain level
 		from.readFloatLE(); //lighting level
 		from.readBoolean(); //is multiplayer
