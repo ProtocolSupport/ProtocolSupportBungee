@@ -52,7 +52,14 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //broadcast to xbl
 		from.readBoolean(); //commands enabled
 		from.readBoolean(); //needs texture pack
-		VarNumberSerializer.readVarInt(from); //game rules //TODO: actually implement gamerules reading in case pspe will actually send them one day
+		int gameRuleCount = VarNumberSerializer.readVarInt(from); //game rules
+		for (int i = 0; i < gameRuleCount; i++) {
+			StringSerializer.readVarIntUTF8String(from); //game rule name
+		}
+		int gameRuleBoolCount = VarNumberSerializer.readVarInt(from); //game rules bool
+		for (int i = 0; i < gameRuleBoolCount; i++) {
+			from.readBoolean();
+		}
 		from.readBoolean(); //player map enabled
 		from.readBoolean(); //trust players
 		VarNumberSerializer.readSVarInt(from); //permission level
@@ -61,6 +68,9 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); // platform broadcast
 		VarNumberSerializer.readSVarInt(from); // broadcast mode
 		from.readBoolean(); // broadcast intent
+		from.readBoolean(); // hasLockedRes pack
+		from.readBoolean(); // hasLockedBeh pack
+		from.readBoolean(); // hasLocked world template.
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id
