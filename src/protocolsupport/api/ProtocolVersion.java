@@ -275,7 +275,7 @@ public enum ProtocolVersion {
 	public static ProtocolVersion getLatest(ProtocolType type) {
 		switch (type) {
 			case PC: {
-				return MINECRAFT_1_12_2;
+				return MINECRAFT_1_13;
 			}
 			case PE: {
 				return MINECRAFT_PE;
