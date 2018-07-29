@@ -1,9 +1,12 @@
 package protocolsupport;
 
+import java.util.logging.Level;
+
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import protocolsupport.injector.BungeeNettyChannelInjector;
 import protocolsupport.injector.pe.PEProxyServer;
+import protocolsupport.utils.Utils;
 
 public class ProtocolSupport extends Plugin {
 
@@ -22,7 +25,10 @@ public class ProtocolSupport extends Plugin {
 
 	@Override
 	public void onEnable() {
-		(peserver = new PEProxyServer()).start();
+		if (Utils.getJavaPropertyValue("enablepe", false, Boolean::parseBoolean)) {
+			getLogger().log(Level.INFO, "Enabling MCPE support");
+			(peserver = new PEProxyServer()).start();
+		}
 	}
 
 	@Override
