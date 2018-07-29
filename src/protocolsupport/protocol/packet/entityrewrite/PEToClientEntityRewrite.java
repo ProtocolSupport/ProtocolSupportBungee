@@ -45,14 +45,15 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 		register(
 			PEPacketId.Clientbound.PLAY_ENTITY_PASSENGER,
 			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
-			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
+			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
 		);
 		register(
 			PEPacketId.Clientbound.PLAY_ENTITY_ANIMATION,
 			new EntityRewriteCommand.NoEntityIdRewriteEntityRewriteCommand() {
 				@Override
 				protected void rewrite(ByteBuf from, ByteBuf to) {
-					VarNumberSerializer.writeSVarLong(to, VarNumberSerializer.readSVarLong(from));
+					VarNumberSerializer.writeSVarInt(to, VarNumberSerializer.readSVarInt(from));
 				}
 			},
 			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND
@@ -83,7 +84,9 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 			new EntityRewriteCommand.NoEntityIdRewriteEntityRewriteCommand() {
 				@Override
 				protected void rewrite(ByteBuf from, ByteBuf to) {
-					StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from));
+					StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from)); // username
+					StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from)); // third party name
+					VarNumberSerializer.writeVarInt(to, VarNumberSerializer.readVarInt(from)); // platform
 				}
 			},
 			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
@@ -91,5 +94,4 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
 		);
 	}
-
 }
