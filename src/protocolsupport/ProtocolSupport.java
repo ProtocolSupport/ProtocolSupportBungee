@@ -33,7 +33,9 @@ public class ProtocolSupport extends Plugin {
 
 	@Override
 	public void onDisable() {
-		peserver.stop();
+		if (peserver != null) {
+			peserver.stop();
+		}
 	}
 
 }
