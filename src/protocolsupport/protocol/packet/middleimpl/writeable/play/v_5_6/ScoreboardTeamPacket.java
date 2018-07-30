@@ -9,7 +9,7 @@ import protocolsupport.protocol.serializer.StringSerializer;
 public class ScoreboardTeamPacket extends LegacySingleWriteablePacket<Team> {
 
 	public ScoreboardTeamPacket() {
-		super(LegacyPacketId.Clientbound.PLAY_SCOREBOARD_SCORE);
+		super(LegacyPacketId.Clientbound.PLAY_SCOREBOARD_TEAM);
 	}
 
 	@Override
