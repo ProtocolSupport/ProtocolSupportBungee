@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -47,6 +48,7 @@ import protocolsupport.api.events.PlayerLoginFinishEvent;
 import protocolsupport.api.events.PlayerLoginStartEvent;
 import protocolsupport.api.events.PlayerProfileCompleteEvent;
 import protocolsupport.api.utils.Profile;
+import protocolsupport.api.utils.ProfileProperty;
 import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 import protocolsupport.protocol.utils.GameProfile;
@@ -262,6 +264,10 @@ public class PSInitialHandler extends InitialHandler {
 						loginProfile = obj;
 						updateUsername(obj.getName(), true);
 						updateUUID(Util.getUUID(obj.getId()), true);
+						Arrays.stream(loginProfile.getProperties())
+						.forEach(bProperty -> connection.getProfile().addProperty(
+							new ProfileProperty(bProperty.getName(), bProperty.getValue(), bProperty.getSignature())
+						));
 						finishLogin();
 						return;
 					}
