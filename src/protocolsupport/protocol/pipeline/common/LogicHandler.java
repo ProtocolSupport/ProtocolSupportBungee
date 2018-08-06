@@ -50,7 +50,7 @@ public class LogicHandler extends ChannelDuplexHandler {
 		super.channelInactive(ctx);
 		if (isClientConnection) {
 			ProxyServer.getInstance().getPluginManager().callEvent(new ConnectionCloseEvent(connection));
-			ProtocolStorage.removeConnection(connection.getAddress());
+			ProtocolStorage.removeConnection(connection.getRawAddress());
 		}
 	}
 
