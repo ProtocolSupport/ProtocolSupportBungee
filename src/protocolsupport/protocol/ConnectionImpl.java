@@ -17,6 +17,7 @@ import protocolsupport.injector.BungeeNettyChannelInjector.CustomHandlerBoss;
 import protocolsupport.protocol.packet.handler.PSInitialHandler;
 import protocolsupport.protocol.pipeline.ChannelHandlers;
 import protocolsupport.protocol.storage.ProtocolStorage;
+import protocolsupport.protocol.utils.GameProfile;
 import protocolsupport.utils.ReflectionUtils;
 
 public class ConnectionImpl extends Connection {
@@ -66,6 +67,11 @@ public class ConnectionImpl extends Connection {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public GameProfile getProfile() {
+		return (GameProfile) super.getProfile();
 	}
 
 	public static ConnectionImpl getFromChannel(Channel channel) {

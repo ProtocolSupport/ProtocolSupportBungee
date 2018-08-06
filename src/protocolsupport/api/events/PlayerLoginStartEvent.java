@@ -1,7 +1,5 @@
 package protocolsupport.api.events;
 
-import java.util.UUID;
-
 import protocolsupport.api.Connection;
 
 /**
@@ -9,16 +7,13 @@ import protocolsupport.api.Connection;
  */
 public class PlayerLoginStartEvent extends PlayerAbstractLoginEvent {
 
-	private final String hostname;
-	private boolean onlinemode;
-	private boolean useonlinemodeuuid;
-	private UUID uuid;
+	protected final String hostname;
+	protected boolean onlinemode;
 
-	public PlayerLoginStartEvent(Connection connection, String username, boolean onlinemode, String hostname) {
-		super(connection, username);
-		this.onlinemode = onlinemode;
-		this.useonlinemodeuuid = onlinemode;
+	public PlayerLoginStartEvent(Connection connection, String hostname) {
+		super(connection);
 		this.hostname = hostname;
+		this.onlinemode = connection.getProfile().isOnlineMode();
 	}
 
 	/**
@@ -30,8 +25,7 @@ public class PlayerLoginStartEvent extends PlayerAbstractLoginEvent {
 	}
 
 	/**
-	 * Returns true if online-mode checks will be used to auth player <br>
-	 * By default returns same value as server online-mode setting
+	 * Returns true if online-mode checks will be used to auth player
 	 * @return true if online-mode checks will be used to auth player
 	 */
 	public boolean isOnlineMode() {
@@ -44,52 +38,6 @@ public class PlayerLoginStartEvent extends PlayerAbstractLoginEvent {
 	 */
 	public void setOnlineMode(boolean onlinemode) {
 		this.onlinemode = onlinemode;
-	}
-
-	/**
-	 * Returns true if online-mode uuid will be assigned to player <by>
-	 * Only used if player authed using online-mode checks <br>
-	 * By default returns same value as server online-mode setting
-	 * @return true if online-mode uuid will be assigned to player
-	 */
-	public boolean useOnlineModeUUID() {
-		return useonlinemodeuuid;
-	}
-
-	/**
-	 * Sets if online-mode uuid will be assigned to player <br>
-	 * Only used if player authed using online-mode checks
-	 * @param useonlinemodeuuid if online-mode uuid will be assigned to player
-	 */
-	public void setUseOnlineModeUUID(boolean useonlinemodeuuid) {
-		this.useonlinemodeuuid = useonlinemodeuuid;
-	}
-
-	/**
-	 * Returns true if has forced uuid
-	 * @return true if has forced uuid
-	 */
-	public boolean hasForcedUUID() {
-		return uuid != null;
-	}
-
-	/**
-	 * Sets forced uuid <br>
-	 * If set to null, server-selected uuid will be used <br>
-	 * This option overrides any other uuid options (like {@link #useOnlineModeUUID()})
-	 * @param uuid forced uuid
-	 */
-	public void setForcedUUID(UUID uuid) {
-		this.uuid = uuid;
-	}
-
-	/**
-	 * Gets currently set forced uuid or null if not set <br>
-	 * By default returns null
-	 * @return currently set forced uuid
-	 */
-	public UUID getForcedUUID() {
-		return uuid;
 	}
 
 }

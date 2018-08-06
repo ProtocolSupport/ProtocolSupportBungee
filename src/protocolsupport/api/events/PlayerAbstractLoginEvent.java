@@ -2,10 +2,10 @@ package protocolsupport.api.events;
 
 import protocolsupport.api.Connection;
 
-public abstract class PlayerAbstractLoginEvent extends PlayerEvent {
+public abstract class PlayerAbstractLoginEvent extends ConnectionEvent {
 
-	public PlayerAbstractLoginEvent(Connection connection, String username) {
-		super(connection, username);
+	public PlayerAbstractLoginEvent(Connection connection) {
+		super(connection);
 	}
 
 	private String denyLoginMessage;

@@ -3,6 +3,7 @@ package protocolsupport.api.events;
 import java.util.UUID;
 
 import protocolsupport.api.Connection;
+import protocolsupport.api.utils.Profile;
 
 /**
  * This event is fired when player login finishes (after online-mode processing and uuid generation, but before actual world join)
@@ -10,29 +11,26 @@ import protocolsupport.api.Connection;
  */
 public class PlayerLoginFinishEvent extends PlayerAbstractLoginEvent {
 
-	private final UUID uuid;
-	private final boolean onlineMode;
-
-	public PlayerLoginFinishEvent(Connection connection, String username, UUID uuid, boolean onlineMode) {
-		super(connection, username);
-		this.uuid = uuid;
-		this.onlineMode = onlineMode;
+	public PlayerLoginFinishEvent(Connection connection) {
+		super(connection);
 	}
 
 	/**
-	 * Returns player uuid
+	 * Returns player uuid <br>
+	 * Is a shortcut to {@link Profile#getUUID()}
 	 * @return player uuid
 	 */
 	public UUID getUUID() {
-		return uuid;
+		return getConnection().getProfile().getUUID();
 	}
 
 	/**
 	 * Returns true if this player logged in using online-mode checks
+	 * Is a shorcut to {@link Profile#isOnlineMode()}
 	 * @return true if this player logged in using online-mode checks
 	 */
 	public boolean isOnlineMode() {
-		return onlineMode;
+		return getConnection().getProfile().isOnlineMode();
 	}
 
 }

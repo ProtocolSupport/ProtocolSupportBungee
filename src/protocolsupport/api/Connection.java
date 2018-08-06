@@ -5,10 +5,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import protocolsupport.api.utils.Profile;
+import protocolsupport.protocol.utils.GameProfile;
 
 public abstract class Connection {
 
 	protected volatile ProtocolVersion version = ProtocolVersion.UNKNOWN;
+	protected Profile profile = new GameProfile();
 
 	/**
 	 * Returns native network manager object
@@ -41,6 +44,14 @@ public abstract class Connection {
 	 * @param newRemote new remote address
 	 */
 	public abstract void changeAddress(InetSocketAddress newRemote);
+
+	/**
+	 * Returns {@link Profile} object
+	 * @return {@link Profile} object
+	 */
+	public Profile getProfile() {
+		return profile;
+	}
 
 	/**
 	 * Returns {@link ProxiedPlayer} object if possible

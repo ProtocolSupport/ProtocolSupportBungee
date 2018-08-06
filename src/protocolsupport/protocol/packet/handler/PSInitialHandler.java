@@ -2,11 +2,9 @@ package protocolsupport.protocol.packet.handler;
 
 import java.math.BigInteger;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -43,15 +41,15 @@ import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.EncryptionResponse;
 import net.md_5.bungee.protocol.packet.LoginRequest;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
-import protocolsupport.api.Connection;
 import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.api.events.PlayerLoginFinishEvent;
 import protocolsupport.api.events.PlayerLoginStartEvent;
-import protocolsupport.api.events.PlayerPropertiesResolveEvent;
-import protocolsupport.api.events.PlayerPropertiesResolveEvent.ProfileProperty;
+import protocolsupport.api.events.PlayerProfileCompleteEvent;
+import protocolsupport.api.utils.Profile;
 import protocolsupport.protocol.ConnectionImpl;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
+import protocolsupport.protocol.utils.GameProfile;
 
 public class PSInitialHandler extends InitialHandler {
 
@@ -60,7 +58,7 @@ public class PSInitialHandler extends InitialHandler {
 	}
 
 	protected ChannelWrapper channel;
-	protected Connection connection;
+	protected ConnectionImpl connection;
 
 	@Override
 	public void connected(ChannelWrapper channel) throws Exception {
@@ -73,7 +71,37 @@ public class PSInitialHandler extends InitialHandler {
 		return channel;
 	}
 
+	protected LoginRequest loginRequest;
+
+	@Override
+	public LoginRequest getLoginRequest() {
+		return loginRequest;
+	}
+
+	protected LoginResult loginProfile;
+
+	@Override
+	public LoginResult getLoginProfile() {
+		return loginProfile;
+	}
+
 	protected LoginState state = LoginState.HELLO;
+
+	protected String username;
+
+	@Override
+	public String getName() {
+		return username;
+	}
+
+	protected void updateUsername(String newName, boolean original) {
+		username = newName;
+		if (original) {
+			connection.getProfile().setOriginalName(newName);
+		} else {
+			connection.getProfile().setName(newName);
+		}
+	}
 
 	protected UUID uuid;
 
@@ -81,7 +109,7 @@ public class PSInitialHandler extends InitialHandler {
 	public void setUniqueId(UUID uuid) {
 		Preconditions.checkState((state == LoginState.HELLO) || (state == LoginState.ONLINEMODERESOLVE), "Can only set uuid while state is username");
 		Preconditions.checkState(!isOnlineMode(), "Can only set uuid when online mode is false");
-		this.uuid = uuid;
+		updateUUID(uuid, true);
 	}
 
 	@Override
@@ -91,29 +119,45 @@ public class PSInitialHandler extends InitialHandler {
 
 	@Override
 	public String getUUID() {
-		return uuid.toString().replaceAll("-", "");
+		return getUniqueId().toString().replaceAll("-", "");
 	}
 
-	protected String username;
-
-	@Override
-	public String getName() {
-		return username;
+	protected void updateUUID(UUID newUUID, boolean original) {
+		uuid = newUUID;
+		if (original) {
+			connection.getProfile().setOriginalUUID(newUUID);
+		} else {
+			connection.getProfile().setUUID(newUUID);
+		}
 	}
 
-	protected LoginRequest loginRequest;
+	protected boolean isOnlineMode = BungeeCord.getInstance().config.isOnlineMode();
 
 	@Override
-	public LoginRequest getLoginRequest() {
-		return loginRequest;
+	public void setOnlineMode(boolean onlineMode) {
+		Preconditions.checkState((state == LoginState.HELLO) || (state == LoginState.ONLINEMODERESOLVE), "Can only set uuid while state is username");
+		updateOnlineMode(onlineMode);
 	}
 
 	@Override
-	public void handle(LoginRequest loginRequest) throws Exception {
+	public boolean isOnlineMode() {
+		return isOnlineMode;
+	}
+
+	protected void updateOnlineMode(boolean newOnlineMode) {
+		isOnlineMode = newOnlineMode;
+		connection.getProfile().setOnlineMode(newOnlineMode);
+	}
+
+	@Override
+	public void handle(LoginRequest lLoginRequest) throws Exception {
 		Preconditions.checkState(state == LoginState.HELLO, "Not expecting USERNAME");
 		state = LoginState.ONLINEMODERESOLVE;
-		this.loginRequest = loginRequest;
-		this.username = loginRequest.getData();
+
+		loginRequest = lLoginRequest;
+
+		updateUsername(lLoginRequest.getData(), true);
+
 		if (getName().contains(".")) {
 			disconnect(BungeeCord.getInstance().getTranslation("name_invalid"));
 			return;
@@ -131,6 +175,7 @@ public class PSInitialHandler extends InitialHandler {
 			disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 			return;
 		}
+
 		BungeeCord.getInstance().getPluginManager().callEvent(new PreLoginEvent(this, new Callback<PreLoginEvent>() {
 			@Override
 			public void done(PreLoginEvent result, Throwable error) {
@@ -149,16 +194,14 @@ public class PSInitialHandler extends InitialHandler {
 	protected EncryptionRequest request;
 
 	protected void processLoginStart() {
-		PlayerLoginStartEvent event = new PlayerLoginStartEvent(connection, username, isOnlineMode(), getHandshake().getHost());
+		PlayerLoginStartEvent event = new PlayerLoginStartEvent(connection, getHandshake().getHost());
 		ProxyServer.getInstance().getPluginManager().callEvent(event);
 		if (event.isLoginDenied()) {
 			disconnect(event.getDenyLoginMessage());
 			return;
 		}
 
-		isOnlineMode = event.isOnlineMode();
-		useOnlineModeUUID = event.useOnlineModeUUID();
-		forcedUUID = event.getForcedUUID();
+		updateOnlineMode(event.isOnlineMode());
 
 		switch (connection.getVersion().getProtocolType()) {
 			case PC: {
@@ -166,9 +209,11 @@ public class PSInitialHandler extends InitialHandler {
 					state = LoginState.KEY;
 					unsafe().sendPacket((request = EncryptionUtil.encryptRequest()));
 				} else {
+					offlineuuid = Profile.generateOfflineModeUUID(getName());
+					updateUUID(offlineuuid, true);
 					finishLogin();
 				}
-				break;
+				return;
 			}
 			case PE: {
 				if (isOnlineMode()) {
@@ -177,23 +222,16 @@ public class PSInitialHandler extends InitialHandler {
 						disconnect("This server is in online mode, but no valid XUID was found (XBOX live auth required)");
 						return;
 					} else {
-						uuid = new UUID(0, Long.parseLong(xuid));
+						updateUUID(new UUID(0, Long.parseLong(xuid)), true);
 					}
 				}
 				finishLogin();
-				break;
+				return;
 			}
 			default: {
 				throw new IllegalArgumentException(MessageFormat.format("Unknown protocol type {0}", connection.getVersion().getProtocolType()));
 			}
 		}
-	}
-
-	protected LoginResult loginProfile;
-
-	@Override
-	public LoginResult getLoginProfile() {
-		return loginProfile;
 	}
 
 	@Override
@@ -222,8 +260,8 @@ public class PSInitialHandler extends InitialHandler {
 					LoginResult obj = BungeeCord.getInstance().gson.fromJson(result, LoginResult.class);
 					if ((obj != null) && (obj.getId() != null)) {
 						loginProfile = obj;
-						username = obj.getName();
-						uuid = Util.getUUID(obj.getId());
+						updateUsername(obj.getName(), true);
+						updateUUID(Util.getUUID(obj.getId()), true);
 						finishLogin();
 						return;
 					}
@@ -237,22 +275,6 @@ public class PSInitialHandler extends InitialHandler {
 		HttpClient.get(authURL, channel.getHandle().eventLoop(), handler);
 	}
 
-	protected boolean isOnlineMode = BungeeCord.getInstance().config.isOnlineMode();
-
-	@Override
-	public void setOnlineMode(boolean onlineMode) {
-		Preconditions.checkState((state == LoginState.HELLO) || (state == LoginState.ONLINEMODERESOLVE), "Can only set uuid while state is username");
-		this.isOnlineMode = onlineMode;
-	}
-
-	@Override
-	public boolean isOnlineMode() {
-		return isOnlineMode;
-	}
-
-	protected boolean useOnlineModeUUID = isOnlineMode;
-	protected UUID forcedUUID;
-
 	protected UUID offlineuuid;
 
 	@Override
@@ -262,26 +284,22 @@ public class PSInitialHandler extends InitialHandler {
 
 	@SuppressWarnings("deprecation")
 	protected void finishLogin() {
-		offlineuuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + getName()).getBytes(StandardCharsets.UTF_8));
-		if ((isOnlineMode() && !useOnlineModeUUID) || (uuid == null)) {
-			uuid = offlineuuid;
-		}
-		if (forcedUUID != null) {
-			uuid = forcedUUID;
-		}
+		GameProfile profile = connection.getProfile();
 
-		PlayerPropertiesResolveEvent propResolveEvent = new PlayerPropertiesResolveEvent(
-			connection, username,
-			loginProfile != null ?
-			Arrays.stream(loginProfile.getProperties())
-			.map(bprop -> new ProfileProperty(bprop.getName(), bprop.getValue(), bprop.getSignature()))
-			.collect(Collectors.toList())
-			: Collections.emptyList()
-		);
-		BungeeCord.getInstance().getPluginManager().callEvent(propResolveEvent);
+		PlayerProfileCompleteEvent event = new PlayerProfileCompleteEvent(connection);
+		BungeeCord.getInstance().getPluginManager().callEvent(event);
+		if (event.getForcedName() != null) {
+			updateUsername(event.getForcedName(), false);
+		}
+		if (event.getForcedUUID() != null) {
+			updateUUID(event.getForcedUUID(), false);
+		}
+		profile.setProperties(event.getProperties());
+
 		loginProfile = new LoginResult(
 			getName(), getUUID(),
-			propResolveEvent.getProperties().values().stream()
+			profile.getProperties().values().stream()
+			.flatMap(Collection::stream)
 			.map(psprop -> new LoginResult.Property(psprop.getName(), psprop.getValue(), psprop.getSignature()))
 			.collect(Collectors.toList()).toArray(new LoginResult.Property[0])
 		);
@@ -329,7 +347,7 @@ public class PSInitialHandler extends InitialHandler {
 			unsafe().sendPacket(new LoginSuccess(getUniqueId().toString(), getName()));
 			channel.setProtocol(Protocol.GAME);
 
-			PlayerLoginFinishEvent loginFinishEvent = new PlayerLoginFinishEvent(connection, getName(), getUniqueId(), isOnlineMode());
+			PlayerLoginFinishEvent loginFinishEvent = new PlayerLoginFinishEvent(connection);
 			BungeeCord.getInstance().getPluginManager().callEvent(loginFinishEvent);
 			if (loginFinishEvent.isLoginDenied()) {
 				disconnect(loginFinishEvent.getDenyLoginMessage());
