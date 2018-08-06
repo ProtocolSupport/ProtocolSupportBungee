@@ -286,15 +286,20 @@ public class PSInitialHandler extends InitialHandler {
 	protected void finishLogin() {
 		GameProfile profile = connection.getProfile();
 
-		PlayerProfileCompleteEvent event = new PlayerProfileCompleteEvent(connection);
-		BungeeCord.getInstance().getPluginManager().callEvent(event);
-		if (event.getForcedName() != null) {
-			updateUsername(event.getForcedName(), false);
+		PlayerProfileCompleteEvent profileCompleteEvent = new PlayerProfileCompleteEvent(connection);
+		BungeeCord.getInstance().getPluginManager().callEvent(profileCompleteEvent);
+		if (profileCompleteEvent.isLoginDenied()) {
+			disconnect(profileCompleteEvent.getDenyLoginMessage());
+			return;
 		}
-		if (event.getForcedUUID() != null) {
-			updateUUID(event.getForcedUUID(), false);
+
+		if (profileCompleteEvent.getForcedName() != null) {
+			updateUsername(profileCompleteEvent.getForcedName(), false);
 		}
-		profile.setProperties(event.getProperties());
+		if (profileCompleteEvent.getForcedUUID() != null) {
+			updateUUID(profileCompleteEvent.getForcedUUID(), false);
+		}
+		profile.setProperties(profileCompleteEvent.getProperties());
 
 		loginProfile = new LoginResult(
 			getName(), getUUID(),
@@ -304,22 +309,15 @@ public class PSInitialHandler extends InitialHandler {
 			.collect(Collectors.toList()).toArray(new LoginResult.Property[0])
 		);
 
-		if (isOnlineMode()) {
-			ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
-			if (oldName != null) {
-				oldName.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
-			}
-			ProxiedPlayer oldID = BungeeCord.getInstance().getPlayer(getUniqueId());
-			if (oldID != null) {
-				oldID.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
-			}
-		} else {
-			ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
-			if (oldName != null) {
-				disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
-				return;
-			}
+		ProxiedPlayer oldName = BungeeCord.getInstance().getPlayer(getName());
+		if (oldName != null) {
+			oldName.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
 		}
+		ProxiedPlayer oldID = BungeeCord.getInstance().getPlayer(getUniqueId());
+		if (oldID != null) {
+			oldID.disconnect(BungeeCord.getInstance().getTranslation("already_connected_proxy"));
+		}
+
 		Callback<LoginEvent> complete = new Callback<LoginEvent>() {
 			@Override
 			public void done(LoginEvent result, Throwable error) {
