@@ -44,8 +44,8 @@ dlDepsDirS.mkdirs()
 
 def dlDepsC = [
 	new Tuple(
-		'https://ci.md-5.net/job/BungeeCord/1305/artifact/bootstrap/target/BungeeCord.jar',
-		'bungeecord-1.jar'
+		'https://ci.md-5.net/job/BungeeCord/1356/artifact/bootstrap/target/BungeeCord.jar',
+		'bungeecord-2.jar'
 	)
 ]
 
