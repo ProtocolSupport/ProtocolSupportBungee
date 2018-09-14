@@ -12,8 +12,6 @@ public abstract class PEDefinedReadableMiddlePacket extends DefinedReadableMiddl
 	@Override
 	protected void writePacketId(ByteBuf to) {
 		VarNumberSerializer.writeVarInt(to, packetId);
-		to.writeByte(0);
-		to.writeByte(0);
 	}
 
 }
