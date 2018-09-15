@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.LoginPacket;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
@@ -80,6 +81,7 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //is trial
 		startgame.writeLongLE(0); //level time
 		VarNumberSerializer.writeSVarInt(startgame, 0); //enchantment seed
+		startgame.writeBytes(LoginPacket.PE_RUNTIME_IDS);
 		packets.add(startgame);
 		return packets;
 	}
