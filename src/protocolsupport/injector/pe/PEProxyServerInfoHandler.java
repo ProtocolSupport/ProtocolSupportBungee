@@ -53,7 +53,7 @@ public class PEProxyServerInfoHandler implements PingHandler {
 			return String.join(";",
 				"MCPE",
 				ping.getMotd().toLegacyText().replace(";", ":"),
-				String.valueOf(ping.getVersion().getName()), "1.12.13",
+				String.valueOf(ping.getVersion().getName()), "1.6.0",
 				String.valueOf(ping.getPlayers().getOnlineCount()),
 				String.valueOf(ping.getPlayers().getMaxPlayers())
 			);
