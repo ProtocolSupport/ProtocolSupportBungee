@@ -28,7 +28,7 @@ public class FromServerPacketDecoder extends MinecraftDecoder {
 		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_KICK, KickPacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_START_GAME, LoginPacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Dualbound.PLAY_CHAT, FromServerChatPacket.class);
-//		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_RESPAWN, RespawnPacket.class);
+		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_RESPAWN, RespawnPacket.class);
 //		registry.register(Protocol.GAME, PlayerListItemPacket.PACKET_ID, PlayerListItemPacket.class); //TODO: implement at bungee level (without this entry it's a direct passthrough, so entries will duplicate upon server switch)
 	}
 
