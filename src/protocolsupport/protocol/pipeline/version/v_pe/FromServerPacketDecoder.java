@@ -5,6 +5,7 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
+import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
@@ -50,10 +51,13 @@ public class FromServerPacketDecoder extends MinecraftDecoder {
 			return;
 		}
 		buf.markReaderIndex();
-		ReadableMiddlePacket transformer = registry.getTransformer(Protocol.GAME, PEPacketIdSerializer.readPacketId(buf), false);
+		int packetId = PEPacketIdSerializer.readPacketId(buf);
+		System.out.println("FROM SERVER: " + packetId);
+		ReadableMiddlePacket transformer = registry.getTransformer(Protocol.GAME, packetId, false);
 		if (transformer == null) {
+			System.out.println("Couldn't find any transformer for packet " + packetId + ", adding null to the packet list...");
 			buf.resetReaderIndex();
-			packets.add(new PacketWrapper(null, buf.copy()));
+			packets.add(new PacketWrapper(new NoopDefinedPacket(), buf.copy()));
 		} else {
 			transformer.read(buf);
 			if (buf.isReadable()) {

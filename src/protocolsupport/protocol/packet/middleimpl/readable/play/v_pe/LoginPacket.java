@@ -10,6 +10,7 @@ import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
+import protocolsupport.protocol.serializer.MiscSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
 
@@ -23,6 +24,8 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 	protected byte gamemode;
 	protected int dimension;
 	protected int difficulty;
+
+	public static byte[] PE_RUNTIME_IDS;
 
 	@Override
 	protected void read0(ByteBuf from) {
@@ -78,6 +81,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //is trial
 		from.readLongLE(); //level time
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
+		PE_RUNTIME_IDS = MiscSerializer.readAllBytes(from);
 	}
 
 	@Override

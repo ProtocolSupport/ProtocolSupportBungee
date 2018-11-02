@@ -23,4 +23,18 @@ public class ArraySerializer {
 		to.writeBytes(array);
 	}
 
+	public static byte[] readVarIntByteArray(ByteBuf from) {
+		return MiscSerializer.readBytes(from, VarNumberSerializer.readVarInt(from));
+	}
+
+	public static ByteBuf readVarIntByteArraySlice(ByteBuf from, int limit) {
+		int length = VarNumberSerializer.readVarInt(from);
+		MiscSerializer.checkLimit(length, limit);
+		return from.readSlice(length);
+	}
+
+	public static ByteBuf readVarIntByteArraySlice(ByteBuf from) {
+		return from.readSlice(VarNumberSerializer.readVarInt(from));
+	}
+
 }

@@ -61,7 +61,7 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 	@Override
 	protected void read0(ByteBuf clientdata) {
 		clientdata.readInt();
-		ByteBuf logindata = Unpooled.wrappedBuffer(ArraySerializer.readVarIntLengthByteArray(clientdata));
+		ByteBuf logindata = ArraySerializer.readVarIntByteArraySlice(clientdata);
 		try {
 			Any<Key, JsonObject> chaindata = extractChainData(Utils.GSON.fromJson(
 				new InputStreamReader(new ByteBufInputStream(logindata, logindata.readIntLE())),
