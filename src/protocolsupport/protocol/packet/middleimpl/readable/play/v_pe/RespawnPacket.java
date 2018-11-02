@@ -20,6 +20,18 @@ public class RespawnPacket extends PEDefinedReadableMiddlePacket {
 
 	protected int dimensionId;
 
+	/*
+			ClientBoundPacketData changedim = ClientBoundPacketData.create(PEPacketIDs.CHANGE_DIMENSION);
+		VarNumberSerializer.writeSVarInt(changedim, getPeDimensionId(dimension));
+		changedim.writeFloatLE(0); //x
+		changedim.writeFloatLE(0); //y
+		changedim.writeFloatLE(0); //z
+		changedim.writeBoolean(true); //respawn
+		packets.add(changedim);
+		packets.add(LoginSuccess.createPlayStatus(LoginSuccess.PLAYER_SPAWN));
+		addFakeChunksAndPos(version, player, posY, packets);
+	 */
+
 	@Override
 	protected void read0(ByteBuf from) {
 		dimensionId = getPcDimensionId(VarNumberSerializer.readSVarInt(from));

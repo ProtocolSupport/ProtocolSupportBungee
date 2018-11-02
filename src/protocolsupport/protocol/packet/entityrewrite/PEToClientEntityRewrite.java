@@ -85,8 +85,6 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 				@Override
 				protected void rewrite(ByteBuf from, ByteBuf to) {
 					StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from)); // username
-					StringSerializer.writeVarIntUTF8String(to, StringSerializer.readVarIntUTF8String(from)); // third party name
-					VarNumberSerializer.writeVarInt(to, VarNumberSerializer.readVarInt(from)); // platform
 				}
 			},
 			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,

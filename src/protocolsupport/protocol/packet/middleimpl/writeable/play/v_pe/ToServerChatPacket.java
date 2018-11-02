@@ -19,8 +19,6 @@ public class ToServerChatPacket extends PESingleWriteablePacket<Chat> {
 		data.writeByte(FromClientChatPacket.CLIENT_CHAT_TYPE); //type
 		data.writeBoolean(true); //isLocalise?
 		StringSerializer.writeVarIntUTF8String(data, ""); //sender username
-		StringSerializer.writeVarIntUTF8String(data, ""); //third party name
-		VarNumberSerializer.writeSVarInt(data, 1); //source platform
 		StringSerializer.writeVarIntUTF8String(data, packet.getMessage());
 		StringSerializer.writeVarIntUTF8String(data, ""); //Xbox user ID
 		StringSerializer.writeVarIntUTF8String(data, ""); //platform chat ID

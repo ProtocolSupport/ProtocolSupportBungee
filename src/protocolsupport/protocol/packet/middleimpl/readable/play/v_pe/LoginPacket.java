@@ -56,14 +56,8 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //broadcast to xbl
 		from.readBoolean(); //commands enabled
 		from.readBoolean(); //needs texture pack
-		int gameRuleCount = VarNumberSerializer.readVarInt(from); //game rules
-		for (int i = 0; i < gameRuleCount; i++) {
-			StringSerializer.readVarIntUTF8String(from); //game rule name
-		}
-		int gameRuleBoolCount = VarNumberSerializer.readVarInt(from); //game rules bool
-		for (int i = 0; i < gameRuleBoolCount; i++) {
-			from.readBoolean();
-		}
+		VarNumberSerializer.readVarInt(from); //game rule count
+		from.readBoolean(); //bonus chests
 		from.readBoolean(); //player map enabled
 		from.readBoolean(); //trust players
 		VarNumberSerializer.readSVarInt(from); //permission level
@@ -75,13 +69,14 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); // hasLockedRes pack
 		from.readBoolean(); // hasLockedBeh pack
 		from.readBoolean(); // hasLocked world template.
+		from.readBoolean(); // Microsoft GamerTags only. Hell no!
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id
 		from.readBoolean(); //is trial
 		from.readLongLE(); //level time
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
-		PE_RUNTIME_IDS = MiscSerializer.readAllBytes(from);
+		PE_RUNTIME_IDS = MiscSerializer.readAllBytes(from); //also consumes version name
 	}
 
 	@Override
