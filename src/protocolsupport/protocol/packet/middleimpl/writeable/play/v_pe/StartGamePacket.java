@@ -6,10 +6,8 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
-import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.LoginPacket;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
@@ -21,8 +19,6 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 
 	@Override
 	public Collection<ByteBuf> toData(Login packet) {
-		ProtocolVersion version = connection.getVersion();
-
 		ArrayList<ByteBuf> packets = new ArrayList<>();
 		ByteBuf resourcepack = Allocator.allocateBuffer();
 		PEPacketIdSerializer.writePacketId(resourcepack, PEPacketId.Clientbound.PLAY_RESOURCE_PACK);
