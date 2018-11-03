@@ -29,7 +29,8 @@ public class FromServerPacketDecoder extends MinecraftDecoder {
 		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_START_GAME, LoginPacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Dualbound.PLAY_CHAT, FromServerChatPacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Clientbound.PLAY_RESPAWN, RespawnPacket.class);
-//		registry.register(Protocol.GAME, PlayerListItemPacket.PACKET_ID, PlayerListItemPacket.class); //TODO: implement at bungee level (without this entry it's a direct passthrough, so entries will duplicate upon server switch)
+		//TODO: implement at bungee level (without this entry it's a direct passthrough, so entries will duplicate upon server switch)
+		//registry.register(Protocol.GAME, PlayerListItemPacket.PACKET_ID, PlayerListItemPacket.class);
 	}
 
 	protected final Connection connection;
@@ -52,10 +53,8 @@ public class FromServerPacketDecoder extends MinecraftDecoder {
 		}
 		buf.markReaderIndex();
 		int packetId = PEPacketIdSerializer.readPacketId(buf);
-		//System.out.println("FROM SERVER: " + packetId);
 		ReadableMiddlePacket transformer = registry.getTransformer(Protocol.GAME, packetId, false);
 		if (transformer == null) {
-			//System.out.println("Couldn't find any transformer for packet " + packetId + ", adding null to the packet list...");
 			buf.resetReaderIndex();
 			packets.add(new PacketWrapper(new NoopDefinedPacket(), buf.copy()));
 		} else {

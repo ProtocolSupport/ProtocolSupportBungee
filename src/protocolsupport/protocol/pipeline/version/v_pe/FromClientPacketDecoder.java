@@ -59,10 +59,8 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 		}
 		buf.markReaderIndex();
 		int packetId = PEPacketIdSerializer.readPacketId(buf);
-		//System.out.println("FROM CLIENT: " + packetId);
 		ReadableMiddlePacket transformer = registry.getTransformer(protocol, packetId, false);
 		if (transformer == null) {
-			//System.out.println("Couldn't find any transformer for packet " + packetId + ", adding null to the packet list...");
 			buf.resetReaderIndex();
 			packets.add(new PacketWrapper(new NoopDefinedPacket(), buf.copy()));
 		} else {
