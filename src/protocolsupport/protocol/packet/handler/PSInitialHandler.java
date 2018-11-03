@@ -133,22 +133,15 @@ public class PSInitialHandler extends InitialHandler {
 		}
 	}
 
-	protected boolean isOnlineMode = BungeeCord.getInstance().config.isOnlineMode();
-
 	@Override
 	public void setOnlineMode(boolean onlineMode) {
 		Preconditions.checkState((state == LoginState.HELLO) || (state == LoginState.ONLINEMODERESOLVE), "Can only set uuid while state is username");
-		updateOnlineMode(onlineMode);
+		connection.getProfile().setOnlineMode(onlineMode);
 	}
 
 	@Override
 	public boolean isOnlineMode() {
-		return isOnlineMode;
-	}
-
-	protected void updateOnlineMode(boolean newOnlineMode) {
-		isOnlineMode = newOnlineMode;
-		connection.getProfile().setOnlineMode(newOnlineMode);
+		return connection.getProfile().isOnlineMode();
 	}
 
 	@Override
@@ -203,7 +196,7 @@ public class PSInitialHandler extends InitialHandler {
 			return;
 		}
 
-		updateOnlineMode(event.isOnlineMode());
+		connection.getProfile().setOnlineMode(event.isOnlineMode());
 
 		switch (connection.getVersion().getProtocolType()) {
 			case PC: {
