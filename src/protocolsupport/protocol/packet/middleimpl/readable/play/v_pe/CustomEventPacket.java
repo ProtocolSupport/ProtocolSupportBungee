@@ -14,7 +14,7 @@ import java.util.Collection;
 
 public class CustomEventPacket extends PEDefinedReadableMiddlePacket {
     public CustomEventPacket() {
-        super(PEPacketId.Clientbound.CUSTOM_EVENT);
+        super(PEPacketId.Dualbound.CUSTOM_EVENT);
     }
 
     String tag;
@@ -24,19 +24,12 @@ public class CustomEventPacket extends PEDefinedReadableMiddlePacket {
     protected void read0(ByteBuf from) {
         tag = StringSerializer.readVarIntUTF8String(from);
         data = MiscSerializer.readAllBytes(from);
-
-        System.out.println("CustomEventPacket " + tag);
     }
 
     @Override
     public Collection<PacketWrapper> toNative() {
-        PluginMessage pluginMessage = new PluginMessage();
-
-        pluginMessage.setTag(tag);
-        pluginMessage.setData(data);
-
         return Arrays.asList(
-            new PacketWrapper(pluginMessage, Unpooled.wrappedBuffer(readbytes))
+            new PacketWrapper(new PluginMessage(tag, data, false), Unpooled.wrappedBuffer(readbytes))
         );
     }
 }

@@ -10,6 +10,7 @@ import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_4_5_6_pe.HandshakeCachePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.handshake.v_pe.LoginRequestServerHandshakePacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.CustomEventPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.ToServerChatPacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -21,7 +22,7 @@ public class ToServerPacketEncoder extends AbstractPacketEncoder {
 		registry.register(LoginRequest.class, LoginRequestServerHandshakePacket.class);
 		registry.register(KeepAlive.class, NoopWriteablePacket.class);
 		registry.register(Chat.class, ToServerChatPacket.class);
-		registry.register(PluginMessage.class, NoopWriteablePacket.class); //TODO: need to implement this somehow, because bungee will try to use it to transfer data
+		registry.register(PluginMessage.class, CustomEventPacket.class);
 		registry.register(ClientStatus.class, NoopWriteablePacket.class);
 	}
 

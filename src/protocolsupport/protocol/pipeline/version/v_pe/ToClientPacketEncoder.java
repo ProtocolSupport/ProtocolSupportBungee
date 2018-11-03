@@ -20,10 +20,7 @@ import net.md_5.bungee.protocol.packet.Title;
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_pe.LoginSuccessPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.KickPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.RespawnPacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.StartGamePacket;
-import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.ToClientChatPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe.*;
 import protocolsupport.protocol.packet.middleimpl.writeable.status.v_pe.StatusResponsePacket;
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -48,6 +45,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(TabCompleteResponse.class, NoopWriteablePacket.class);
 		registry.register(BossBar.class, NoopWriteablePacket.class);
 		registry.register(Title.class, NoopWriteablePacket.class);
+		registry.register(PluginMessage.class, CustomEventPacket.class);
 	}
 
 	public ToClientPacketEncoder(Connection connection, NetworkDataCache cache) {
