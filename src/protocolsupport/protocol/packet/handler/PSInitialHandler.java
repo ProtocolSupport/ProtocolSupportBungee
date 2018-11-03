@@ -218,7 +218,7 @@ public class PSInitialHandler extends InitialHandler {
 				return;
 			}
 			case PE: {
-				if (isOnlineMode()) {
+				if (BungeeCord.getInstance().config.isOnlineMode() || isOnlineMode()) {
 					String xuid = (String) connection.getMetadata(LoginHandshakePacket.XUID_METADATA_KEY);
 					if (xuid == null) {
 						disconnect("This server is in online mode, but no valid XUID was found (XBOX live auth required)");

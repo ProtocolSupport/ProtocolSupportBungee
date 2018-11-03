@@ -25,8 +25,6 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 	protected int dimension;
 	protected int difficulty;
 
-	public static byte[] PE_RUNTIME_IDS;
-
 	@Override
 	protected void read0(ByteBuf from) {
 		VarNumberSerializer.readSVarLong(from); //entity id (but it's actually signed varlong, so we use the field below, which is unsigned)
@@ -76,7 +74,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); //is trial
 		from.readLongLE(); //level time
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
-		PE_RUNTIME_IDS = MiscSerializer.readAllBytes(from); //also consumes version name
+		cache.setPeRuntimeIDs(MiscSerializer.readAllBytes(from)); //also consumes version name
 	}
 
 	@Override

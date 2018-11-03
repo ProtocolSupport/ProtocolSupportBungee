@@ -1,6 +1,5 @@
 package protocolsupport.protocol.packet.middleimpl.writeable.play.v_pe;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -86,8 +85,10 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //is trial
 		startgame.writeLongLE(0); //world ticks
 		VarNumberSerializer.writeSVarInt(startgame, 0); //enchantment seed FFS MOJANG
-		startgame.writeBytes(LoginPacket.PE_RUNTIME_IDS); // this also has the version name afterwards, just being lazy
+		startgame.writeBytes(cache.getPeRuntimeIDs()); // this also has the version name afterwards, just being lazy
 		//StringSerializer.writeVarIntUTF8String(startgame, version.getName()); //combined with ids above
+
+		cache.setPeRuntimeIDs(null); //clear cache
 
 		packets.add(startgame);
 		return packets;

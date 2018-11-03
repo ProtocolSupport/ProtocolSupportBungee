@@ -29,6 +29,16 @@ public class NetworkDataCache {
 		return serverHandshake;
 	}
 
+	private byte[] peRuntimeIDs;
+
+	public byte[] getPeRuntimeIDs() {
+		return peRuntimeIDs;
+	}
+
+	public void setPeRuntimeIDs(byte[] peRuntimeIDs) {
+		this.peRuntimeIDs = peRuntimeIDs;
+	}
+
 	protected String locale = "en_us";
 
 	public void setLocale(String locale) {
