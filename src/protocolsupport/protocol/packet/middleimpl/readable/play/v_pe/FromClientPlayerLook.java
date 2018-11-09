@@ -21,7 +21,7 @@ public class FromClientPlayerLook extends PEDefinedReadableMiddlePacket {
         from.skipBytes(from.readableBytes());
         // player is 'alive' again, lets unlock our queue to get things moving
         if (cache.isStashingClientPackets()) {
-            connection.sendPacketToClient(new PluginMessage("ps:bungeeunlock", Unpooled.EMPTY_BUFFER, false));
+            connection.sendPacketToClient(new PluginMessage("ps:bungeeunlock", new byte[0], false));
         }
     }
 

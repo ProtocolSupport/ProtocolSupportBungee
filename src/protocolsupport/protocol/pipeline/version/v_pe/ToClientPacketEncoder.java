@@ -74,7 +74,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 				}
 				packetCache.clear();
 				// mimic SET_LOCAL_PLAYER_INITIALISED that would normally get sent on initial login
-				connection.sendPacketToServer(new PluginMessage("ps:clientunlock", Unpooled.EMPTY_BUFFER, false));
+				connection.sendPacketToServer(new PluginMessage("ps:clientunlock", new byte[0], false));
 				return;
 			}
 			// check if this is the bungee initiated chunk-cache-clearing dim switch
