@@ -39,6 +39,16 @@ public class NetworkDataCache {
 		this.peRuntimeIDs = peRuntimeIDs;
 	}
 
+	private int realDimension = 0;
+
+	public int getRealDimension() {
+		return realDimension;
+	}
+
+	public void setRealDimension(int realDimension) {
+		this.realDimension = realDimension;
+	}
+
 	protected String locale = "en_us";
 
 	public void setLocale(String locale) {
@@ -61,4 +71,13 @@ public class NetworkDataCache {
 		return peClientUUID;
 	}
 
+	private boolean stashingClientPackets = false;
+
+	public boolean isStashingClientPackets() {
+		return stashingClientPackets;
+	}
+
+	public void setStashingClientPackets(boolean stashingClientPackets) {
+		this.stashingClientPackets = stashingClientPackets;
+	}
 }

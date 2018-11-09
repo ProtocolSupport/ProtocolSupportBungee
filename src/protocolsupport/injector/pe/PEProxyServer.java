@@ -14,7 +14,10 @@ public class PEProxyServer {
 		new UserChannelInitializer() {
 			@Override
 			public void init(Channel channel) {
+				PEQueryHandler queryHandler = new PEQueryHandler();
 				ChannelPipeline pipeline = channel.pipeline();
+				pipeline.addFirst(queryHandler);
+				pipeline.addFirst(queryHandler.createWriter());
 				pipeline.addLast(new PECompressor());
 				pipeline.addLast(new PEDecompressor());
 				pipeline.addLast(PEProxyNetworkManager.NAME, new PEProxyNetworkManager());

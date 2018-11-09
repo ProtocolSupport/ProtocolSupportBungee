@@ -15,7 +15,11 @@ public class CustomEventPacket extends PESingleWriteablePacket<PluginMessage> {
 
     @Override
     protected void write(ByteBuf data, PluginMessage packet) {
-        StringSerializer.writeVarIntUTF8String(data, packet.getTag());
-        data.writeBytes(packet.getData());
+        write(data, packet.getTag(), packet.getData());
+    }
+
+    static void write(ByteBuf buf, String tag, byte[] data) {
+        StringSerializer.writeVarIntUTF8String(buf, tag);
+        buf.writeBytes(data);
     }
 }

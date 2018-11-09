@@ -75,6 +75,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readLongLE(); //level time
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
 		cache.setPeRuntimeIDs(MiscSerializer.readAllBytes(from)); //also consumes version name
+		cache.setRealDimension(dimension);
 	}
 
 	@Override

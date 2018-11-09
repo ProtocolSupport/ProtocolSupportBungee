@@ -1,5 +1,10 @@
 package protocolsupport.protocol.pipeline.version.v_pe;
 
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.DefaultChannelPromise;
+import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
@@ -25,6 +30,10 @@ import protocolsupport.protocol.packet.middleimpl.writeable.status.v_pe.StatusRe
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Map;
+
 public class ToClientPacketEncoder extends AbstractPacketEncoder {
 
 	{
@@ -34,7 +43,6 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(StatusResponse.class, StatusResponsePacket.class);
 		registry.register(Kick.class, KickPacket.class);
 		registry.register(KeepAlive.class, NoopWriteablePacket.class);
-		registry.register(PluginMessage.class, NoopWriteablePacket.class);
 		registry.register(Respawn.class, RespawnPacket.class);
 		registry.register(Chat.class, ToClientChatPacket.class);
 		registry.register(ScoreboardDisplay.class, NoopWriteablePacket.class);
@@ -50,6 +58,37 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 
 	public ToClientPacketEncoder(Connection connection, NetworkDataCache cache) {
 		super(connection, cache);
+	}
+
+	// wish java had some kind of real 'tuple' class
+	protected ArrayList<Map.Entry<Object, ChannelPromise>> packetCache = new ArrayList<>();
+
+	@Override
+	public void write(final ChannelHandlerContext ctx, final Object msgObject, final ChannelPromise promise) throws Exception {
+		if (acceptOutboundMessage(msgObject)) {
+			DefinedPacket msg = (DefinedPacket) msgObject;
+			if (msg instanceof PluginMessage && cache.isStashingClientPackets() && ((PluginMessage)msg).getTag().equals("ps:bungeeunlock")) {
+				cache.setStashingClientPackets(false);
+				for (Map.Entry<Object, ChannelPromise> cachedPacket : packetCache) {
+					super.write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
+				}
+				packetCache.clear();
+				// mimic SET_LOCAL_PLAYER_INITIALISED that would normally get sent on initial login
+				connection.sendPacketToServer(new PluginMessage("ps:clientunlock", Unpooled.EMPTY_BUFFER, false));
+				return;
+			}
+			// check if this is the bungee initiated chunk-cache-clearing dim switch
+			if (msg instanceof Respawn && ((Respawn)msg).getDimension() != cache.getRealDimension() && !cache.isStashingClientPackets()) {
+				cache.setStashingClientPackets(true);
+				super.write(ctx, msgObject, promise);
+				return;
+			}
+		}
+		if (cache.isStashingClientPackets()) {
+			packetCache.add(new AbstractMap.SimpleImmutableEntry(msgObject, promise));
+		} else {
+			super.write(ctx, msgObject, promise);
+		}
 	}
 
 }
