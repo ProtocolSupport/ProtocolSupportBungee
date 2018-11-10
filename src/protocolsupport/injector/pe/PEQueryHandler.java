@@ -30,23 +30,19 @@ public class PEQueryHandler extends QueryHandler {
             ctx.fireChannelRead(msg);
             return;
         }
-
         if (msg instanceof ByteBuf) {
             ByteBuf buf = (ByteBuf)msg;
             ByteBuf peakBuf = buf.duplicate();
-
             hasChecked = true;
             if (peakBuf.readUnsignedByte() != 0xFE || peakBuf.readUnsignedByte() != 0xFD) {
                 ctx.fireChannelRead(msg);
                 return;
             }
             isQuery = true;
-
             DatagramPacket gram = new DatagramPacket(buf,
                     (InetSocketAddress)ctx.channel().localAddress(),
                     (InetSocketAddress)ctx.channel().remoteAddress()
             );
-
             super.channelRead(ctx, gram);
         } else {
             ctx.fireChannelRead(msg);
@@ -60,7 +56,6 @@ public class PEQueryHandler extends QueryHandler {
                 channelHandlerContext.fireChannelRead(datagramPacket);
                 return;
             }
-
             byteBuf.writeBytes(datagramPacket.content());
         }
     }

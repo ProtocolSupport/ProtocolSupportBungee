@@ -17,8 +17,8 @@ public class CustomEventPacket extends PEDefinedReadableMiddlePacket {
         super(PEPacketId.Dualbound.CUSTOM_EVENT);
     }
 
-    String tag;
-    byte[] data;
+    protected String tag;
+    protected byte[] data;
 
     @Override
     protected void read0(ByteBuf from) {

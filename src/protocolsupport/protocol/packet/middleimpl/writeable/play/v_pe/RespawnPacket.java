@@ -47,7 +47,6 @@ public class RespawnPacket extends PESingleWriteablePacket<Respawn> {
 					packets.add(buffer);
 				}
 			}
-
 			ByteBuf spawnBuffer = Unpooled.buffer();
 			PEPacketIdSerializer.writePacketId(spawnBuffer, PEPacketId.Clientbound.PLAY_PLAY_STATUS);
 			spawnBuffer.writeInt(3); //player_spawn
