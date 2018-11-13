@@ -1,4 +1,4 @@
- buildscript {
+buildscript {
 	dependencies {
 		classpath 'org.jdom:jdom2:2.0.6'
 		classpath 'org.ow2.asm:asm:5.1'
@@ -31,8 +31,7 @@ tasks.withType(JavaCompile) {
 group 'protocolsupport'
 version '1.4.dev'
 
-sourceCompatibility = 1.8
-
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 import java.text.MessageFormat
 
@@ -107,6 +106,14 @@ dependencies {
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
 }
 
+task copyFinalJarToTarget(type: Copy) {
+	// JitPack searches for the output jar at the standard Gradle output directory (jar.archivePath)
+	// By copying it from there to our target destination JitPack can archive it in a Maven repository
+	from jar.archivePath.getPath()
+	into 'target'
+	//remove version suffix
+	rename (jar.archiveName, jar.baseName + '.jar')
+}
 
 shadowJar {
 	doFirst {
@@ -116,10 +123,10 @@ shadowJar {
 	from sourceSets.main.java.srcDirs
 	from 'LICENSE'
 
-	minimizeJar = true
 
-	destinationDir = file('target')
-	archiveName = 'ProtocolSupportBungee.jar'
+	//remove the -all suffix
+	archiveName = jar.archiveName
+	minimizeJar = true
 
 	exclude 'META-INF/**'
 	relocate 'org.apache', 'protocolsupport.libs.org.apache'
@@ -136,3 +143,4 @@ compileJava.dependsOn(clean)
 compileJava.dependsOn(updateLibs)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
+shadowJar.finalizedBy(copyFinalJarToTarget)
