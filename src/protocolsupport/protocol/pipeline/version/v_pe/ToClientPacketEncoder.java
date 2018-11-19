@@ -1,9 +1,7 @@
 package protocolsupport.protocol.pipeline.version.v_pe;
 
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.DefaultChannelPromise;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
@@ -77,8 +75,6 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 					super.write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
 				}
 				packetCache.clear();
-				// mimic SET_LOCAL_PLAYER_INITIALISED that would normally get sent on initial login
-				connection.sendPacketToServer(new PluginMessage("ps:clientunlock", new byte[0], false));
 				return;
 			}
 			// check if this is the bungee initiated chunk-cache-clearing dim switch
