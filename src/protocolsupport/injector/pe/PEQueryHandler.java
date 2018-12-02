@@ -8,6 +8,7 @@ import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.query.QueryHandler;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 public class PEQueryHandler extends QueryHandler {
     public PEQueryHandler() {
@@ -38,6 +39,12 @@ public class PEQueryHandler extends QueryHandler {
                 ctx.fireChannelRead(msg);
                 return;
             }
+            //TODO: queries just clog up a pipeline until timeout. we need to correctly close these...
+            ctx.channel().eventLoop().schedule(() -> {
+                if (ctx.channel().isOpen()) {
+                    ctx.channel().close();
+                }
+            }, 500, TimeUnit.MILLISECONDS);
             isQuery = true;
             DatagramPacket gram = new DatagramPacket(buf,
                     (InetSocketAddress)ctx.channel().localAddress(),
