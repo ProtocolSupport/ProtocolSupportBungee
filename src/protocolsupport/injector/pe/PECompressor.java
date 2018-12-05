@@ -10,6 +10,8 @@ import protocolsupport.utils.netty.Compressor;
 
 public class PECompressor extends MessageToByteEncoder<ByteBuf> {
 
+	public static final String NAME = "peproxy-comp";
+
 	private final ByteBuf packbuffer = Allocator.allocateBuffer();
 	private final Compressor compressor = Compressor.create();
 

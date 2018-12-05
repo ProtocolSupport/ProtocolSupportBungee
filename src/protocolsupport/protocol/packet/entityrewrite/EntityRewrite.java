@@ -29,6 +29,9 @@ public abstract class EntityRewrite {
 			}
 			buf.clear();
 			buf.writeBytes(newbuf);
+		} catch(Exception e) {
+			System.err.println("Entity remap error in packet ID " + packetId);
+			throw e;
 		} finally {
 			newbuf.release();
 		}

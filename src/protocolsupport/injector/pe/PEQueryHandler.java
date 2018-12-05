@@ -1,6 +1,7 @@
 package protocolsupport.injector.pe;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -11,6 +12,9 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 public class PEQueryHandler extends QueryHandler {
+
+    public static final String NAME = "peproxy-query-read";
+
     public PEQueryHandler() {
         super(
             BungeeCord.getInstance(),
@@ -32,18 +36,17 @@ public class PEQueryHandler extends QueryHandler {
             return;
         }
         if (msg instanceof ByteBuf) {
-            ByteBuf buf = (ByteBuf)msg;
-            ByteBuf peakBuf = buf.duplicate();
-            hasChecked = true;
+            final Channel channel = ctx.channel();
+            final ByteBuf buf = (ByteBuf)msg;
+            final ByteBuf peakBuf = buf.duplicate();
+            hasChecked = true; //we check the first packet only
             if (peakBuf.readUnsignedByte() != 0xFE || peakBuf.readUnsignedByte() != 0xFD) {
                 ctx.fireChannelRead(msg);
                 return;
             }
             //TODO: queries just clog up a pipeline until timeout. we need to correctly close these...
-            ctx.channel().eventLoop().schedule(() -> {
-                if (ctx.channel().isOpen()) {
-                    ctx.channel().close();
-                }
+            channel.eventLoop().schedule(() -> {
+                channel.close();
             }, 500, TimeUnit.MILLISECONDS);
             isQuery = true;
             DatagramPacket gram = new DatagramPacket(buf,
@@ -57,6 +60,8 @@ public class PEQueryHandler extends QueryHandler {
     }
 
     public class Writer extends MessageToByteEncoder<DatagramPacket> {
+        public static final String NAME = "peproxy-query-write";
+
         @Override
         protected void encode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, ByteBuf byteBuf) throws Exception {
             if(!isQuery) {

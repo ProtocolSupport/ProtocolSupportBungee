@@ -14,6 +14,7 @@ import protocolsupport.protocol.serializer.VarNumberSerializer;
 
 public class PEDecompressor extends MessageToMessageDecoder<ByteBuf> {
 
+	public static final String NAME = "peproxy-decomp";
 	private static final int maxPacketLength = 2 << 21;
 
 	private final Inflater inflater = new Inflater();
