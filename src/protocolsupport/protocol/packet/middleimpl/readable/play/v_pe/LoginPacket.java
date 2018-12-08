@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
+import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.MiscSerializer;
@@ -76,6 +77,8 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		VarNumberSerializer.readSVarInt(from); //enchantment seed
 		cache.setPeRuntimeIDs(MiscSerializer.readAllBytes(from)); //also consumes version name
 		cache.setRealDimension(dimension);
+		//unlock server client queue, because we're tracking the state in bungee after initial login
+		connection.sendPacketToServer(new PluginMessage("ps:ir_unlockchannel", new byte[0], false));
 	}
 
 	@Override

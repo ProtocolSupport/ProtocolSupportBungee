@@ -30,6 +30,7 @@ public class FromClientPlayerAction extends PEDefinedReadableMiddlePacket {
         VarNumberSerializer.readVarInt(from); //y
         VarNumberSerializer.readSVarInt(from); //z
         VarNumberSerializer.readSVarInt(from); //face
+        from.skipBytes(from.readableBytes());
 
         switch (action) {
             case DIMENSION_CHANGE_ACK: {

@@ -17,7 +17,6 @@ import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.PingHa
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CommandRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CustomEventPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientChatPacket;
-import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientPlayerLook;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientPlayerAction;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
@@ -31,7 +30,6 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 		registry.register(Protocol.HANDSHAKE, PEPacketId.Serverbound.HANDSHAKE_LOGIN, LoginHandshakePacket.class);
 		registry.register(Protocol.HANDSHAKE, PEProxyServerInfoHandler.PACKET_ID, PingHandshakePacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Dualbound.PLAY_CHAT, FromClientChatPacket.class);
-		registry.register(Protocol.GAME, PEPacketId.Dualbound.PLAY_PLAYER_MOVE_LOOK, FromClientPlayerLook.class);
 		registry.register(Protocol.GAME, PEPacketId.Serverbound.PLAY_PLAYER_ACTION, FromClientPlayerAction.class);
 		registry.register(Protocol.GAME, PEPacketId.Serverbound.PLAY_COMMAND_REQUEST, CommandRequestPacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Dualbound.CUSTOM_EVENT, CustomEventPacket.class);
