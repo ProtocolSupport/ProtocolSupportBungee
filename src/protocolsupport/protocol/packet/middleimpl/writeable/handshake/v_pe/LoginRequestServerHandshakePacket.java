@@ -76,6 +76,8 @@ public class LoginRequestServerHandshakePacket extends PESingleWriteablePacket<L
 		JsonObject clientinfo = new JsonObject();
 		clientinfo.addProperty("ServerAddress", cache.getServerHandshake().getHost() + ":" + cache.getServerHandshake().getPort());
 		clientinfo.addProperty("LanguageCode", cache.getLocale());
+		clientinfo.addProperty("SkinData", cache.getSkinData());
+		clientinfo.addProperty("SkinGeometryName", cache.getSkinGeometry());
 		return encodeJWT(clientinfo);
 	}
 

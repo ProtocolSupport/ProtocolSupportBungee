@@ -67,14 +67,17 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 
 	@Override
 	public void write(final ChannelHandlerContext ctx, final Object msgObject, final ChannelPromise promise) throws Exception {
+
 		if (acceptOutboundMessage(msgObject)) {
 			DefinedPacket msg = (DefinedPacket) msgObject;
 			if (msg instanceof PluginMessage && cache.isStashingClientPackets() && ((PluginMessage)msg).getTag().equals("ps:bungeeunlock")) {
 				cache.setStashingClientPackets(false);
-				for (Map.Entry<Object, ChannelPromise> cachedPacket : packetCache) {
-					super.write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
+				//copy list so we can safely recurse back into this method
+				ArrayList<Map.Entry<Object, ChannelPromise>> packetCacheCopy = packetCache;
+				packetCache = new ArrayList<>();
+				for (Map.Entry<Object, ChannelPromise> cachedPacket : packetCacheCopy) {
+					write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
 				}
-				packetCache.clear();
 				return;
 			}
 			// check if this is the bungee initiated chunk-cache-clearing dim switch

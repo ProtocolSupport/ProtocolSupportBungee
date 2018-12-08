@@ -5,6 +5,7 @@ public class PEPacketId {
 	public static class Serverbound {
 
 		public static final int HANDSHAKE_LOGIN = 0x01;
+		public static final int PLAY_PLAYER_ACTION = 0x24;
 		public static final int PLAY_COMMAND_REQUEST = 0x4D;
 
 	}

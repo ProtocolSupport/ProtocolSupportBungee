@@ -82,6 +82,8 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 			host = rserveraddresssplit[0];
 			port = Integer.parseInt(rserveraddresssplit[1]);
 			cache.setLocale(clientinfo.get("LanguageCode"));
+			cache.setSkinData(clientinfo.get("SkinData"));
+			cache.setSkinGeometry(clientinfo.get("SkinGeometryName"));
 		} catch (ParseException e) {
 			throw new DecoderException("Unable to parse jwt", e);
 		}

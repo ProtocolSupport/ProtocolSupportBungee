@@ -80,4 +80,25 @@ public class NetworkDataCache {
 	public void setStashingClientPackets(boolean stashingClientPackets) {
 		this.stashingClientPackets = stashingClientPackets;
 	}
+
+	private String skinData;
+
+	public String getSkinData() {
+		return skinData;
+	}
+
+	public void setSkinData(String skinData) {
+		this.skinData = skinData;
+	}
+
+	private String skinGeometry;
+
+	public String getSkinGeometry() {
+		return skinGeometry;
+	}
+
+	public void setSkinGeometry(String skinGeometry) {
+		this.skinGeometry = skinGeometry;
+	}
+
 }

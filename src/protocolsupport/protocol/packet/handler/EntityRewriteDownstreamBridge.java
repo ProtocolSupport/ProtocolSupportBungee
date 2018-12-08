@@ -32,7 +32,7 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 	@Override
 	public void handle(PluginMessage pluginMessage) throws Exception {
 		// bungee somehow doesnt update these, even though our protocol technically supports the new format
-		if(pluginMessage.getTag().equals("bungeecord:main")) {
+		if (pluginMessage.getTag().equals("bungeecord:main")) {
 			pluginMessage.setTag("BungeeCord");
 		}
 		super.handle(pluginMessage);
