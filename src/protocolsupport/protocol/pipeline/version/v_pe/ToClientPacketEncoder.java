@@ -32,6 +32,9 @@ import protocolsupport.protocol.packet.middleimpl.writeable.status.v_pe.StatusRe
 import protocolsupport.protocol.pipeline.version.AbstractPacketEncoder;
 import protocolsupport.protocol.storage.NetworkDataCache;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
@@ -62,8 +65,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		super(connection, cache);
 	}
 
-	// wish java had some kind of real 'tuple' class
-	protected ArrayList<Map.Entry<Object, ChannelPromise>> packetCache = new ArrayList<>();
+	protected ArrayList<Pair<Object, ChannelPromise>> packetCache = new ArrayList<>();
 
 	@Override
 	public void write(final ChannelHandlerContext ctx, final Object msgObject, final ChannelPromise promise) throws Exception {
@@ -73,7 +75,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 			if (msg instanceof PluginMessage && cache.isStashingClientPackets() && ((PluginMessage)msg).getTag().equals("ps:bungeeunlock")) {
 				cache.setStashingClientPackets(false);
 				//copy list so we can safely recurse back into this method
-				ArrayList<Map.Entry<Object, ChannelPromise>> packetCacheCopy = packetCache;
+				ArrayList<Pair<Object, ChannelPromise>> packetCacheCopy = packetCache;
 				packetCache = new ArrayList<>();
 				for (Map.Entry<Object, ChannelPromise> cachedPacket : packetCacheCopy) {
 					write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
@@ -88,7 +90,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 			}
 		}
 		if (cache.isStashingClientPackets()) {
-			packetCache.add(new AbstractMap.SimpleImmutableEntry(msgObject, promise));
+			packetCache.add(new ImmutablePair(msgObject, promise));
 		} else {
 			super.write(ctx, msgObject, promise);
 		}
