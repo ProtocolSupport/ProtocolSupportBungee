@@ -19,7 +19,6 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 	protected final UserConnection con;
 	protected final IntUnaryOperator rewritefunc;
 	protected final EntityRewrite rewrite;
-	protected final ByteBuf scratchBuffer = Allocator.allocateBuffer();
 
 	public EntityRewriteDownstreamBridge(UserConnection con, ProtocolVersion version) {
 		super(ProxyServer.getInstance(), con, con.getServer());
@@ -30,7 +29,7 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
-		con.sendPacket(rewrite.rewrite(packet, rewritefunc, scratchBuffer));
+		con.sendPacket(rewrite.rewrite(packet, rewritefunc));
 	}
 
 	@Override
@@ -42,9 +41,4 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 		super.handle(pluginMessage);
 	}
 
-	@Override
-	public void disconnected(ChannelWrapper channel) throws Exception {
-		super.disconnected(channel);
-		scratchBuffer.release();
-	}
 }

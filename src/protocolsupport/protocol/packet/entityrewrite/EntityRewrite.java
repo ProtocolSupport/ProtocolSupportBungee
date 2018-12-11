@@ -14,32 +14,32 @@ public abstract class EntityRewrite {
 		rewritechains[packetId] = chain.clone();
 	}
 
-	public PacketWrapper rewrite(PacketWrapper packet, IntUnaryOperator rewritefunc, ByteBuf scratchBuffer) {
+	public PacketWrapper rewrite(PacketWrapper packet, IntUnaryOperator rewritefunc) {
 		ByteBuf buf = packet.buf;
 		buf.markReaderIndex();
-		scratchBuffer.clear();
 		int packetId = readPacketId(buf);
 		EntityRewriteCommand[] chain = rewritechains[packetId];
 		if (chain == null) {
 			buf.resetReaderIndex();
 			return packet;
 		}
+		ByteBuf tmpBuffer = Allocator.allocateBuffer();
 		try {
-			writePacketId(scratchBuffer, packetId);
+			writePacketId(tmpBuffer, packetId);
 			for (EntityRewriteCommand command : chain) {
-				command.rewrite(buf, scratchBuffer, rewritefunc);
+				command.rewrite(buf, tmpBuffer, rewritefunc);
 			}
 			buf.clear();
-			if (buf.maxWritableBytes() < scratchBuffer.readableBytes()) {
+			if (buf.maxWritableBytes() < tmpBuffer.readableBytes()) {
 				packet.trySingleRelease();
-				ByteBuf outBuf = Allocator.allocateBuffer();
-				outBuf.writeBytes(scratchBuffer);
-				return new PacketWrapper(packet.packet, outBuf);
+				return new PacketWrapper(packet.packet, tmpBuffer);
 			} else {
-				buf.writeBytes(scratchBuffer);
+				buf.writeBytes(tmpBuffer);
+				tmpBuffer.release();
 				return packet;
 			}
 		} catch (Exception e) {
+			tmpBuffer.release();
 			throw new RuntimeException("Entity remap error in packet ID " + packetId, e);
 		}
 	}

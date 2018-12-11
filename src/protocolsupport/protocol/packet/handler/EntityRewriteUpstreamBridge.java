@@ -18,7 +18,6 @@ public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 	protected final UserConnection con;
 	protected final IntUnaryOperator rewritefunc;
 	protected final EntityRewrite rewrite;
-	protected final ByteBuf scratchBuffer = Allocator.allocateBuffer();
 
 	public EntityRewriteUpstreamBridge(UserConnection con, ProtocolVersion version) {
 		super(ProxyServer.getInstance(), con);
@@ -30,13 +29,8 @@ public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
 		if (con.getServer() != null) {
-			con.getServer().getCh().write(rewrite.rewrite(packet, rewritefunc, scratchBuffer));
+			con.getServer().getCh().write(rewrite.rewrite(packet, rewritefunc));
 		}
 	}
 
-	@Override
-	public void disconnected(ChannelWrapper channel) throws Exception {
-		super.disconnected(channel);
-		scratchBuffer.release();
-	}
 }
