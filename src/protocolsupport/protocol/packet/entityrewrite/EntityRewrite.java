@@ -39,9 +39,8 @@ public abstract class EntityRewrite {
 				buf.writeBytes(scratchBuffer);
 				return packet;
 			}
-		} catch(Exception e) {
-			System.err.println("Entity remap error in packet ID " + packetId);
-			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException("Entity remap error in packet ID " + packetId, e);
 		}
 	}
 
