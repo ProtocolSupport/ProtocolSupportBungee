@@ -9,6 +9,7 @@ import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
 import net.md_5.bungee.protocol.packet.PluginMessage;
+import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.MiscSerializer;
@@ -69,8 +70,10 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); // hasLockedBeh pack
 		from.readBoolean(); // hasLocked world template.
 		from.readBoolean(); // Microsoft GamerTags only. Hell no!
-		from.readBoolean(); //is from world template
-		from.readBoolean(); //is world template option locked
+		if (connection.getVersion().isAfterOrEq(ProtocolVersion.MINECRAFT_PE_1_8)) {
+			from.readBoolean(); //is from world template
+			from.readBoolean(); //is world template option locked
+		}
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id

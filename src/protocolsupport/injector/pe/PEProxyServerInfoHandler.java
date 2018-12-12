@@ -17,6 +17,7 @@ import io.netty.util.ReferenceCountUtil;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.utils.PingSerializer;
 import protocolsupport.utils.PingSerializer.ServerPing;
 import protocolsupport.utils.Utils;
@@ -55,7 +56,7 @@ public class PEProxyServerInfoHandler implements PingHandler {
 				"MCPE",
 				ping.getMotd().toLegacyText().replace(";", ":"),
 				String.valueOf(ping.getVersion().getName()),
-				ProtocolVersion.MINECRAFT_PE.getName().replaceFirst("PE-", ""),
+				ProtocolVersionsHelper.LATEST_PE.getName().replaceFirst("PE-", ""),
 				String.valueOf(ping.getPlayers().getOnlineCount()),
 				String.valueOf(ping.getPlayers().getMaxPlayers())
 			);

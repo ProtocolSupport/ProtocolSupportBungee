@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
+import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
@@ -75,8 +76,10 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //hasLockedBeh pack
 		startgame.writeBoolean(false); //hasLocked world template.
 		startgame.writeBoolean(false); //Microsoft GamerTags only. Hell no!
-		startgame.writeBoolean(false); //is from world template
-		startgame.writeBoolean(false); //is world template option locked
+		if (connection.getVersion().isAfterOrEq(ProtocolVersion.MINECRAFT_PE_1_8)) {
+			startgame.writeBoolean(false); //is from world template
+			startgame.writeBoolean(false); //is world template option locked
+		}
 		StringSerializer.writeVarIntUTF8String(startgame, levelId);
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //level name (will packet.getLevelType() work?)
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //template pack id
