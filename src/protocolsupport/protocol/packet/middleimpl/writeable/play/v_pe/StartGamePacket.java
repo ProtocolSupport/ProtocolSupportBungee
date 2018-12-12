@@ -75,6 +75,8 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		startgame.writeBoolean(false); //hasLockedBeh pack
 		startgame.writeBoolean(false); //hasLocked world template.
 		startgame.writeBoolean(false); //Microsoft GamerTags only. Hell no!
+		startgame.writeBoolean(false); //is from world template
+		startgame.writeBoolean(false); //is world template option locked
 		StringSerializer.writeVarIntUTF8String(startgame, levelId);
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //level name (will packet.getLevelType() work?)
 		StringSerializer.writeVarIntUTF8String(startgame, ""); //template pack id

@@ -69,6 +69,8 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 		from.readBoolean(); // hasLockedBeh pack
 		from.readBoolean(); // hasLocked world template.
 		from.readBoolean(); // Microsoft GamerTags only. Hell no!
+		from.readBoolean(); //is from world template
+		from.readBoolean(); //is world template option locked
 		StringSerializer.readVarIntUTF8String(from); //level id (pe one)
 		StringSerializer.readVarIntUTF8String(from); //level name (will packet.getLevelType() work?)
 		StringSerializer.readVarIntUTF8String(from); //template pack id
