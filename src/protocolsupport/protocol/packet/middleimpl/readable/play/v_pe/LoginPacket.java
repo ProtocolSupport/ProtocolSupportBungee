@@ -12,9 +12,12 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.PEDefinedReadableMiddlePacket;
+import protocolsupport.protocol.pipeline.version.v_pe.NoopDefinedPacket;
 import protocolsupport.protocol.serializer.MiscSerializer;
+import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
 import protocolsupport.protocol.serializer.VarNumberSerializer;
+import protocolsupport.utils.netty.Allocator;
 
 public class LoginPacket extends PEDefinedReadableMiddlePacket {
 
@@ -88,9 +91,13 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
+		ByteBuf gameModeSerializer = Allocator.allocateBuffer();
+		PEPacketIdSerializer.writePacketId(gameModeSerializer, PEPacketId.Clientbound.PLAY_PLAYER_GAME_TYPE);
+		VarNumberSerializer.writeSVarInt(gameModeSerializer, gamemode);
 		return Arrays.asList(
 			new PacketWrapper(new LoginSuccess(), Unpooled.EMPTY_BUFFER),
-			new PacketWrapper(new Login(entityId, gamemode, dimension, (short) difficulty, (short) 1, "", false), Unpooled.wrappedBuffer(readbytes))
+			new PacketWrapper(new Login(entityId, gamemode, dimension, (short) difficulty, (short) 1, "", false), Unpooled.wrappedBuffer(readbytes)),
+			new PacketWrapper(new NoopDefinedPacket(), gameModeSerializer) //send game mode independently
 		);
 	}
 

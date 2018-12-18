@@ -2,6 +2,7 @@ package protocolsupport.protocol.pipeline.version.v_pe;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
@@ -20,6 +21,7 @@ import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import net.md_5.bungee.protocol.packet.Team;
 import net.md_5.bungee.protocol.packet.Title;
+
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_pe.LoginSuccessPacket;
@@ -35,9 +37,7 @@ import protocolsupport.protocol.storage.NetworkDataCache;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ToClientPacketEncoder extends AbstractPacketEncoder {
 
@@ -77,8 +77,8 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 				//copy list so we can safely recurse back into this method
 				ArrayList<Pair<Object, ChannelPromise>> packetCacheCopy = packetCache;
 				packetCache = new ArrayList<>();
-				for (Map.Entry<Object, ChannelPromise> cachedPacket : packetCacheCopy) {
-					write(ctx, cachedPacket.getKey(), cachedPacket.getValue());
+				for (Pair<Object, ChannelPromise> cachedPacket : packetCacheCopy) {
+					write(ctx, cachedPacket.getLeft(), cachedPacket.getRight());
 				}
 				return;
 			}
