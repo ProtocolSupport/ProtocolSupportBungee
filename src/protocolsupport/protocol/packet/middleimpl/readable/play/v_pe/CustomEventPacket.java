@@ -29,7 +29,7 @@ public class CustomEventPacket extends PEDefinedReadableMiddlePacket {
     @Override
     public Collection<PacketWrapper> toNative() {
         return Arrays.asList(
-            new PacketWrapper(new PluginMessage(tag, data, false), Unpooled.wrappedBuffer(readbytes))
+            new PacketWrapper(new PluginMessage(tag, data, false), Unpooled.EMPTY_BUFFER)
         );
     }
 }

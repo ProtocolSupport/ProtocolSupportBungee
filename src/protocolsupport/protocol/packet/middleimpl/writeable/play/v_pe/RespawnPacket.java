@@ -36,7 +36,7 @@ public class RespawnPacket extends PESingleWriteablePacket<Respawn> {
 		ArrayList<ByteBuf> packets = new ArrayList<>();
 		packets.add(single);
 		if (!isRealRespawn) {
-			// send fake chunks, ToClientPacketEncoder will lock client stream afterwards, until FromClientPlayerLook
+			// send fake chunks, ToClientPacketEncoder will lock client stream afterwards
 			for (int x = -2; x <= 2; x++) {
 				for (int z = -2; z <= 2; z++) {
 					ByteBuf buffer = Unpooled.buffer();

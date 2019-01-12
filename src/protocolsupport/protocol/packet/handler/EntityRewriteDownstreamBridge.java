@@ -29,7 +29,9 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
-		con.sendPacket(rewrite.rewrite(packet, rewritefunc));
+		if (packet.buf.readableBytes() > 0) {
+			con.sendPacket(rewrite.rewrite(packet, rewritefunc));
+		}
 	}
 
 	@Override

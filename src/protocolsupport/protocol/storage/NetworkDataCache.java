@@ -29,14 +29,14 @@ public class NetworkDataCache {
 		return serverHandshake;
 	}
 
-	private byte[] peRuntimeIDs;
+	private byte[] startGameData;
 
-	public byte[] getPeRuntimeIDs() {
-		return peRuntimeIDs;
+	public byte[] getStartGameData() {
+		return startGameData;
 	}
 
-	public void setPeRuntimeIDs(byte[] peRuntimeIDs) {
-		this.peRuntimeIDs = peRuntimeIDs;
+	public void setStartGameData(byte[] startGameData) {
+		this.startGameData = startGameData;
 	}
 
 	private int realDimension = 0;
