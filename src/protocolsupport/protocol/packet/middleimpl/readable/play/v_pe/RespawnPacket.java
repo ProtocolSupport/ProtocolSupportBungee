@@ -27,7 +27,6 @@ public class RespawnPacket extends PEDefinedReadableMiddlePacket {
 		from.readFloatLE(); //y
 		from.readFloatLE(); //z
 		from.readBoolean(); //respawn
-		cache.setRealDimension(dimensionId);
 	}
 
 	@Override

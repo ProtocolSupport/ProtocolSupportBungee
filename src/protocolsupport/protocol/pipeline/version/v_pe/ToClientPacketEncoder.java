@@ -4,23 +4,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 
 import net.md_5.bungee.protocol.DefinedPacket;
-import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
-import net.md_5.bungee.protocol.packet.EncryptionRequest;
-import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.Kick;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
-import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.Respawn;
-import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
-import net.md_5.bungee.protocol.packet.ScoreboardObjective;
-import net.md_5.bungee.protocol.packet.ScoreboardScore;
 import net.md_5.bungee.protocol.packet.StatusResponse;
-import net.md_5.bungee.protocol.packet.TabCompleteResponse;
-import net.md_5.bungee.protocol.packet.Team;
-import net.md_5.bungee.protocol.packet.Title;
 
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
@@ -63,7 +53,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 	public void write(final ChannelHandlerContext ctx, final Object msgObject, final ChannelPromise promise) throws Exception {
 		if (acceptOutboundMessage(msgObject)) {
 			DefinedPacket msg = (DefinedPacket) msgObject;
-			if (msg instanceof PluginMessage && cache.isStashingClientPackets() && ((PluginMessage)msg).getTag().equals("ps:bungeeunlock")) {
+			if (msg instanceof PluginMessage && cache.isStashingClientPackets() && ((PluginMessage) msg).getTag().equals("ps:bungeeunlock")) {
 				cache.setStashingClientPackets(false);
 				//copy list so we can safely recurse back into this method
 				ArrayList<Pair<Object, ChannelPromise>> packetCacheCopy = new ArrayList(packetCache);
@@ -75,7 +65,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 				return;
 			}
 			// check if this is the bungee initiated chunk-cache-clearing dim switch
-			if (msg instanceof Respawn && ((Respawn)msg).getDimension() != cache.getRealDimension() && !cache.isStashingClientPackets()) {
+			if (msg instanceof Respawn && !cache.isStashingClientPackets()) {
 				cache.setStashingClientPackets(true);
 				super.write(ctx, msgObject, promise);
 				return;

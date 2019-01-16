@@ -2,17 +2,14 @@ package protocolsupport.protocol.packet.handler;
 
 import java.util.function.IntUnaryOperator;
 
-import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
-import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.entityrewrite.EntityRewrite;
 import protocolsupport.protocol.packet.entityrewrite.EntityRewriteFactory;
-import protocolsupport.utils.netty.Allocator;
 
 public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 

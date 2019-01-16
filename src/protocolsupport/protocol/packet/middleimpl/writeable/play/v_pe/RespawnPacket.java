@@ -31,26 +31,18 @@ public class RespawnPacket extends PESingleWriteablePacket<Respawn> {
 
 	@Override
 	public Collection<ByteBuf> toData(Respawn packet) {
-		final boolean isRealRespawn = packet.getDimension() == cache.getRealDimension();
 		ByteBuf single = super.toData(packet).iterator().next();
 		ArrayList<ByteBuf> packets = new ArrayList<>();
 		packets.add(single);
-		if (!isRealRespawn) {
-			// send fake chunks, ToClientPacketEncoder will lock client stream afterwards
-			for (int x = -2; x <= 2; x++) {
-				for (int z = -2; z <= 2; z++) {
-					ByteBuf buffer = Unpooled.buffer();
-					PEPacketIdSerializer.writePacketId(buffer, PEPacketId.Clientbound.PLAY_CHUNK_DATA);
-					VarNumberSerializer.writeSVarInt(buffer, x);
-					VarNumberSerializer.writeSVarInt(buffer, z);
-					buffer.writeBytes(getPEChunkData());
-					packets.add(buffer);
-				}
+		for (int x = -2; x <= 2; x++) {
+			for (int z = -2; z <= 2; z++) {
+				ByteBuf buffer = Unpooled.buffer();
+				PEPacketIdSerializer.writePacketId(buffer, PEPacketId.Clientbound.PLAY_CHUNK_DATA);
+				VarNumberSerializer.writeSVarInt(buffer, x);
+				VarNumberSerializer.writeSVarInt(buffer, z);
+				buffer.writeBytes(getPEChunkData());
+				packets.add(buffer);
 			}
-			ByteBuf spawnBuffer = Unpooled.buffer();
-			PEPacketIdSerializer.writePacketId(spawnBuffer, PEPacketId.Clientbound.PLAY_PLAY_STATUS);
-			spawnBuffer.writeInt(3); //player_spawn
-			packets.add(spawnBuffer);
 		}
 		return packets;
 	}

@@ -48,7 +48,7 @@ public class CommandRequestPacket extends PEDefinedReadableMiddlePacket {
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
-		return Collections.singletonList(new PacketWrapper(new Chat(command), Unpooled.wrappedBuffer(readbytes)));
+		return Collections.singletonList(new PacketWrapper(new Chat(command), Unpooled.EMPTY_BUFFER));
 	}
 
 }

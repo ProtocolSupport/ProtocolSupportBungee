@@ -39,16 +39,6 @@ public class NetworkDataCache {
 		this.startGameData = startGameData;
 	}
 
-	private int realDimension = 0;
-
-	public int getRealDimension() {
-		return realDimension;
-	}
-
-	public void setRealDimension(int realDimension) {
-		this.realDimension = realDimension;
-	}
-
 	protected String locale = "en_us";
 
 	public void setLocale(String locale) {
