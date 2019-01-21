@@ -24,6 +24,11 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
 		);
 		register(
+			PEPacketId.Clientbound.MOVE_ENTITY_DELTA,
+			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+		);
+		register(
 			PEPacketId.Clientbound.PLAY_ENTITY_VELOCITY,
 			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
@@ -89,6 +94,22 @@ public class PEToClientEntityRewrite extends PEEntityRewrite {
 			},
 			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 			EntityRewriteCommand.VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
+		);
+		register(
+			PEPacketId.Clientbound.PLAY_TRADE_UPDATE,
+			new EntityRewriteCommand.FixedLengthBytesCopyEntityRewriteCommand(2),
+			new EntityRewriteCommand.NoEntityIdRewriteEntityRewriteCommand() {
+				@Override
+				protected void rewrite(ByteBuf from, ByteBuf to) {
+					VarNumberSerializer.writeSVarInt(to, VarNumberSerializer.readSVarInt(from));
+					VarNumberSerializer.writeSVarInt(to, VarNumberSerializer.readSVarInt(from));
+					VarNumberSerializer.writeSVarInt(to, VarNumberSerializer.readSVarInt(from));
+				}
+			},
+			new EntityRewriteCommand.FixedLengthBytesCopyEntityRewriteCommand(1),
+			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
+			EntityRewriteCommand.SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND,
 			EntityRewriteCommand.REMAINING_BYTES_COPY_ENTITY_REWRITE_COMMAND
 		);
 	}

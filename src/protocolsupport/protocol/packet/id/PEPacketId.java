@@ -32,6 +32,8 @@ public class PEPacketId {
 		public static final int PLAY_CHUNK_DATA = 0x3A;
 		public static final int PLAY_RESPAWN = 0x3D;
 		public static final int PLAY_PLAYER_GAME_TYPE = 0x3E;
+		public static final int PLAY_TRADE_UPDATE = 0x50;
+		public static final int MOVE_ENTITY_DELTA = 0x6F;
 
 	}
 
