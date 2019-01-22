@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.packet.Login;
+import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.id.PEPacketId;
 import protocolsupport.protocol.packet.middle.WriteableMiddlePacket;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
@@ -16,12 +17,19 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 
 	@Override
 	public Collection<ByteBuf> toData(Login packet) {
+		ProtocolVersion version = connection.getVersion();
 		ArrayList<ByteBuf> packets = new ArrayList<>();
 		ByteBuf resourcepack = Allocator.allocateBuffer();
 		PEPacketIdSerializer.writePacketId(resourcepack, PEPacketId.Clientbound.PLAY_RESOURCE_PACK);
 		resourcepack.writeBoolean(false); // required
 		resourcepack.writeShortLE(0); //beh packs count
+		if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_PE_1_9)) {
+			resourcepack.writeBoolean(false); // ???
+		}
 		resourcepack.writeShortLE(0); //res packs count
+		if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_PE_1_9)) {
+			resourcepack.writeBoolean(false); // ???
+		}
 		packets.add(resourcepack);
 		ByteBuf resourcestack = Allocator.allocateBuffer();
 		PEPacketIdSerializer.writePacketId(resourcestack, PEPacketId.Clientbound.PLAY_RESOURCE_STACK);
