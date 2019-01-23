@@ -35,9 +35,9 @@ public abstract class IPipeLineBuilder {
 		BUILDERS.put(ProtocolVersion.MINECRAFT_1_4_7, new protocolsupport.protocol.pipeline.version.v_1_4.PipeLineBuilder());
 		IPipeLineBuilder vpebuilder = new protocolsupport.protocol.pipeline.version.v_pe.PipeLineBuilder();
 		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_FUTURE, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_10, vpebuilder);
 		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_9, vpebuilder);
 		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_8, vpebuilder);
-		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_7, vpebuilder);
 		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_LEGACY, vpebuilder);
 	}
 
