@@ -41,7 +41,7 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		packets.add(resourcestack);
 		ByteBuf startgame = Allocator.allocateBuffer();
 		PEPacketIdSerializer.writePacketId(startgame, PEPacketId.Clientbound.PLAY_START_GAME);
-		VarNumberSerializer.writeVarLong(startgame, packet.getEntityId());
+		VarNumberSerializer.writeSVarLong(startgame, packet.getEntityId());
 		VarNumberSerializer.writeVarLong(startgame, packet.getEntityId());
 		VarNumberSerializer.writeSVarInt(startgame, packet.getGameMode());
 		startgame.writeFloatLE(0); //player x
