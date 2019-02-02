@@ -44,9 +44,9 @@ public class StartGamePacket extends WriteableMiddlePacket<Login> {
 		VarNumberSerializer.writeSVarLong(startgame, packet.getEntityId());
 		VarNumberSerializer.writeVarLong(startgame, packet.getEntityId());
 		VarNumberSerializer.writeSVarInt(startgame, packet.getGameMode());
-		startgame.writeFloatLE(0); //player x
-		startgame.writeFloatLE(0); //player y
-		startgame.writeFloatLE(0); //player z
+		startgame.writeFloatLE(cache.getX()); //player x
+		startgame.writeFloatLE(cache.getY()); //player y
+		startgame.writeFloatLE(cache.getZ()); //player z
 		startgame.writeFloatLE(0); //player pitch
 		startgame.writeFloatLE(0); //player yaw
 		VarNumberSerializer.writeSVarInt(startgame, 0); //seed

@@ -35,9 +35,7 @@ public class FromClientPlayerAction extends PEDefinedReadableMiddlePacket {
         switch (action) {
             case DIMENSION_CHANGE_ACK: {
                 // player is 'alive' again, lets unlock our queue to get things moving
-                if (cache.isStashingClientPackets()) {
-                    connection.sendPacketToClient(new PluginMessage("ps:bungeeunlock", new byte[0], false));
-                }
+                connection.sendPacketToClient(new PluginMessage("ps:bungeeunlock", new byte[0], false));
                 return;
             }
             default:
