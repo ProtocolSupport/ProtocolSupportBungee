@@ -50,12 +50,12 @@ def dlDepsC = [
 
 def dlDepsS = [
 	new Tuple(
-		'https://build.true-games.org/job/RakNetServer/26/artifact/target/RakNetServer.jar',
-		'raknetserver-6.jar'
+		'https://build.true-games.org/job/RakNetServer/29/artifact/target/RakNetServer.jar',
+		'raknetserver-7.jar'
 	),
 	new Tuple(
 		'https://build.true-games.org/job/UdpServerSocketChannel/11/artifact/target/UdpServerSocketChannel.jar',
-		'udpserver-2.jar'
+		'udpserver-3.jar'
 	)
 ]
 
@@ -104,6 +104,7 @@ dependencies {
 	compile fileTree(dir: dlDepsDirS, include: '*.jar')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
+	compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.1'
 }
 
 task copyFinalJarToTarget(type: Copy) {
@@ -136,6 +137,7 @@ shadowJar {
 	relocate 'net.jcip', 'protocolsupport.libs.net.jcip'
 	relocate 'raknetserver', 'protocolsupport.libs.raknetserver'
 	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
+	relocate 'it.unimi.dsi.fastutil', 'protocolsupport.libs.it.unimi.dsi.fastutil'
 }
 
 

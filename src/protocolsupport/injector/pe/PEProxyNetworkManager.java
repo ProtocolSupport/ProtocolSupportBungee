@@ -25,16 +25,27 @@ public class PEProxyNetworkManager extends SimpleChannelInboundHandler<ByteBuf> 
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		System.err.println("PE proxy client connection exception occured");
+		System.err.println("PE proxy client connection exception occurred");
 		cause.printStackTrace();
 		ctx.channel().close();
 	}
 
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	protected void closeServerConnection() {
 		if (serverconnection != null) {
 			serverconnection.close();
 		}
 	}
 
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		closeServerConnection();
+		super.channelInactive(ctx);
+	}
+
+	@Override
+	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+		//TODO: why is this sometimes fired but not channelInactive ? Only seems to happen on STATUS
+		closeServerConnection();
+		super.channelUnregistered(ctx);
+	}
 }

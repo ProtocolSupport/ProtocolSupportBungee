@@ -29,6 +29,16 @@ public class NetworkDataCache {
 		return serverHandshake;
 	}
 
+	private byte[] startGameData;
+
+	public byte[] getStartGameData() {
+		return startGameData;
+	}
+
+	public void setStartGameData(byte[] startGameData) {
+		this.startGameData = startGameData;
+	}
+
 	protected String locale = "en_us";
 
 	public void setLocale(String locale) {
@@ -49,6 +59,56 @@ public class NetworkDataCache {
 
 	public UUID getPEClientUUID() {
 		return peClientUUID;
+	}
+
+	private boolean stashingClientPackets = false;
+
+	public boolean isStashingClientPackets() {
+		return stashingClientPackets;
+	}
+
+	public void setStashingClientPackets(boolean stashingClientPackets) {
+		this.stashingClientPackets = stashingClientPackets;
+	}
+
+	private String skinData;
+
+	public String getSkinData() {
+		return skinData;
+	}
+
+	public void setSkinData(String skinData) {
+		this.skinData = skinData;
+	}
+
+	private String skinGeometry;
+
+	public String getSkinGeometry() {
+		return skinGeometry;
+	}
+
+	public void setSkinGeometry(String skinGeometry) {
+		this.skinGeometry = skinGeometry;
+	}
+
+	private float x, y, z;
+
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public float getZ() {
+		return z;
+	}
+
+	public void setSpawnLocation(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 }

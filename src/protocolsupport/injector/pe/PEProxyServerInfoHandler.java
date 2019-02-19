@@ -14,8 +14,10 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.EncoderException;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
+import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 import protocolsupport.utils.PingSerializer;
 import protocolsupport.utils.PingSerializer.ServerPing;
 import protocolsupport.utils.Utils;
@@ -53,7 +55,8 @@ public class PEProxyServerInfoHandler implements PingHandler {
 			return String.join(";",
 				"MCPE",
 				ping.getMotd().toLegacyText().replace(";", ":"),
-				String.valueOf(ping.getVersion().getName()), "1.12.13",
+				String.valueOf(ping.getVersion().getName()),
+				ProtocolVersionsHelper.LATEST_PE.getName().replaceFirst("PE-", ""),
 				String.valueOf(ping.getPlayers().getOnlineCount()),
 				String.valueOf(ping.getPlayers().getMaxPlayers())
 			);
@@ -74,14 +77,19 @@ public class PEProxyServerInfoHandler implements PingHandler {
 
 		@Override
 		public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-			try {
-				ByteBuf serverdata = (ByteBuf) msg;
-				if (PEPacketIdSerializer.readPacketId(serverdata) != PACKET_ID) {
-					throw new EncoderException("Unknown packet sent by server while handling internal pe ping passthrough");
+			if (msg instanceof ByteBuf) {
+				try {
+					ByteBuf serverdata = (ByteBuf) msg;
+					if (PEPacketIdSerializer.readPacketId(serverdata) != PACKET_ID) {
+						throw new EncoderException("Unknown packet sent by server while handling internal pe ping passthrough");
+					}
+					response.put(PingSerializer.fromJson(StringSerializer.readVarIntUTF8String(serverdata)));
+					promise.trySuccess();
+				} finally {
+					ReferenceCountUtil.release(msg);
 				}
-				response.put(PingSerializer.fromJson(StringSerializer.readVarIntUTF8String(serverdata)));
-			} finally {
-				ReferenceCountUtil.release(msg);
+			} else {
+				ctx.writeAndFlush(msg, promise);
 			}
 		}
 

@@ -39,17 +39,8 @@ public class ProtocolUtils {
 	}
 
 	protected static ProtocolVersion readPEHandshake(ByteBuf data) {
-		data.readByte();
-		data.readByte();
 		int incomingversion = data.readInt();
-		int cversion = ProtocolVersion.MINECRAFT_PE.getId();
-		if (incomingversion == cversion) {
-			return ProtocolVersion.MINECRAFT_PE;
-		} else if (incomingversion < cversion) {
-			return ProtocolVersion.MINECRAFT_PE_LEGACY;
-		} else {
-			return ProtocolVersion.MINECRAFT_PE_FUTURE;
-		}
+		return ProtocolVersionsHelper.getPEProtocolVersion(incomingversion);
 	}
 
 }

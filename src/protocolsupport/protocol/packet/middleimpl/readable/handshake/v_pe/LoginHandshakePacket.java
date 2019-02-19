@@ -61,7 +61,7 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 	@Override
 	protected void read0(ByteBuf clientdata) {
 		clientdata.readInt();
-		ByteBuf logindata = Unpooled.wrappedBuffer(ArraySerializer.readVarIntLengthByteArray(clientdata));
+		ByteBuf logindata = ArraySerializer.readVarIntByteArraySlice(clientdata);
 		try {
 			Any<Key, JsonObject> chaindata = extractChainData(Utils.GSON.fromJson(
 				new InputStreamReader(new ByteBufInputStream(logindata, logindata.readIntLE())),
@@ -82,6 +82,8 @@ public class LoginHandshakePacket extends PEDefinedReadableMiddlePacket {
 			host = rserveraddresssplit[0];
 			port = Integer.parseInt(rserveraddresssplit[1]);
 			cache.setLocale(clientinfo.get("LanguageCode"));
+			cache.setSkinData(clientinfo.get("SkinData"));
+			cache.setSkinGeometry(clientinfo.get("SkinGeometryName"));
 		} catch (ParseException e) {
 			throw new DecoderException("Unable to parse jwt", e);
 		}

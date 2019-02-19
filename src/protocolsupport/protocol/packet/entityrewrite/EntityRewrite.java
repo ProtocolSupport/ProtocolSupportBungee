@@ -3,6 +3,7 @@ package protocolsupport.protocol.packet.entityrewrite;
 import java.util.function.IntUnaryOperator;
 
 import io.netty.buffer.ByteBuf;
+import net.md_5.bungee.protocol.PacketWrapper;
 import protocolsupport.utils.netty.Allocator;
 
 public abstract class EntityRewrite {
@@ -13,24 +14,33 @@ public abstract class EntityRewrite {
 		rewritechains[packetId] = chain.clone();
 	}
 
-	public void rewrite(ByteBuf buf, IntUnaryOperator rewritefunc) {
+	public PacketWrapper rewrite(PacketWrapper packet, IntUnaryOperator rewritefunc) {
+		ByteBuf buf = packet.buf;
 		buf.markReaderIndex();
 		int packetId = readPacketId(buf);
 		EntityRewriteCommand[] chain = rewritechains[packetId];
 		if (chain == null) {
 			buf.resetReaderIndex();
-			return;
+			return packet;
 		}
-		ByteBuf newbuf = Allocator.allocateBuffer();
+		ByteBuf tmpBuffer = Allocator.allocateBuffer();
 		try {
-			writePacketId(newbuf, packetId);
+			writePacketId(tmpBuffer, packetId);
 			for (EntityRewriteCommand command : chain) {
-				command.rewrite(buf, newbuf, rewritefunc);
+				command.rewrite(buf, tmpBuffer, rewritefunc);
 			}
 			buf.clear();
-			buf.writeBytes(newbuf);
-		} finally {
-			newbuf.release();
+			if (buf.maxWritableBytes() < tmpBuffer.readableBytes()) {
+				packet.trySingleRelease();
+				return new PacketWrapper(packet.packet, tmpBuffer);
+			} else {
+				buf.writeBytes(tmpBuffer);
+				tmpBuffer.release();
+				return packet;
+			}
+		} catch (Exception e) {
+			tmpBuffer.release();
+			throw new RuntimeException("Entity remap error in packet ID " + packetId, e);
 		}
 	}
 

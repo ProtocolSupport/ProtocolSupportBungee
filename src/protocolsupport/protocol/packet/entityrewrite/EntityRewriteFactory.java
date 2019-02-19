@@ -6,14 +6,17 @@ import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
 
 import protocolsupport.api.ProtocolVersion;
+import protocolsupport.protocol.utils.ProtocolVersionsHelper;
 
 public class EntityRewriteFactory {
 
 	protected static EnumMap<ProtocolVersion, EntityRewrite> toClient = new EnumMap<>(ProtocolVersion.class);
 	protected static EnumMap<ProtocolVersion, EntityRewrite> fromClient = new EnumMap<>(ProtocolVersion.class);
 	static {
-		toClient.put(ProtocolVersion.MINECRAFT_PE, new PEToClientEntityRewrite());
-		fromClient.put(ProtocolVersion.MINECRAFT_PE, new PEFromClientEntityRewrite());
+		for (ProtocolVersion protocol : ProtocolVersionsHelper.ALL_PE) {
+			toClient.put(protocol, new PEToClientEntityRewrite());
+			fromClient.put(protocol, new PEFromClientEntityRewrite());
+		}
 		Arrays.stream(ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_4_7, ProtocolVersion.MINECRAFT_1_6_4))
 		.forEach(version -> {
 			toClient.put(version, new LegacyToClientEntityRewrite());

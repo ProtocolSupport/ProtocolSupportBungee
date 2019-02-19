@@ -5,7 +5,8 @@ public class PEPacketId {
 	public static class Serverbound {
 
 		public static final int HANDSHAKE_LOGIN = 0x01;
-		public static final int PLAY_COMMAND_REQEST = 0x4D;
+		public static final int PLAY_PLAYER_ACTION = 0x24;
+		public static final int PLAY_COMMAND_REQUEST = 0x4D;
 
 	}
 
@@ -28,16 +29,18 @@ public class PEPacketId {
 		public static final int PLAY_ENTITY_VELOCITY = 0x28;
 		public static final int PLAY_ENTITY_PASSENGER = 0x29;
 		public static final int PLAY_ENTITY_ANIMATION = 0x2C;
+		public static final int PLAY_CHUNK_DATA = 0x3A;
 		public static final int PLAY_RESPAWN = 0x3D;
 		public static final int PLAY_PLAYER_GAME_TYPE = 0x3E;
+		public static final int PLAY_TRADE_UPDATE = 0x50;
+		public static final int MOVE_ENTITY_DELTA = 0x6F;
 
 	}
 
 	public static class Dualbound {
-
 		public static final int PLAY_CHAT = 0x09;
 		public static final int PLAY_PLAYER_MOVE_LOOK = 0x13;
-
+		public static final int CUSTOM_EVENT = 0x75;
 	}
 
 }
