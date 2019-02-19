@@ -77,14 +77,19 @@ public class PEProxyServerInfoHandler implements PingHandler {
 
 		@Override
 		public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-			try {
-				ByteBuf serverdata = (ByteBuf) msg;
-				if (PEPacketIdSerializer.readPacketId(serverdata) != PACKET_ID) {
-					throw new EncoderException("Unknown packet sent by server while handling internal pe ping passthrough");
+			if (msg instanceof ByteBuf) {
+				try {
+					ByteBuf serverdata = (ByteBuf) msg;
+					if (PEPacketIdSerializer.readPacketId(serverdata) != PACKET_ID) {
+						throw new EncoderException("Unknown packet sent by server while handling internal pe ping passthrough");
+					}
+					response.put(PingSerializer.fromJson(StringSerializer.readVarIntUTF8String(serverdata)));
+					promise.trySuccess();
+				} finally {
+					ReferenceCountUtil.release(msg);
 				}
-				response.put(PingSerializer.fromJson(StringSerializer.readVarIntUTF8String(serverdata)));
-			} finally {
-				ReferenceCountUtil.release(msg);
+			} else {
+				ctx.writeAndFlush(msg, promise);
 			}
 		}
 
