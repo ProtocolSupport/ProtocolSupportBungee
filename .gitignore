@@ -3,10 +3,23 @@ bin/
 build/
 target/
 gen/
+<<<<<<< HEAD
 libraries_runtime/
 libraries_shade/
 build_libraries/
 logs/
+=======
+dllibs/
+out/
+
+.externalToolBuilders/
+ # Eclipse Files #
+*.project
+*.classpath
+*.prefs
+/.apt_generated/
+*.factorypath
+>>>>>>> branch 'master' of https://github.com/ProtocolSupport/ProtocolSupportBungee
 
 # Gradle
 .gradle

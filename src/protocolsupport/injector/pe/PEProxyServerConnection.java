@@ -41,7 +41,7 @@ public class PEProxyServerConnection extends SimpleChannelInboundHandler<ByteBuf
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		System.err.println("PE proxy server connection exception occured");
+		System.err.println("PE proxy server connection exception occurred");
 		cause.printStackTrace();
 		ctx.channel().close();
 	}
@@ -49,6 +49,7 @@ public class PEProxyServerConnection extends SimpleChannelInboundHandler<ByteBuf
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		clientconnection.close();
+		super.channelInactive(ctx);
 	}
 
 	protected static final NioEventLoopGroup group = new NioEventLoopGroup();

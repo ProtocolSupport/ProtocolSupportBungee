@@ -1,4 +1,4 @@
- buildscript {
+buildscript {
 	dependencies {
 		classpath 'org.jdom:jdom2:2.0.6'
 		classpath 'org.ow2.asm:asm:5.1'
@@ -32,8 +32,7 @@ tasks.withType(JavaCompile) {
 group 'protocolsupport'
 version '1.4.dev'
 
-sourceCompatibility = 1.8
-
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 File librariesRuntimeDirectory = new File("libraries_runtime")
 File librariesShadeDirectory = new File("libraries_shade")
@@ -82,8 +81,17 @@ dependencies {
 	compile fileTree(dir: librariesShadeDirectory, include: '*.jar')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
+	compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.1'
 }
 
+task copyFinalJarToTarget(type: Copy) {
+	// JitPack searches for the output jar at the standard Gradle output directory (jar.archivePath)
+	// By copying it from there to our target destination JitPack can archive it in a Maven repository
+	from jar.archivePath.getPath()
+	into 'target'
+	//remove version suffix
+	rename (jar.archiveName, jar.baseName + '.jar')
+}
 
 shadowJar {
 	doFirst {
@@ -93,10 +101,10 @@ shadowJar {
 	from sourceSets.main.java.srcDirs
 	from 'LICENSE'
 
-	minimizeJar = true
 
-	destinationDir = file('target')
-	archiveName = 'ProtocolSupportBungee.jar'
+	//remove the -all suffix
+	archiveName = jar.archiveName
+	minimizeJar = true
 
 	exclude 'META-INF/**'
 	relocate 'org.apache', 'protocolsupport.libs.org.apache'
@@ -106,6 +114,7 @@ shadowJar {
 	relocate 'net.jcip', 'protocolsupport.libs.net.jcip'
 	relocate 'raknetserver', 'protocolsupport.libs.raknetserver'
 	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
+	relocate 'it.unimi.dsi.fastutil', 'protocolsupport.libs.it.unimi.dsi.fastutil'
 }
 
 
@@ -115,3 +124,4 @@ compileJava.dependsOn(updateRuntimeLibraries)
 compileJava.dependsOn(updateShadeLibraries)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
+shadowJar.finalizedBy(copyFinalJarToTarget)

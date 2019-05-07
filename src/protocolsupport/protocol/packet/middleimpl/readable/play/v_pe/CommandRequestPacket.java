@@ -30,7 +30,7 @@ public class CommandRequestPacket extends PEDefinedReadableMiddlePacket {
 	//private static final int ORIGIN_ENTITY_SERVER = 11;
 
 	public CommandRequestPacket() {
-		super(PEPacketId.Serverbound.PLAY_COMMAND_REQEST);
+		super(PEPacketId.Serverbound.PLAY_COMMAND_REQUEST);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class CommandRequestPacket extends PEDefinedReadableMiddlePacket {
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
-		return Collections.singletonList(new PacketWrapper(new Chat(command), Unpooled.wrappedBuffer(readbytes)));
+		return Collections.singletonList(new PacketWrapper(new Chat(command), Unpooled.EMPTY_BUFFER));
 	}
 
 }

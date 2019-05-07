@@ -15,7 +15,9 @@ import protocolsupport.protocol.packet.middle.ReadableMiddlePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.PingHandshakePacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CommandRequestPacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.CustomEventPacket;
 import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientChatPacket;
+import protocolsupport.protocol.packet.middleimpl.readable.play.v_pe.FromClientPlayerAction;
 import protocolsupport.protocol.serializer.PEPacketIdSerializer;
 import protocolsupport.protocol.storage.NetworkDataCache;
 import protocolsupport.protocol.utils.ProtocolVersionsHelper;
@@ -28,7 +30,9 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 		registry.register(Protocol.HANDSHAKE, PEPacketId.Serverbound.HANDSHAKE_LOGIN, LoginHandshakePacket.class);
 		registry.register(Protocol.HANDSHAKE, PEProxyServerInfoHandler.PACKET_ID, PingHandshakePacket.class);
 		registry.register(Protocol.GAME, PEPacketId.Dualbound.PLAY_CHAT, FromClientChatPacket.class);
-		registry.register(Protocol.GAME, PEPacketId.Serverbound.PLAY_COMMAND_REQEST, CommandRequestPacket.class);
+		registry.register(Protocol.GAME, PEPacketId.Serverbound.PLAY_PLAYER_ACTION, FromClientPlayerAction.class);
+		registry.register(Protocol.GAME, PEPacketId.Serverbound.PLAY_COMMAND_REQUEST, CommandRequestPacket.class);
+		registry.register(Protocol.GAME, PEPacketId.Dualbound.CUSTOM_EVENT, CustomEventPacket.class);
 	}
 
 	protected final Connection connection;
@@ -58,10 +62,11 @@ public class FromClientPacketDecoder extends MinecraftDecoder {
 			return;
 		}
 		buf.markReaderIndex();
-		ReadableMiddlePacket transformer = registry.getTransformer(protocol, PEPacketIdSerializer.readPacketId(buf), false);
+		int packetId = PEPacketIdSerializer.readPacketId(buf);
+		ReadableMiddlePacket transformer = registry.getTransformer(protocol, packetId, false);
 		if (transformer == null) {
 			buf.resetReaderIndex();
-			packets.add(new PacketWrapper(null, buf.copy()));
+			packets.add(new PacketWrapper(new NoopDefinedPacket(), buf.copy()));
 		} else {
 			transformer.read(buf);
 			if (buf.isReadable()) {

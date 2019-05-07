@@ -16,7 +16,7 @@ public class PlayerListItemPacket extends WriteableMiddlePacket<PlayerListItem> 
 
 	@Override
 	public Collection<ByteBuf> toData(PlayerListItem packet) {
-		ArrayList<ByteBuf> packets = new ArrayList<ByteBuf>();
+		ArrayList<ByteBuf> packets = new ArrayList<>();
 		for (Item item : packet.getItems()) {
 			ByteBuf data = Allocator.allocateBuffer();
 			data.writeByte(LegacyPacketId.Clientbound.PLAY_PLAYER_LIST);

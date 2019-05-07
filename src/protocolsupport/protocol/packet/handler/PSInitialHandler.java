@@ -219,6 +219,9 @@ public class PSInitialHandler extends InitialHandler {
 					} else {
 						updateUUID(new UUID(0, Long.parseLong(xuid)), true);
 					}
+				} else {
+					offlineuuid = Profile.generateOfflineModeUUID(getName());
+					updateUUID(offlineuuid, true);
 				}
 				finishLogin();
 				return;

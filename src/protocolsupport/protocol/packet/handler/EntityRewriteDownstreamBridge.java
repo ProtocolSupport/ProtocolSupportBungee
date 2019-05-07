@@ -6,6 +6,7 @@ import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.protocol.PacketWrapper;
+import net.md_5.bungee.protocol.packet.PluginMessage;
 import protocolsupport.api.ProtocolVersion;
 import protocolsupport.protocol.packet.entityrewrite.EntityRewrite;
 import protocolsupport.protocol.packet.entityrewrite.EntityRewriteFactory;
@@ -15,6 +16,7 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 	protected final UserConnection con;
 	protected final IntUnaryOperator rewritefunc;
 	protected final EntityRewrite rewrite;
+
 	public EntityRewriteDownstreamBridge(UserConnection con, ProtocolVersion version) {
 		super(ProxyServer.getInstance(), con, con.getServer());
 		this.con = con;
@@ -24,8 +26,18 @@ public class EntityRewriteDownstreamBridge extends DownstreamBridge {
 
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
-		rewrite.rewrite(packet.buf, rewritefunc);
-		con.sendPacket(packet);
+		if (packet.buf.readableBytes() > 0) {
+			con.sendPacket(rewrite.rewrite(packet, rewritefunc));
+		}
+	}
+
+	@Override
+	public void handle(PluginMessage pluginMessage) throws Exception {
+		//TODO: bungee somehow doesnt update these, even though our protocol technically supports the new format
+		if (pluginMessage.getTag().equals("bungeecord:main")) {
+			pluginMessage.setTag("BungeeCord");
+		}
+		super.handle(pluginMessage);
 	}
 
 }

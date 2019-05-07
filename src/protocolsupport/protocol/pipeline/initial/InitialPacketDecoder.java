@@ -49,9 +49,11 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_1_5_1, v5builder);
 		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_1_4_7, new protocolsupport.protocol.pipeline.version.v_1_4.PipeLineBuilder());
 		IPipeLineBuilder vpebuilder = new protocolsupport.protocol.pipeline.version.v_pe.PipeLineBuilder();
-		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_PE_FUTURE, vpebuilder);
-		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_PE, vpebuilder);
-		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_PE_LEGACY, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_FUTURE, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_10, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_9, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_1_8, vpebuilder);
+		BUILDERS.put(ProtocolVersion.MINECRAFT_PE_LEGACY, vpebuilder);
 	}
 
 	private static final int ping152delay = Utils.getJavaPropertyValue("ping152delay", 100, Integer::parseInt);
@@ -214,7 +216,7 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 				break;
 			}
 			case PEProxyServerInfoHandler.PACKET_ID: {
-				setProtocol(channel, ProtocolVersion.MINECRAFT_PE);
+				setProtocol(channel, ProtocolVersion.MINECRAFT_PE_FUTURE);
 				break;
 			}
 			default: {

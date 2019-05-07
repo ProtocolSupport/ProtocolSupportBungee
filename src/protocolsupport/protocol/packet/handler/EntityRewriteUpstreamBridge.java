@@ -15,6 +15,7 @@ public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 	protected final UserConnection con;
 	protected final IntUnaryOperator rewritefunc;
 	protected final EntityRewrite rewrite;
+
 	public EntityRewriteUpstreamBridge(UserConnection con, ProtocolVersion version) {
 		super(ProxyServer.getInstance(), con);
 		this.con = con;
@@ -25,8 +26,7 @@ public class EntityRewriteUpstreamBridge extends UpstreamBridge {
 	@Override
 	public void handle(PacketWrapper packet) throws Exception {
 		if (con.getServer() != null) {
-			rewrite.rewrite(packet.buf, rewritefunc);
-			con.getServer().getCh().write(packet);
+			con.getServer().getCh().write(rewrite.rewrite(packet, rewritefunc));
 		}
 	}
 
