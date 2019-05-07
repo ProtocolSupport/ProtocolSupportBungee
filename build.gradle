@@ -18,6 +18,7 @@ plugins {
 	id 'java'
 }
 
+apply from: 'helper.gradle'
 apply plugin: com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 
 tasks.withType(AbstractCompile) {
@@ -34,55 +35,31 @@ version '1.4.dev'
 sourceCompatibility = 1.8
 
 
-import java.text.MessageFormat
+File librariesRuntimeDirectory = new File("libraries_runtime")
+File librariesShadeDirectory = new File("libraries_shade")
+File targetJarDirectory = new File("target")
+String resourcesDirectoryName = "resources";
 
-File dlDepsDirC = new File('dllibsc')
-dlDepsDirC.mkdirs()
+task setupFolders(type: DefaultTask) {doLast{
+	librariesRuntimeDirectory.mkdirs()
+	librariesShadeDirectory.mkdirs()
+	targetJarDirectory.mkdirs()
+}}
 
-File dlDepsDirS = new File('dllibss')
-dlDepsDirS.mkdirs()
-
-def dlDepsC = [
-	new Tuple(
-		'https://ci.md-5.net/job/BungeeCord/1356/artifact/bootstrap/target/BungeeCord.jar',
-		'bungeecord-2.jar'
-	)
-]
-
-def dlDepsS = [
-	new Tuple(
-		'https://build.true-games.org/job/RakNetServer/26/artifact/target/RakNetServer.jar',
-		'raknetserver-6.jar'
-	),
-	new Tuple(
-		'https://build.true-games.org/job/UdpServerSocketChannel/11/artifact/target/UdpServerSocketChannel.jar',
-		'udpserver-2.jar'
-	)
-]
-
-void dlDeps(def dlDeps, File dlDepsDir) {
-	def dlDepsNames = new HashSet<String>()
-	dlDeps.each({
-		String dlDepUrl = it[0]
-		File dlDepFile = new File(dlDepsDir, it[1])
-		dlDepsNames.add(dlDepFile.getName())
-		if (!dlDepFile.exists()) {
-			logger.lifecycle(MessageFormat.format("Downloading {0} from {1}", dlDepFile.getName(), dlDepUrl))
-			ant.get(src: dlDepUrl, dest: dlDepFile)
-		} else {
-			logger.lifecycle(MessageFormat.format("Skipping download of {0} because it already exists", dlDepFile.getName()))
-		}
-	})
-	dlDepsDir.listFiles().findAll({ !dlDepsNames.contains(it.getName()) }).each({
-		logger.lifecycle(MessageFormat.format("Deleting old dllib {0}", it.getName()))
-		it.delete()
-	})
+task updateRuntimeLibraries(type: UpdateLibrariesTask) {
+	directory = librariesRuntimeDirectory
+	libraries = [
+		[url: "https://papermc.io/ci/job/Travertine/99/artifact/Travertine-Proxy/bootstrap/target/Travertine.jar", name: "bungeecord-3.jar"]
+	]
 }
 
-task updateLibs(type: DefaultTask) {doLast{
-	dlDeps(dlDepsC, dlDepsDirC)
-	dlDeps(dlDepsS, dlDepsDirS)
-}}
+task updateShadeLibraries(type: UpdateLibrariesTask) {
+	directory = librariesShadeDirectory
+	libraries = [
+		[url: "https://build.true-games.org/job/RakNetServer/30/artifact/target/RakNetServer.jar", name: "raknetserver-7.jar"],
+		[url: "https://build.true-games.org/job/UdpServerSocketChannel/11/artifact/target/UdpServerSocketChannel.jar", name: "udpserver-2.jar"]
+	]
+}
 
 
 sourceSets {
@@ -101,8 +78,8 @@ repositories {
 }
 
 dependencies {
-	shadow fileTree(dir: dlDepsDirC, include: '*.jar')
-	compile fileTree(dir: dlDepsDirS, include: '*.jar')
+	shadow fileTree(dir: librariesRuntimeDirectory, include: '*.jar')
+	compile fileTree(dir: librariesShadeDirectory, include: '*.jar')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
 }
@@ -133,6 +110,8 @@ shadowJar {
 
 
 compileJava.dependsOn(clean)
-compileJava.dependsOn(updateLibs)
+compileJava.dependsOn(setupFolders)
+compileJava.dependsOn(updateRuntimeLibraries)
+compileJava.dependsOn(updateShadeLibraries)
 jar.enabled = false
 jar.finalizedBy(shadowJar)

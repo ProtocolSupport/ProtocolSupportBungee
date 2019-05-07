@@ -40,7 +40,7 @@ public class StartGamePacket extends LegacyDefinedReadableMiddlePacket {
 	public Collection<PacketWrapper> toNative() {
 		return Arrays.asList(
 			new PacketWrapper(new LoginSuccess(), Unpooled.EMPTY_BUFFER),
-			new PacketWrapper(new Login(entityId, (short) gamemode, dimension, (short) difficulty, (short) maxPlayers, levelType, false), Unpooled.wrappedBuffer(readbytes))
+			new PacketWrapper(new Login(entityId, (short) gamemode, dimension, (short) difficulty, (short) maxPlayers, levelType, 10, false), Unpooled.wrappedBuffer(readbytes))
 		);
 	}
 

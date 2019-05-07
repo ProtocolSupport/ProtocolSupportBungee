@@ -84,7 +84,7 @@ public class LoginPacket extends PEDefinedReadableMiddlePacket {
 	public Collection<PacketWrapper> toNative() {
 		return Arrays.asList(
 			new PacketWrapper(new LoginSuccess(), Unpooled.EMPTY_BUFFER),
-			new PacketWrapper(new Login(entityId, gamemode, dimension, (short) difficulty, (short) 1, "", false), Unpooled.wrappedBuffer(readbytes))
+			new PacketWrapper(new Login(entityId, gamemode, dimension, (short) difficulty, (short) 1, "", 10, false), Unpooled.wrappedBuffer(readbytes))
 		);
 	}
 

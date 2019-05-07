@@ -12,7 +12,8 @@ import protocolsupport.utils.Utils;
 
 public enum ProtocolVersion {
 
-	MINECRAFT_FUTURE(-1, new OrderId(ProtocolType.PC, 23)),
+	MINECRAFT_FUTURE(-1, new OrderId(ProtocolType.PC, 24)),
+	MINECRAFT_1_14(477, new OrderId(ProtocolType.PC, 23), "1.14"),
 	MINECRAFT_1_13_2(404, new OrderId(ProtocolType.PC, 22), "1.13.2"),
 	MINECRAFT_1_13_1(401, new OrderId(ProtocolType.PC, 21), "1.13.1"),
 	MINECRAFT_1_13(393, new OrderId(ProtocolType.PC, 20), "1.13"),
@@ -277,7 +278,7 @@ public enum ProtocolVersion {
 	public static ProtocolVersion getLatest(ProtocolType type) {
 		switch (type) {
 			case PC: {
-				return MINECRAFT_1_13_2;
+				return MINECRAFT_1_14;
 			}
 			case PE: {
 				return MINECRAFT_PE;
@@ -314,50 +315,6 @@ public enum ProtocolVersion {
 	 */
 	public static ProtocolVersion[] getAllSupported() {
 		return allSupported.clone();
-	}
-
-	/**
-	 * Returns all protocol versions that are after specified one (inclusive)
-	 * @param version protocol version
-	 * @return all protocol versions that are after specified one  (inclusive)
-	 * @throws IllegalArgumentException  if getAllBetween(version, getLatest(version.getType())) throws one
-	 * @deprecated non intuitive behavior
-	 */
-	@Deprecated
-	public static ProtocolVersion[] getAllAfter(ProtocolVersion version) {
-		return getAllAfterI(version);
-	}
-
-	/**
-	 * Returns all protocol versions that are before specified one (inclusive)
-	 * @param version protocol version
-	 * @return all protocol versions that are before specified one
-	 * @throws IllegalArgumentException if getAllBetween(getOldest(version.getType()), version) throws one
-	 * @deprecated non intuitive behavior
-	 */
-	@Deprecated
-	public static ProtocolVersion[] getAllBefore(ProtocolVersion version) {
-		return getAllBeforeI(version);
-	}
-
-	/**
-	 * Returns latest supported protocol version for {@link ProtocolType} PC
-	 * @return latest supported protocol version for {@link ProtocolType} PC
-	 * @deprecated only returns latest version for {@link ProtocolType} PC
-	 */
-	@Deprecated
-	public static ProtocolVersion getLatest() {
-		return getLatest(ProtocolType.PC);
-	}
-
-	/**
-	 * Returns oldest supported protocol version for {@link ProtocolType} PC
-	 * @return oldest supported protocol version for {@link ProtocolType} PC
-	 * @deprecated only returns oldest version for {@link ProtocolType} PC
-	 */
-	@Deprecated
-	public static ProtocolVersion getOldest() {
-		return getOldest(ProtocolType.PC);
 	}
 
 	private static class OrderId implements Comparable<OrderId> {

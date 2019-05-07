@@ -45,6 +45,9 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 
 		@Override
 		protected void initChannel(Channel channel) throws Exception {
+			if (!channel.isOpen()) {
+				return;
+			}
 			ChannelPipeline pipeline = channel.pipeline();
 			PacketHandler handler = ReflectionUtils.getFieldValue(pipeline.get(HandlerBoss.class), "handler");
 			CustomHandlerBoss boss = new CustomHandlerBoss(handler);
@@ -68,7 +71,7 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 				ConnectionImpl connection = ConnectionImpl.getFromChannel(((ChannelWrapper) ReflectionUtils.getFieldValue(ReflectionUtils.getFieldValue(handler, "user"), "ch")).getHandle());
 				pipeline.addBefore(PipelineUtils.BOSS_HANDLER, ChannelHandlers.LOGIC, new LogicHandler(connection, false));
 				connection.setServerConnectionChannel(channel);
-				IPipeLineBuilder builder = IPipeLineBuilder.BUILDERS.get(connection.getVersion());
+				IPipeLineBuilder builder = InitialPacketDecoder.BUILDERS.get(connection.getVersion());
 				if (builder != null) {
 					builder.buildBungeeServer(channel, connection);
 				}
