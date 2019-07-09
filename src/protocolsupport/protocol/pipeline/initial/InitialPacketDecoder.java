@@ -39,6 +39,7 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 	//TODO: a kick build for LEGACY versions
 	public static final Map<ProtocolVersion, IPipeLineBuilder> BUILDERS = new EnumMap<>(ProtocolVersion.class);
 	static {
+		BUILDERS.put(ProtocolVersion.MINECRAFT_FUTURE, IPipeLineBuilder.NOOP);
 		Arrays.stream(ProtocolVersion.getAllAfterI(ProtocolVersion.MINECRAFT_1_7_5)).forEach(version -> InitialPacketDecoder.BUILDERS.put(version, IPipeLineBuilder.NOOP));
 		IPipeLineBuilder v6builder = new protocolsupport.protocol.pipeline.version.v_1_6.PipeLineBuilder();
 		InitialPacketDecoder.BUILDERS.put(ProtocolVersion.MINECRAFT_1_6_4, v6builder);
