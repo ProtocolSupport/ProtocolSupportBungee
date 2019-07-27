@@ -1,37 +1,16 @@
-buildscript {
-	dependencies {
-		classpath 'org.jdom:jdom2:2.0.6'
-		classpath 'org.ow2.asm:asm:5.1'
-		classpath 'org.ow2.asm:asm-commons:5.1'
-		classpath 'commons-io:commons-io:2.5'
-		classpath 'org.apache.ant:ant:1.9.7'
-		classpath 'org.codehaus.plexus:plexus-utils:3.0.24'
-		classpath 'org.vafer:jdependency:1.1'
-		classpath files('gradle/plugins/shadowPlugin.jar')
-	}
-	repositories {
-		mavenCentral()
-	}
-}
-
 plugins {
+	id 'com.github.johnrengelman.shadow' version '5.0.0'
 	id 'java'
 }
 
 apply from: 'helper.gradle'
-apply plugin: com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 
-tasks.withType(AbstractCompile) {
-	classpath += configurations.shadow
-}
 
-tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
-}
+defaultTasks 'build'
+
 
 group 'protocolsupport'
 version '1.4.dev'
-
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 File librariesRuntimeDirectory = new File("libraries_runtime")
@@ -76,18 +55,18 @@ repositories {
 dependencies {
 	shadow fileTree(dir: librariesRuntimeDirectory, include: '*.jar')
 	compile fileTree(dir: librariesShadeDirectory, include: '*.jar')
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-	compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '5.2'
-	compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.1'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+	compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.2.2'
 }
 
-task copyFinalJarToTarget(type: Copy) {
-	// JitPack searches for the output jar at the standard Gradle output directory (jar.archivePath)
-	// By copying it from there to our target destination JitPack can archive it in a Maven repository
-	from jar.archivePath.getPath()
-	into 'target'
-	//remove version suffix
-	rename (jar.archiveName, jar.baseName + '.jar')
+compileJava {
+	doFirst {
+	    classpath -= configurations.shadow
+	    classpath += configurations.shadow
+	}
+
+	options.encoding = 'UTF-8'
+	options.incremental = false
 }
 
 shadowJar {
@@ -98,21 +77,33 @@ shadowJar {
 	from sourceSets.main.java.srcDirs
 	from 'LICENSE'
 
-
-	//remove the -all suffix
 	archiveName = jar.archiveName
-	minimizeJar = true
 
 	exclude 'META-INF/**'
 	relocate 'org.apache', 'protocolsupport.libs.org.apache'
-	relocate 'com.nimbusds', 'protocolsupport.libs.com.nimbusds'
-	relocate 'org.objectweb', 'protocolsupport.libs.org.objectweb'
-	relocate 'net.minidev', 'protocolsupport.libs.net.minidev'
-	relocate 'net.jcip', 'protocolsupport.libs.net.jcip'
-	relocate 'raknetserver', 'protocolsupport.libs.raknetserver'
-	relocate 'udpserversocketchannel', 'protocolsupport.libs.udpserversocketchannel'
 	relocate 'it.unimi.dsi.fastutil', 'protocolsupport.libs.it.unimi.dsi.fastutil'
+
+	minimize()
 }
+
+
+task postprocessFatJar(type: Zip) {
+	File originalJar = new File(shadowJar.destinationDir, shadowJar.archiveName)
+
+	archiveName = shadowJar.archiveName
+
+	from(zipTree(originalJar)) {
+        exclude 'META-INF/**'
+	}
+}
+
+task copyFinalJarToTarget(type: DefaultTask) {doLast{
+	java.nio.file.Files.copy(
+		postprocessFatJar.archivePath.getAbsoluteFile().toPath(),
+		new File(targetJarDirectory, jar.baseName + '.jar').getAbsoluteFile().toPath(),
+		java.nio.file.StandardCopyOption.REPLACE_EXISTING
+	)
+}}
 
 
 compileJava.dependsOn(clean)
@@ -121,4 +112,5 @@ compileJava.dependsOn(updateRuntimeLibraries)
 compileJava.dependsOn(updateShadeLibraries)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
-shadowJar.finalizedBy(copyFinalJarToTarget)
+shadowJar.finalizedBy(postprocessFatJar)
+postprocessFatJar.finalizedBy(copyFinalJarToTarget)
