@@ -12,18 +12,9 @@ public class MiscSerializer {
 		return new UUID(from.readLong(), from.readLong());
 	}
 
-	public static UUID readUUIDLE(ByteBuf from) {
-		return new UUID(from.readLongLE(), from.readLongLE());
-	}
-
 	public static void writeUUID(ByteBuf to, UUID uuid) {
 		to.writeLong(uuid.getMostSignificantBits());
 		to.writeLong(uuid.getLeastSignificantBits());
-	}
-
-	public static void writeUUIDLE(ByteBuf to, UUID uuid) {
-		to.writeLongLE(uuid.getMostSignificantBits());
-		to.writeLongLE(uuid.getLeastSignificantBits());
 	}
 
 	public static byte[] readAllBytes(ByteBuf buf) {

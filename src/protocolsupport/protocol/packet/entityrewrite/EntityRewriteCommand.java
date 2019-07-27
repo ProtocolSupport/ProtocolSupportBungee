@@ -4,7 +4,6 @@ import java.util.function.IntUnaryOperator;
 
 import io.netty.buffer.ByteBuf;
 import protocolsupport.protocol.serializer.TypeCopier;
-import protocolsupport.protocol.serializer.VarNumberSerializer;
 
 public abstract class EntityRewriteCommand {
 
@@ -23,17 +22,6 @@ public abstract class EntityRewriteCommand {
 
 	}
 
-	public static final EntityIdEntityRewriteCommand VARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND = new EntityIdEntityRewriteCommand() {
-		@Override
-		protected int readEntityId(ByteBuf from) {
-			return (int) VarNumberSerializer.readVarLong(from);
-		}
-		@Override
-		protected void writeEntityId(ByteBuf to, int entityId) {
-			VarNumberSerializer.writeVarLong(to, entityId);
-		}
-	};
-
 	public static final EntityIdEntityRewriteCommand INT_ENTITY_ID_ENTITY_REWRITE_COMMAND = new EntityIdEntityRewriteCommand() {
 		@Override
 		protected void writeEntityId(ByteBuf to, int entityId) {
@@ -42,17 +30,6 @@ public abstract class EntityRewriteCommand {
 		@Override
 		protected int readEntityId(ByteBuf from) {
 			return from.readInt();
-		}
-	};
-
-	public static final EntityIdEntityRewriteCommand SVARLONG_ENTITY_ID_ENTITY_REWRITE_COMMAND = new EntityIdEntityRewriteCommand() {
-		@Override
-		protected int readEntityId(ByteBuf from) {
-			return (int) VarNumberSerializer.readSVarLong(from);
-		}
-		@Override
-		protected void writeEntityId(ByteBuf to, int entityId) {
-			VarNumberSerializer.writeSVarLong(to, entityId);
 		}
 	};
 
