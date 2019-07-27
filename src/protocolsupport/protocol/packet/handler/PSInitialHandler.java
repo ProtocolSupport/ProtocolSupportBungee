@@ -50,7 +50,6 @@ import protocolsupport.api.events.PlayerProfileCompleteEvent;
 import protocolsupport.api.utils.Profile;
 import protocolsupport.api.utils.ProfileProperty;
 import protocolsupport.protocol.ConnectionImpl;
-import protocolsupport.protocol.packet.middleimpl.readable.handshake.v_pe.LoginHandshakePacket;
 import protocolsupport.protocol.utils.GameProfile;
 
 public class PSInitialHandler extends InitialHandler {
@@ -208,22 +207,6 @@ public class PSInitialHandler extends InitialHandler {
 					updateUUID(offlineuuid, true);
 					finishLogin();
 				}
-				return;
-			}
-			case PE: {
-				if (isOnlineMode()) {
-					String xuid = (String) connection.getMetadata(LoginHandshakePacket.XUID_METADATA_KEY);
-					if (xuid == null) {
-						disconnect("This server is in online mode, but no valid XUID was found (XBOX live auth required)");
-						return;
-					} else {
-						updateUUID(new UUID(0, Long.parseLong(xuid)), true);
-					}
-				} else {
-					offlineuuid = Profile.generateOfflineModeUUID(getName());
-					updateUUID(offlineuuid, true);
-				}
-				finishLogin();
 				return;
 			}
 			default: {
