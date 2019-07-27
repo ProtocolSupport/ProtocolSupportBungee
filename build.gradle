@@ -27,7 +27,7 @@ task setupFolders(type: DefaultTask) {doLast{
 task updateRuntimeLibraries(type: UpdateLibrariesTask) {
 	directory = librariesRuntimeDirectory
 	libraries = [
-		[url: "https://papermc.io/ci/job/Travertine/99/artifact/Travertine-Proxy/bootstrap/target/Travertine.jar", name: "bungeecord-3.jar"]
+		[url: "https://papermc.io/ci/job/Travertine/105/artifact/Travertine-Proxy/bootstrap/target/Travertine.jar", name: "bungeecord-4.jar"]
 	]
 }
 
