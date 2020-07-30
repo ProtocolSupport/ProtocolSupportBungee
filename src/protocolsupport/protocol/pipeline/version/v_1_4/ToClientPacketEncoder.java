@@ -4,6 +4,7 @@ import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.EntityStatus;
+import net.md_5.bungee.protocol.packet.GameState;
 import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.Kick;
 import net.md_5.bungee.protocol.packet.Login;
@@ -22,6 +23,7 @@ import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.EncryptionRequestPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.EntityStatusPacket;
+import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.GameStatePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KeepAlivePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.KickPacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.play.v_4_5_6.PlayerListItemPacket;
@@ -53,6 +55,7 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(PlayerListItem.class, PlayerListItemPacket.class);
 		registry.register(TabCompleteResponse.class, TabCompleteResponsePacket.class);
 		registry.register(EntityStatus.class, EntityStatusPacket.class);
+		registry.register(GameState.class, GameStatePacket.class);
 		registry.register(BossBar.class, NoopWriteablePacket.class);
 		registry.register(Title.class, NoopWriteablePacket.class);
 	}

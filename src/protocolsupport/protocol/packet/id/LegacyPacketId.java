@@ -59,6 +59,7 @@ public class LegacyPacketId {
 		public static final int PLAY_SCOREBOARD_SCORE = 0xCF;
 		public static final int PLAY_SCOREBOARD_DISPLAY_SLOT = 0xD0;
 		public static final int PLAY_SCOREBOARD_TEAM = 0xD1;
+		public static final int PLAY_GAME_STATE = 0x46;
 
 	}
 
