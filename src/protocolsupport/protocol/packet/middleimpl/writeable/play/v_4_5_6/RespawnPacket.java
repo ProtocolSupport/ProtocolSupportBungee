@@ -5,6 +5,7 @@ import net.md_5.bungee.protocol.packet.Respawn;
 import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.typeremapper.LegacyDimension;
 
 public class RespawnPacket extends LegacySingleWriteablePacket<Respawn> {
 
@@ -14,7 +15,7 @@ public class RespawnPacket extends LegacySingleWriteablePacket<Respawn> {
 
 	@Override
 	protected void write(ByteBuf data, Respawn packet) {
-		data.writeInt(packet.getDimension());
+		data.writeInt(LegacyDimension.get(packet.getDimension()));
 		data.writeByte(packet.getDifficulty());
 		data.writeByte(packet.getGameMode());
 		data.writeShort(256);

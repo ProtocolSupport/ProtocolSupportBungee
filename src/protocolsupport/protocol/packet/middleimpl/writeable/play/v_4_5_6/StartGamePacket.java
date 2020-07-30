@@ -5,6 +5,7 @@ import net.md_5.bungee.protocol.packet.Login;
 import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.writeable.LegacySingleWriteablePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.protocol.typeremapper.LegacyDimension;
 
 public class StartGamePacket extends LegacySingleWriteablePacket<Login> {
 
@@ -17,7 +18,7 @@ public class StartGamePacket extends LegacySingleWriteablePacket<Login> {
 		data.writeInt(packet.getEntityId());
 		StringSerializer.writeShortUTF16BEString(data, packet.getLevelType());
 		data.writeByte(packet.getGameMode());
-		data.writeByte(packet.getDimension());
+		data.writeByte(LegacyDimension.get(packet.getDimension()));
 		data.writeByte(packet.getDifficulty());
 		data.writeByte(0);
 		data.writeByte(packet.getMaxPlayers());

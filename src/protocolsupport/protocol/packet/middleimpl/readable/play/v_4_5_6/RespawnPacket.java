@@ -33,7 +33,9 @@ public class RespawnPacket extends LegacyDefinedReadableMiddlePacket {
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
-		return Collections.singletonList(new PacketWrapper(new Respawn(dimension, 0, (short) difficulty, (short) gamemode, levelType), Unpooled.wrappedBuffer(readbytes)));
+		return Collections.singletonList(new PacketWrapper(
+			new Respawn(dimension, null, 0, (short) difficulty, (short) gamemode, (short) gamemode, levelType, false, false, true), Unpooled.wrappedBuffer(readbytes)
+		));
 	}
 
 }

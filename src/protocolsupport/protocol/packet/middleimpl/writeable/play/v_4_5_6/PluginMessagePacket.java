@@ -15,7 +15,11 @@ public class PluginMessagePacket extends LegacySingleWriteablePacket<PluginMessa
 
 	@Override
 	protected void write(ByteBuf data, PluginMessage packet) {
-		StringSerializer.writeShortUTF16BEString(data, packet.getTag());
+		String tag = packet.getTag();
+		if (tag.equals("bungeecord:main")) {
+			tag = "BungeeCord";
+		}
+		StringSerializer.writeShortUTF16BEString(data, tag);
 		ArraySerializer.writeShortLengthByteArray(data, packet.getData());
 	}
 

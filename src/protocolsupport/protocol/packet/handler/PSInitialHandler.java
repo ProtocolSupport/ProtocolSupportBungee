@@ -327,7 +327,7 @@ public class PSInitialHandler extends InitialHandler {
 				userCon.setCompressionThreshold(BungeeCord.getInstance().config.getCompressionThreshold());
 			}
 			userCon.init();
-			unsafe().sendPacket(new LoginSuccess(getUniqueId().toString(), getName()));
+			unsafe().sendPacket(new LoginSuccess(getUniqueId(), getName()));
 			channel.setProtocol(Protocol.GAME);
 
 			PlayerLoginFinishEvent loginFinishEvent = new PlayerLoginFinishEvent(connection);

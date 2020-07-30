@@ -27,7 +27,7 @@ task setupFolders(type: DefaultTask) {doLast{
 task updateRuntimeLibraries(type: UpdateLibrariesTask) {
 	directory = librariesRuntimeDirectory
 	libraries = [
-		[url: "https://papermc.io/api/v1/travertine/1.15/125/download", name: "bungeecord-6.jar"]
+		[url: "https://papermc.io/api/v1/travertine/1.16/154/download", name: "bungeecord-1.16.1-1.jar"]
 	]
 }
 
