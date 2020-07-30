@@ -2,6 +2,7 @@ package protocolsupport.protocol.pipeline.version.v_1_5;
 
 import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
+import net.md_5.bungee.protocol.packet.Commands;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.EntityStatus;
 import net.md_5.bungee.protocol.packet.GameState;
@@ -9,6 +10,7 @@ import net.md_5.bungee.protocol.packet.KeepAlive;
 import net.md_5.bungee.protocol.packet.Kick;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
+import net.md_5.bungee.protocol.packet.PlayerListHeaderFooter;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 import net.md_5.bungee.protocol.packet.Respawn;
@@ -19,6 +21,7 @@ import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import net.md_5.bungee.protocol.packet.Team;
 import net.md_5.bungee.protocol.packet.Title;
+import net.md_5.bungee.protocol.packet.ViewDistance;
 import protocolsupport.api.Connection;
 import protocolsupport.protocol.packet.middleimpl.writeable.NoopWriteablePacket;
 import protocolsupport.protocol.packet.middleimpl.writeable.login.v_4_5_6.EncryptionRequestPacket;
@@ -62,6 +65,9 @@ public class ToClientPacketEncoder extends AbstractPacketEncoder {
 		registry.register(GameState.class, GameStatePacket.class);
 		registry.register(BossBar.class, NoopWriteablePacket.class);
 		registry.register(Title.class, NoopWriteablePacket.class);
+		registry.register(PlayerListHeaderFooter.class, NoopWriteablePacket.class);
+		registry.register(Commands.class, NoopWriteablePacket.class);
+		registry.register(ViewDistance.class, NoopWriteablePacket.class);
 	}
 
 	public ToClientPacketEncoder(Connection connection, NetworkDataCache cache) {
