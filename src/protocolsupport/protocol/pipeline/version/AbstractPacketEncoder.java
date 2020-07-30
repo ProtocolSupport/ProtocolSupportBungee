@@ -38,6 +38,7 @@ public abstract class AbstractPacketEncoder extends MinecraftEncoder {
 				DefinedPacket msg = (DefinedPacket) msgObject;
 				try {
 					encode(ctx, msg, null);
+					promise.trySuccess();
 				} finally {
 					ReferenceCountUtil.release(msg);
 				}
