@@ -19,6 +19,7 @@ public class StartGamePacket extends LegacyDefinedReadableMiddlePacket {
 	}
 
 	protected int entityId;
+	protected boolean hardcode;
 	protected int gamemode;
 	protected int dimension;
 	protected int difficulty;
@@ -29,7 +30,9 @@ public class StartGamePacket extends LegacyDefinedReadableMiddlePacket {
 	protected void read0(ByteBuf from) {
 		entityId = from.readInt();
 		levelType = StringSerializer.readShortUTF16BEString(from);
-		gamemode = from.readByte();
+		int	sGamemodeHardcore = from.readByte();
+		hardcode = (sGamemodeHardcore & 0b1000) != 0;
+		gamemode = (sGamemodeHardcore & 0b111);
 		dimension = from.readByte();
 		difficulty = from.readByte();
 		from.readByte();
@@ -41,7 +44,7 @@ public class StartGamePacket extends LegacyDefinedReadableMiddlePacket {
 		return Arrays.asList(
 			new PacketWrapper(new LoginSuccess(), Unpooled.EMPTY_BUFFER),
 			new PacketWrapper(
-				new Login(entityId, (short) gamemode, (short) gamemode, null, null, Integer.valueOf(dimension), null, 0, (short) difficulty, (short) maxPlayers, levelType, 10, false, true, false, false),
+				new Login(entityId, hardcode, (short) gamemode, (short) gamemode, null, null, Integer.valueOf(dimension), null, 0, (short) difficulty, (short) maxPlayers, levelType, 10, false, true, false, false),
 				Unpooled.wrappedBuffer(readbytes)
 			)
 		);

@@ -1,9 +1,13 @@
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+
 plugins {
 	id 'com.github.johnrengelman.shadow' version '5.0.0'
 	id 'java'
 }
 
-apply from: 'helper.gradle'
+apply from: 'gradle/helper.gradle'
 
 
 defaultTasks 'build'
@@ -11,28 +15,32 @@ defaultTasks 'build'
 
 group 'protocolsupport'
 version '1.4.dev'
+
+
+Path projectDirectoryPath = projectDir.toPath().toAbsolutePath()
+
+
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-File librariesRuntimeDirectory = new File("libraries_runtime")
-File librariesShadeDirectory = new File("libraries_shade")
-File targetJarDirectory = new File("target")
-String resourcesDirectoryName = "resources";
+Path librariesRuntimeDirectoryPath = projectDirectoryPath.resolve("libraries_runtime")
+Path librariesShadeDirectoryPath = projectDirectoryPath.resolve("libraries_shade")
+
 
 task setupFolders(type: DefaultTask) {doLast{
-	librariesRuntimeDirectory.mkdirs()
-	librariesShadeDirectory.mkdirs()
-	targetJarDirectory.mkdirs()
+	Files.createDirectories(librariesRuntimeDirectoryPath)
+	Files.createDirectories(librariesShadeDirectoryPath)
 }}
 
+
 task updateRuntimeLibraries(type: UpdateLibrariesTask) {
-	directory = librariesRuntimeDirectory
+	directory = librariesRuntimeDirectoryPath
 	libraries = [
-		[url: "https://papermc.io/api/v1/travertine/1.16/154/download", name: "bungeecord-1.16.1-1.jar"]
+		[url: "https://papermc.io/api/v1/travertine/1.16/157/download", name: "bungeecord-1.16.2-1.jar"]
 	]
 }
 
 task updateShadeLibraries(type: UpdateLibrariesTask) {
-	directory = librariesShadeDirectory
+	directory = librariesShadeDirectoryPath
 	libraries = []
 }
 
@@ -53,27 +61,24 @@ repositories {
 }
 
 dependencies {
-	shadow fileTree(dir: librariesRuntimeDirectory, include: '*.jar')
-	compile fileTree(dir: librariesShadeDirectory, include: '*.jar')
+	compileOnly fileTree(dir: librariesRuntimeDirectoryPath, include: '*.jar')
+	compile fileTree(dir: librariesShadeDirectoryPath, include: '*.jar')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 	compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.2.2'
 }
 
 compileJava {
 	doFirst {
-	    classpath -= configurations.shadow
-	    classpath += configurations.shadow
+	    classpath -= configurations.compileOnly
+	    classpath += configurations.compileOnly
 	}
 
 	options.encoding = 'UTF-8'
 	options.incremental = false
 }
 
-shadowJar {
-	doFirst {
-		new File(destinationDir, archiveName).delete()
-	}
 
+shadowJar {
 	from sourceSets.main.java.srcDirs
 	from 'LICENSE'
 
@@ -87,20 +92,12 @@ shadowJar {
 }
 
 
-task postprocessFatJar(type: Zip) {
-	File originalJar = new File(shadowJar.destinationDir, shadowJar.archiveName)
-
-	archiveName = shadowJar.archiveName
-
-	from(zipTree(originalJar)) {
-        exclude 'META-INF/**'
-	}
-}
-
 task copyFinalJarToTarget(type: DefaultTask) {doLast{
+	Path targetJarDirectory = projectDirectoryPath.resolve("target")
+	Files.createDirectories(targetJarDirectory)
 	java.nio.file.Files.copy(
-		postprocessFatJar.archivePath.getAbsoluteFile().toPath(),
-		new File(targetJarDirectory, jar.baseName + '.jar').getAbsoluteFile().toPath(),
+		shadowJar.archivePath.toPath().toAbsolutePath(),
+		targetJarDirectory.resolve(shadowJar.baseName + '.jar'),
 		java.nio.file.StandardCopyOption.REPLACE_EXISTING
 	)
 }}
@@ -112,5 +109,4 @@ compileJava.dependsOn(updateRuntimeLibraries)
 compileJava.dependsOn(updateShadeLibraries)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
-shadowJar.finalizedBy(postprocessFatJar)
-postprocessFatJar.finalizedBy(copyFinalJarToTarget)
+shadowJar.finalizedBy(copyFinalJarToTarget)
