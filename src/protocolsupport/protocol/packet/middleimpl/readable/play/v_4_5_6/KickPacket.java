@@ -12,6 +12,7 @@ import net.md_5.bungee.protocol.packet.Kick;
 import protocolsupport.protocol.packet.id.LegacyPacketId;
 import protocolsupport.protocol.packet.middleimpl.readable.LegacyDefinedReadableMiddlePacket;
 import protocolsupport.protocol.serializer.StringSerializer;
+import protocolsupport.utils.Utils;
 
 public class KickPacket extends LegacyDefinedReadableMiddlePacket {
 
@@ -28,7 +29,7 @@ public class KickPacket extends LegacyDefinedReadableMiddlePacket {
 
 	@Override
 	public Collection<PacketWrapper> toNative() {
-		return Collections.singletonList(new PacketWrapper(new Kick(message), Unpooled.wrappedBuffer(readbytes)));
+		return Collections.singletonList(new PacketWrapper(new Kick(Utils.clampString(message, 256)), Unpooled.wrappedBuffer(readbytes)));
 	}
 
 }
