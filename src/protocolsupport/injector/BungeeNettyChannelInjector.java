@@ -32,7 +32,7 @@ public class BungeeNettyChannelInjector extends Varint21LengthFieldPrepender {
 	}
 
 	public static void inject() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		ReflectionUtils.setStaticFinalField(PipelineUtils.class.getDeclaredField("framePrepender"), new BungeeNettyChannelInjector());
+		ReflectionUtils.setStaticFinalField(PipelineUtils.class, "framePrepender", new BungeeNettyChannelInjector());
 	}
 
 	@Override
