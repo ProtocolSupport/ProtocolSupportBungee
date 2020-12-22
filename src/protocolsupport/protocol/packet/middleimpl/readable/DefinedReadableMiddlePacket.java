@@ -16,18 +16,11 @@ public abstract class DefinedReadableMiddlePacket extends ReadableMiddlePacket {
 
 	@Override
 	public void read(ByteBuf data) {
-		int readerIndex = data.readerIndex();
+		int index = data.readerIndex();// Packet id skipped
+		data.resetReaderIndex();// Reset reader index to first
+		readbytes = MiscSerializer.readAllBytes(data);
+		data.readerIndex(index);
 		read0(data);
-		ByteBuf buffer = Allocator.allocateBuffer();
-		try {
-			writePacketId(buffer);
-			int readBytes = data.readerIndex() - readerIndex;
-			data.readerIndex(readerIndex);
-			buffer.writeBytes(data, readBytes);
-			readbytes = MiscSerializer.readAllBytes(buffer);
-		} finally {
-			buffer.release();
-		}
 	}
 
 	protected abstract void writePacketId(ByteBuf to);
